@@ -1,0 +1,15 @@
+{
+    "name": "administrator/aces-next",
+    "autoload": {
+        "psr-4": {
+            "Administrator\\AcesNext\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ashdownbadd",
+            "email": "u.randalljay00@gmail.com"
+        }
+    ],
+    "require": {}
+}
