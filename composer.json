@@ -1,15 +1,27 @@
 {
-    "name": "administrator/aces-next",
-    "autoload": {
-        "psr-4": {
-            "Administrator\\AcesNext\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "ashdownbadd",
-            "email": "u.randalljay00@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "ashdownbadd/aces-next",
+  "description": "Financial Operations Platform for Cooperatives",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.2"
+  },
+  "require-dev": {},
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {},
+  "config": {
+    "sort-packages": true,
+    "optimize-autoloader": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
