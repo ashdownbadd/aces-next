@@ -1,10 +1,6 @@
-/vendor
+/vendor/
+/storage/logs/*
+/storage/cache/*
 .env
-/storage/*
-!.gitkeep
-
-.idea
-.vscode/settings.json
-
 .DS_Store
 Thumbs.db

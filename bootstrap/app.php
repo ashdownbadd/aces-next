@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Core\Application;
+use App\Foundation\Application;
+use App\Foundation\Container;
+use App\Providers\ProviderLoader;
 
-return new Application();
+$container = new Container();
+
+(new ProviderLoader($container))->register();
+
+return new Application($container);
