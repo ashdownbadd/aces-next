@@ -9,23 +9,35 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title><?= htmlspecialchars($title ?? 'ACES Next') ?></title>
+    <title><?= $title ?? 'ACES'; ?></title>
+
+    <link
+        rel="stylesheet"
+        href="/css/app.css">
 
 </head>
 
 <body>
 
-    <?= $view->partial('partials.header') ?>
+    <div class="app">
 
-    <?= $view->partial('partials.navbar') ?>
+        <?= $view->partial('partials.header') ?>
 
-    <main>
+        <div class="app__body">
 
-        <?= $content ?>
+            <?= $view->partial('partials.sidebar') ?>
 
-    </main>
+            <main class="app__content">
 
-    <?= $view->partial('partials.footer') ?>
+                <?= $content ?>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <script src="/js/app.js"></script>
 
 </body>
 

@@ -1,0 +1,35 @@
+/* ==========================================
+   Input
+========================================== */
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+
+  margin-bottom: var(--space-5);
+}
+
+.input-label {
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+
+  padding: 0.75rem 1rem;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+
+  border-color: var(--color-primary);
+}

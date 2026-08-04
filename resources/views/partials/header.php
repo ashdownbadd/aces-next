@@ -1,7 +1,27 @@
-<header>
+<header class="header">
 
-    <h2>ACES Next</h2>
+    <div class="header__brand">
 
-    <hr>
+        <strong>
+            ACES
+        </strong>
+
+    </div>
+
+    <div class="header__actions">
+
+        <span>
+
+            Administrator
+
+        </span>
+
+        <a
+            href="/logout"
+            class="btn btn--outline">
+            Logout
+        </a>
+
+    </div>
 
 </header>

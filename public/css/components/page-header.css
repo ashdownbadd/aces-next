@@ -1,0 +1,20 @@
+/* ==========================================
+   Page Header
+========================================== */
+
+.page-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: var(--space-8);
+}
+
+.page-header__title {
+  margin-bottom: var(--space-2);
+}
+
+.page-header__description {
+  color: var(--color-text-muted);
+}

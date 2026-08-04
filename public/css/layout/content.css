@@ -1,0 +1,7 @@
+.app__content h1 {
+  margin-bottom: var(--space-2);
+}
+
+.app__content p {
+  margin-bottom: var(--space-6);
+}

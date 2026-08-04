@@ -18,7 +18,11 @@ final readonly class DashboardController
         return new Response(
             $this->view->render(
                 'dashboard.dashboard',
-            ),
+                [
+                    'title' => 'Dashboard',
+                ],
+                'layouts.app',
+            )
         );
     }
 }

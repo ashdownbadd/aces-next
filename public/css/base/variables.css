@@ -1,0 +1,58 @@
+:root {
+  /* Brand */
+
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+
+  /* Status */
+
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+
+  /* Neutrals */
+
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+
+  --color-border: #e2e8f0;
+
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+
+  /* Typography */
+
+  --font-family: Inter, "Segoe UI", sans-serif;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+
+  /* Radius */
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* Shadow */
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.1);
+
+  /* Spacing */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+}

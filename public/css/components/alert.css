@@ -1,0 +1,17 @@
+.alert {
+  padding: var(--space-4);
+
+  margin-bottom: var(--space-5);
+
+  border-radius: var(--radius-sm);
+
+  font-size: var(--font-size-sm);
+}
+
+.alert--danger {
+  color: #991b1b;
+
+  background: #fee2e2;
+
+  border: 1px solid #fecaca;
+}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Features\Authentication\Controllers\LoginController;
 use App\Features\Dashboard\Controllers\DashboardController;
+use App\Features\Members\Controllers\MembersController;
 use App\Foundation\Router;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
@@ -21,6 +22,14 @@ $router->get(
 $router->get(
     '/dashboard',
     [DashboardController::class, 'index'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
+    '/members',
+    [MembersController::class, 'index'],
     [
         AuthMiddleware::class,
     ],
