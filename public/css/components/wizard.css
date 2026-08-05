@@ -1,0 +1,127 @@
+/* ==========================================
+   Registration Wizard
+========================================== */
+
+.wizard {
+  margin-bottom: 2rem;
+}
+
+.wizard-layout {
+  max-width: 980px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.wizard .card {
+  width: 100%;
+}
+
+/* ==========================================
+   Steps
+========================================== */
+
+.wizard__steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 0;
+
+  overflow-x: auto;
+
+  padding: 0.5rem 0;
+}
+
+.wizard__step {
+  position: relative;
+
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+
+  min-width: max-content;
+}
+
+.wizard__step:not(:last-child) {
+  padding-right: 2rem;
+}
+
+.wizard__step:not(:last-child)::after {
+  content: "";
+
+  position: absolute;
+
+  left: calc(100% - 1.5rem);
+  top: 50%;
+
+  width: calc(100% - 2rem);
+  height: 2px;
+
+  background: var(--color-border);
+
+  transform: translateY(-50%);
+}
+
+/* ==========================================
+   Indicator
+========================================== */
+
+.wizard__indicator {
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50%;
+
+  background: #d1d5db;
+
+  flex-shrink: 0;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.wizard__step--active .wizard__indicator {
+  background: var(--color-primary);
+
+  transform: scale(1.35);
+}
+
+/* ==========================================
+   Label
+========================================== */
+
+.wizard__label {
+  margin-left: 0.75rem;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  color: #9ca3af;
+
+  transition: color 0.2s ease;
+}
+
+.wizard__step--active .wizard__label {
+  color: var(--color-primary);
+}
+
+/* ==========================================
+   Responsive
+========================================== */
+
+@media (max-width: 992px) {
+  .wizard__steps {
+    gap: 1rem;
+  }
+
+  .wizard__step:not(:last-child)::after {
+    display: none;
+  }
+}

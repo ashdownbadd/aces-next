@@ -36,6 +36,22 @@ $router->get(
 );
 
 $router->get(
+    '/members/create',
+    [MembersController::class, 'create'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/members/create',
+    [MembersController::class, 'storeStep'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
     '/login',
     [LoginController::class, 'show'],
     [

@@ -9,6 +9,7 @@
 @import url("./layout/content.css");
 @import url("./layout/footer.css");
 
+@import url("./components/wizard.css");
 @import url("./components/button.css");
 @import url("./components/card.css");
 @import url("./components/stat-card.css");
@@ -19,6 +20,7 @@
 @import url("./components/badge.css");
 @import url("./components/modal.css");
 @import url("./components/page-header.css");
+@import url("./components/summary.css");
 
 @import url("./pages/auth.css");
 @import url("./pages/dashboard.css");

@@ -20,11 +20,11 @@ $title = 'Members';
 
         </div>
 
-        <button
-            class="btn btn--primary"
-            type="button">
+        <a
+            href="/members/create"
+            class="btn btn--primary">
             Register Member
-        </button>
+        </a>
 
     </div>
 
@@ -91,13 +91,11 @@ $title = 'Members';
 
                             </p>
 
-                            <button
-                                class="btn btn--primary"
-                                type="button">
-
+                            <a
+                                href="/members/create"
+                                class="btn btn--primary">
                                 Register Member
-
-                            </button>
+                            </a>
 
                         </div>
 
