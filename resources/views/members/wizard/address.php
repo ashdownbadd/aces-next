@@ -4,141 +4,172 @@ declare(strict_types=1);
 
 ?>
 
-<div class="form-section">
+<form
+    method="POST"
+    action="/members/create?step=address">
 
-    <?php
+    <div class="form-section">
 
-    $sectionTitle = 'Address Information';
+        <?php
 
-    $sectionDescription = 'Enter the member\'s residential address.';
+        $sectionTitle = 'Address Information';
 
-    require __DIR__ . '/../partials/section-header.php';
+        $sectionDescription = 'Enter the member\'s residential address.';
 
-    ?>
+        require __DIR__ . '/../partials/section-header.php';
 
-    <div class="form-grid">
+        ?>
 
-        <div class="form-group">
+        <div class="form-grid">
 
-            <label
-                class="form-label"
-                for="house_number">
+            <div class="form-group">
 
-                House No.
+                <label
+                    class="form-label"
+                    for="house_number">
 
-            </label>
+                    House No.
 
-            <input
-                id="house_number"
-                class="input"
-                type="text"
-                name="house_number"
-                autocomplete="address-line1"
-                value="<?= htmlspecialchars($address['house_number'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="house_number"
+                    class="input"
+                    type="text"
+                    name="house_number"
+                    autocomplete="address-line1"
+                    maxlength="100"
+                    value="<?= htmlspecialchars($address['house_number'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="street">
+            <div class="form-group">
 
-                Street
+                <label
+                    class="form-label"
+                    for="street">
 
-            </label>
+                    Street
 
-            <input
-                id="street"
-                class="input"
-                type="text"
-                name="street"
-                autocomplete="address-line2"
-                value="<?= htmlspecialchars($address['street'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="street"
+                    class="input"
+                    type="text"
+                    name="street"
+                    data-type="title"
+                    maxlength="150"
+                    autocomplete="address-line2"
+                    required
+                    value="<?= htmlspecialchars($address['street'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="barangay">
+            <div class="form-group">
 
-                Barangay
+                <label
+                    class="form-label"
+                    for="barangay">
 
-            </label>
+                    Barangay
 
-            <input
-                id="barangay"
-                class="input"
-                type="text"
-                name="barangay"
-                value="<?= htmlspecialchars($address['barangay'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="barangay"
+                    class="input"
+                    type="text"
+                    name="barangay"
+                    data-type="title"
+                    maxlength="100"
+                    required
+                    value="<?= htmlspecialchars($address['barangay'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="city">
+            <div class="form-group">
 
-                City / Municipality
+                <label
+                    class="form-label"
+                    for="city">
 
-            </label>
+                    City / Municipality
 
-            <input
-                id="city"
-                class="input"
-                type="text"
-                name="city"
-                autocomplete="address-level2"
-                value="<?= htmlspecialchars($address['city'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="city"
+                    class="input"
+                    type="text"
+                    name="city"
+                    data-type="title"
+                    maxlength="100"
+                    autocomplete="address-level2"
+                    required
+                    value="<?= htmlspecialchars($address['city'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="province">
+            <div class="form-group">
 
-                Province
+                <label
+                    class="form-label"
+                    for="province">
 
-            </label>
+                    Province
 
-            <input
-                id="province"
-                class="input"
-                type="text"
-                name="province"
-                autocomplete="address-level1"
-                value="<?= htmlspecialchars($address['province'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="province"
+                    class="input"
+                    type="text"
+                    name="province"
+                    data-type="title"
+                    maxlength="100"
+                    autocomplete="address-level1"
+                    required
+                    value="<?= htmlspecialchars($address['province'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="zip_code">
+            <div class="form-group">
 
-                ZIP Code
+                <label
+                    class="form-label"
+                    for="zip_code">
 
-            </label>
+                    ZIP Code
 
-            <input
-                id="zip_code"
-                class="input"
-                type="text"
-                name="zip_code"
-                inputmode="numeric"
-                maxlength="4"
-                autocomplete="postal-code"
-                value="<?= htmlspecialchars($address['zip_code'] ?? '') ?>">
+                </label>
+
+                <input
+                    id="zip_code"
+                    class="input"
+                    type="text"
+                    name="zip_code"
+                    data-type="zip"
+                    data-max-length="4"
+                    inputmode="numeric"
+                    maxlength="4"
+                    autocomplete="postal-code"
+                    required
+                    value="<?= htmlspecialchars($address['zip_code'] ?? '') ?>">
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+    <?php
+
+    $previousStep = 'contact';
+    $submitLabel = 'Next →';
+
+    require __DIR__ . '/../partials/wizard-navigation.php';
+
+    ?>
+
+</form>

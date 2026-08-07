@@ -4,83 +4,105 @@ declare(strict_types=1);
 
 ?>
 
-<div class="form-section">
+<form
+    method="POST"
+    action="/members/create?step=contact">
 
-    <?php
+    <div class="form-section">
 
-    $sectionTitle = 'Contact Information';
+        <?php
 
-    $sectionDescription = 'Enter the member\'s contact details.';
+        $sectionTitle = 'Contact Information';
 
-    require __DIR__ . '/../partials/section-header.php';
+        $sectionDescription = 'Enter the member\'s contact details.';
 
-    ?>
+        require __DIR__ . '/../partials/section-header.php';
 
-    <div class="form-grid">
+        ?>
 
-        <div class="form-group">
+        <div class="form-grid">
 
-            <label
-                class="form-label"
-                for="mobile_number">
+            <div class="form-group">
 
-                Mobile Number
+                <label
+                    class="form-label"
+                    for="mobile_number">
 
-            </label>
+                    Mobile Number
 
-            <input
-                id="mobile_number"
-                class="input"
-                type="tel"
-                name="mobile_number"
-                placeholder="09XXXXXXXXX"
-                autocomplete="tel"
-                value="<?= htmlspecialchars($contact['mobile_number'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="mobile_number"
+                    class="input"
+                    type="tel"
+                    name="mobile_number"
+                    data-type="phone"
+                    data-max-length="11"
+                    inputmode="numeric"
+                    maxlength="11"
+                    placeholder="09XXXXXXXXX"
+                    autocomplete="tel"
+                    required
+                    value="<?= htmlspecialchars($contact['mobile_number'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="telephone_number">
+            <div class="form-group">
 
-                Telephone Number
+                <label
+                    class="form-label"
+                    for="telephone_number">
 
-            </label>
+                    Telephone Number
 
-            <input
-                id="telephone_number"
-                class="input"
-                type="tel"
-                name="telephone_number"
-                placeholder="(02) 8123-4567"
-                autocomplete="tel-national"
-                value="<?= htmlspecialchars($contact['telephone_number'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="telephone_number"
+                    class="input"
+                    type="tel"
+                    name="telephone_number"
+                    placeholder="(02) 8123-4567"
+                    autocomplete="tel-national"
+                    value="<?= htmlspecialchars($contact['telephone_number'] ?? '') ?>">
 
-        <div class="form-group form-group--full">
+            </div>
 
-            <label
-                class="form-label"
-                for="email_address">
+            <div class="form-group form-group--full">
 
-                Email Address
+                <label
+                    class="form-label"
+                    for="email_address">
 
-            </label>
+                    Email Address
 
-            <input
-                id="email_address"
-                class="input"
-                type="email"
-                name="email_address"
-                placeholder="name@example.com"
-                autocomplete="email"
-                value="<?= htmlspecialchars($contact['email_address'] ?? '') ?>">
+                </label>
+
+                <input
+                    id="email_address"
+                    class="input"
+                    type="email"
+                    name="email_address"
+                    data-type="email"
+                    maxlength="150"
+                    placeholder="name@example.com"
+                    autocomplete="email"
+                    value="<?= htmlspecialchars($contact['email_address'] ?? '') ?>">
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+    <?php
+
+    $previousStep = 'personal';
+    $submitLabel = 'Next →';
+
+    require __DIR__ . '/../partials/wizard-navigation.php';
+
+    ?>
+
+</form>

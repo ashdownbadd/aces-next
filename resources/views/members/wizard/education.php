@@ -4,83 +4,139 @@ declare(strict_types=1);
 
 ?>
 
-<div class="form-section">
+<form
+    method="POST"
+    action="/members/create?step=education">
 
-    <?php
+    <div class="form-section">
 
-    $sectionTitle = 'Education Information';
+        <?php
 
-    $sectionDescription = 'Provide the member\'s highest educational attainment.';
+        $sectionTitle = 'Education Information';
 
-    require __DIR__ . '/../partials/section-header.php';
+        $sectionDescription = 'Provide the member\'s highest educational attainment.';
 
-    ?>
+        require __DIR__ . '/../partials/section-header.php';
 
-    <div class="form-grid">
+        ?>
 
-        <div class="form-group form-group--full">
+        <div class="form-grid">
 
-            <label
-                class="form-label"
-                for="highest_educational_attainment">
+            <div class="form-group form-group--full">
 
-                Highest Educational Attainment
+                <label
+                    class="form-label"
+                    for="highest_educational_attainment">
 
-            </label>
+                    Highest Educational Attainment
 
-            <select
-                id="highest_educational_attainment"
-                class="input"
-                name="highest_educational_attainment">
+                </label>
 
-                <option value="">
-                    Select Educational Attainment
-                </option>
+                <select
+                    id="highest_educational_attainment"
+                    class="input"
+                    name="highest_educational_attainment"
+                    required>
 
-                <option value="no_formal_education"
-                    <?= ($education['highest_educational_attainment'] ?? '') === 'no_formal_education' ? 'selected' : '' ?>>
-                    No Formal Education
-                </option>
+                    <option value="">
+                        Select Educational Attainment
+                    </option>
 
-                <option value="elementary"
-                    <?= ($education['highest_educational_attainment'] ?? '') === 'elementary' ? 'selected' : '' ?>>
-                    Elementary
-                </option>
+                    <option
+                        value="no_formal_education"
+                        <?= ($education['highest_educational_attainment'] ?? '') === 'no_formal_education'
+                            ? 'selected'
+                            : '' ?>>
 
-                <option value="high_school"
-                    <?= ($education['highest_educational_attainment'] ?? '') === 'high_school' ? 'selected' : '' ?>>
-                    High School
-                </option>
+                        No Formal Education
 
-                <option value="senior_high_school"
-                    <?= ($education['highest_educational_attainment'] ?? '') === 'senior_high_school' ? 'selected' : '' ?>>
-                    Senior High School
-                </option>
+                    </option>
 
-                <option value="vocational"
-                    <?= ($education['highest_educational_attainment'] ?? '') === 'vocational' ? 'selected' : '' ?>>
-                    Vocational / Technical
-                </option>
+                    <option
+                        value="elementary"
+                        <?= ($education['highest_educational_attainment'] ?? '') === 'elementary'
+                            ? 'selected'
+                            : '' ?>>
 
-                <option value="college"
-                    <?= ($education['highest_educational_attainment'] ?? '') === 'college' ? 'selected' : '' ?>>
-                    College
-                </option>
+                        Elementary
 
-                <option value="postgraduate"
-                    <?= ($education['highest_educational_attainment'] ?? '') === 'postgraduate' ? 'selected' : '' ?>>
-                    Postgraduate
-                </option>
+                    </option>
 
-                <option value="other"
-                    <?= ($education['highest_educational_attainment'] ?? '') === 'other' ? 'selected' : '' ?>>
-                    Other
-                </option>
+                    <option
+                        value="high_school"
+                        <?= ($education['highest_educational_attainment'] ?? '') === 'high_school'
+                            ? 'selected'
+                            : '' ?>>
 
-            </select>
+                        High School
+
+                    </option>
+
+                    <option
+                        value="senior_high_school"
+                        <?= ($education['highest_educational_attainment'] ?? '') === 'senior_high_school'
+                            ? 'selected'
+                            : '' ?>>
+
+                        Senior High School
+
+                    </option>
+
+                    <option
+                        value="vocational"
+                        <?= ($education['highest_educational_attainment'] ?? '') === 'vocational'
+                            ? 'selected'
+                            : '' ?>>
+
+                        Vocational / Technical
+
+                    </option>
+
+                    <option
+                        value="college"
+                        <?= ($education['highest_educational_attainment'] ?? '') === 'college'
+                            ? 'selected'
+                            : '' ?>>
+
+                        College
+
+                    </option>
+
+                    <option
+                        value="postgraduate"
+                        <?= ($education['highest_educational_attainment'] ?? '') === 'postgraduate'
+                            ? 'selected'
+                            : '' ?>>
+
+                        Postgraduate
+
+                    </option>
+
+                    <option
+                        value="other"
+                        <?= ($education['highest_educational_attainment'] ?? '') === 'other'
+                            ? 'selected'
+                            : '' ?>>
+
+                        Other
+
+                    </option>
+
+                </select>
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+    <?php
+
+    $previousStep = 'livelihood';
+    $submitLabel = 'Next →';
+
+    require __DIR__ . '/../partials/wizard-navigation.php';
+
+    ?>
+
+</form>

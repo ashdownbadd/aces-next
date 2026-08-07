@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Features\Authentication\Controllers\LoginController;
 use App\Features\Dashboard\Controllers\DashboardController;
 use App\Features\Members\Controllers\MembersController;
+use App\Features\Members\Controllers\BeneficiaryController;
 use App\Foundation\Router;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
@@ -46,6 +47,30 @@ $router->get(
 $router->post(
     '/members/create',
     [MembersController::class, 'storeStep'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/members/beneficiaries',
+    [BeneficiaryController::class, 'store'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/members/beneficiaries/update',
+    [BeneficiaryController::class, 'update'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/members/beneficiaries/delete',
+    [BeneficiaryController::class, 'destroy'],
     [
         AuthMiddleware::class,
     ],

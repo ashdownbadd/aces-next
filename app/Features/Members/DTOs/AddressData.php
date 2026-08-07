@@ -54,6 +54,39 @@ final class AddressData
     }
 
     /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(
+        array $data,
+    ): self {
+        return new self(
+            houseNumber: (string) (
+                $data['house_number'] ?? ''
+            ),
+
+            street: (string) (
+                $data['street'] ?? ''
+            ),
+
+            barangay: (string) (
+                $data['barangay'] ?? ''
+            ),
+
+            city: (string) (
+                $data['city'] ?? ''
+            ),
+
+            province: (string) (
+                $data['province'] ?? ''
+            ),
+
+            zipCode: (string) (
+                $data['zip_code'] ?? ''
+            ),
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     public function toArray(): array

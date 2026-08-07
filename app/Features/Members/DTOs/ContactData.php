@@ -36,6 +36,27 @@ final class ContactData
     }
 
     /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(
+        array $data,
+    ): self {
+        return new self(
+            mobileNumber: (string) (
+                $data['mobile_number'] ?? ''
+            ),
+
+            telephoneNumber: (string) (
+                $data['telephone_number'] ?? ''
+            ),
+
+            emailAddress: (string) (
+                $data['email_address'] ?? ''
+            ),
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     public function toArray(): array

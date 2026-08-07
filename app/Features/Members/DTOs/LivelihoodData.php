@@ -42,6 +42,31 @@ final class LivelihoodData
     }
 
     /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(
+        array $data,
+    ): self {
+        return new self(
+            livelihoodType: (string) (
+                $data['employment_status'] ?? ''
+            ),
+
+            occupation: (string) (
+                $data['occupation'] ?? ''
+            ),
+
+            employer: (string) (
+                $data['employer'] ?? ''
+            ),
+
+            monthlyIncome: (string) (
+                $data['monthly_income'] ?? ''
+            ),
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     public function toArray(): array

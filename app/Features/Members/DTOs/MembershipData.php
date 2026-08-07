@@ -30,6 +30,21 @@ final class MembershipData
     }
 
     /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(
+        array $data,
+    ): self {
+        return new self(
+            membershipDate: (string) ($data['membership_date'] ?? ''),
+
+            membershipType: (string) (
+                $data['membership_type'] ?? 'regular'
+            ),
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     public function toArray(): array

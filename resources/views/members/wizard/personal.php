@@ -4,232 +4,318 @@ declare(strict_types=1);
 
 ?>
 
-<div class="form-section">
+<form
+    method="POST"
+    action="/members/create?step=personal">
 
-    <?php
+    <div class="form-section">
 
-    $sectionTitle = 'Personal Information';
+        <?php
 
-    $sectionDescription = 'Enter the member\'s personal information.';
+        $sectionTitle = 'Personal Information';
 
-    require __DIR__ . '/../partials/section-header.php';
+        $sectionDescription = 'Enter the member\'s personal information.';
 
-    ?>
+        require __DIR__ . '/../partials/section-header.php';
 
-    <div class="form-grid">
+        ?>
 
-        <div class="form-group">
+        <div class="form-grid">
 
-            <label
-                class="form-label"
-                for="first_name">
+            <div class="form-group">
 
-                First Name
+                <label
+                    class="form-label"
+                    for="first_name">
 
-            </label>
+                    First Name
 
-            <input
-                id="first_name"
-                class="input"
-                type="text"
-                name="first_name"
-                autocomplete="given-name"
-                value="<?= htmlspecialchars($personal['first_name'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="first_name"
+                    class="input"
+                    type="text"
+                    name="first_name"
+                    data-type="personName"
+                    maxlength="100"
+                    autocomplete="given-name"
+                    required
+                    value="<?= htmlspecialchars($personal['first_name'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="middle_name">
+            <div class="form-group">
 
-                Middle Name
+                <label
+                    class="form-label"
+                    for="middle_name">
 
-            </label>
+                    Middle Name
 
-            <input
-                id="middle_name"
-                class="input"
-                type="text"
-                name="middle_name"
-                autocomplete="additional-name"
-                value="<?= htmlspecialchars($personal['middle_name'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="middle_name"
+                    class="input"
+                    type="text"
+                    name="middle_name"
+                    data-type="personName"
+                    maxlength="100"
+                    autocomplete="additional-name"
+                    value="<?= htmlspecialchars($personal['middle_name'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="last_name">
+            <div class="form-group">
 
-                Last Name
+                <label
+                    class="form-label"
+                    for="last_name">
 
-            </label>
+                    Last Name
 
-            <input
-                id="last_name"
-                class="input"
-                type="text"
-                name="last_name"
-                autocomplete="family-name"
-                value="<?= htmlspecialchars($personal['last_name'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="last_name"
+                    class="input"
+                    type="text"
+                    name="last_name"
+                    data-type="personName"
+                    maxlength="100"
+                    autocomplete="family-name"
+                    required
+                    value="<?= htmlspecialchars($personal['last_name'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="suffix">
+            <div class="form-group">
 
-                Suffix
+                <label
+                    class="form-label"
+                    for="suffix">
 
-            </label>
+                    Suffix
 
-            <input
-                id="suffix"
-                class="input"
-                type="text"
-                name="suffix"
-                placeholder="Jr., Sr., III (optional)"
-                value="<?= htmlspecialchars($personal['suffix'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="suffix"
+                    class="input"
+                    type="text"
+                    name="suffix"
+                    data-type="uppercase"
+                    maxlength="10"
+                    placeholder="Jr., Sr., III"
+                    value="<?= htmlspecialchars($personal['suffix'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="birth_date">
+            <div class="form-group">
 
-                Birth Date
+                <label
+                    class="form-label"
+                    for="birth_date">
 
-            </label>
+                    Birth Date
 
-            <input
-                id="birth_date"
-                class="input"
-                type="date"
-                name="birth_date"
-                value="<?= htmlspecialchars($personal['birth_date'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="birth_date"
+                    class="input"
+                    type="date"
+                    name="birth_date"
+                    data-type="birthdate"
+                    required
+                    value="<?= htmlspecialchars($personal['birth_date'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="birth_place">
+            <div class="form-group">
 
-                Birth Place
+                <label
+                    class="form-label"
+                    for="birth_place">
 
-            </label>
+                    Birth Place
 
-            <input
-                id="birth_place"
-                class="input"
-                type="text"
-                name="birth_place"
-                value="<?= htmlspecialchars($personal['birth_place'] ?? '') ?>">
+                </label>
 
-        </div>
+                <input
+                    id="birth_place"
+                    class="input"
+                    type="text"
+                    name="birth_place"
+                    data-type="title"
+                    maxlength="150"
+                    value="<?= htmlspecialchars($personal['birth_place'] ?? '') ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="sex">
+            <div class="form-group">
 
-                Sex
+                <label
+                    class="form-label"
+                    for="sex">
 
-            </label>
+                    Sex
 
-            <select
-                id="sex"
-                class="input"
-                name="sex">
+                </label>
 
-                <option value="">
-                    Select Sex
-                </option>
+                <select
+                    id="sex"
+                    class="input"
+                    name="sex"
+                    required>
 
-                <option
-                    value="male"
-                    <?= ($personal['sex'] ?? '') === 'male' ? 'selected' : '' ?>>
+                    <option value="">
+                        Select Sex
+                    </option>
 
-                    Male
+                    <option
+                        value="male"
+                        <?= ($personal['sex'] ?? '') === 'male'
+                            ? 'selected'
+                            : '' ?>>
 
-                </option>
+                        Male
 
-                <option
-                    value="female"
-                    <?= ($personal['sex'] ?? '') === 'female' ? 'selected' : '' ?>>
+                    </option>
 
-                    Female
+                    <option
+                        value="female"
+                        <?= ($personal['sex'] ?? '') === 'female'
+                            ? 'selected'
+                            : '' ?>>
 
-                </option>
+                        Female
 
-            </select>
+                    </option>
 
-        </div>
+                </select>
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="civil_status">
+            <div class="form-group">
 
-                Civil Status
+                <label
+                    class="form-label"
+                    for="civil_status">
 
-            </label>
+                    Civil Status
 
-            <select
-                id="civil_status"
-                class="input"
-                name="civil_status">
+                </label>
 
-                <option value="">
-                    Select Civil Status
-                </option>
+                <select
+                    id="civil_status"
+                    class="input"
+                    name="civil_status"
+                    required>
 
-                <option
-                    value="single"
-                    <?= ($personal['civil_status'] ?? '') === 'single' ? 'selected' : '' ?>>
+                    <option value="">
+                        Select Civil Status
+                    </option>
 
-                    Single
+                    <option
+                        value="single"
+                        <?= ($personal['civil_status'] ?? '') === 'single'
+                            ? 'selected'
+                            : '' ?>>
 
-                </option>
+                        Single
 
-                <option
-                    value="married"
-                    <?= ($personal['civil_status'] ?? '') === 'married' ? 'selected' : '' ?>>
+                    </option>
 
-                    Married
+                    <option
+                        value="married"
+                        <?= ($personal['civil_status'] ?? '') === 'married'
+                            ? 'selected'
+                            : '' ?>>
 
-                </option>
+                        Married
 
-                <option
-                    value="widowed"
-                    <?= ($personal['civil_status'] ?? '') === 'widowed' ? 'selected' : '' ?>>
+                    </option>
 
-                    Widowed
+                    <option
+                        value="widowed"
+                        <?= ($personal['civil_status'] ?? '') === 'widowed'
+                            ? 'selected'
+                            : '' ?>>
 
-                </option>
+                        Widowed
 
-                <option
-                    value="separated"
-                    <?= ($personal['civil_status'] ?? '') === 'separated' ? 'selected' : '' ?>>
+                    </option>
 
-                    Separated
+                    <option
+                        value="separated"
+                        <?= ($personal['civil_status'] ?? '') === 'separated'
+                            ? 'selected'
+                            : '' ?>>
 
-                </option>
+                        Separated
 
-            </select>
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    class="form-label"
+                    for="nationality">
+
+                    Nationality
+
+                </label>
+
+                <input
+                    id="nationality"
+                    class="input"
+                    type="text"
+                    name="nationality"
+                    data-type="title"
+                    maxlength="100"
+                    value="<?= htmlspecialchars($personal['nationality'] ?? '') ?>">
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+    <?php
+
+    $previousStep = 'membership';
+    $submitLabel = 'Next →';
+
+    require __DIR__ . '/../partials/wizard-navigation.php';
+
+    ?>
+
+</form>
+
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| End of Personal Wizard Page
+|--------------------------------------------------------------------------
+|
+| Input Types Used
+|
+| personName
+| uppercase
+| birthdate
+| title
+|
+| All formatting and input behavior is handled by:
+|
+| public/js/wizard.js
+|
+*/
+
+// END OF FILE

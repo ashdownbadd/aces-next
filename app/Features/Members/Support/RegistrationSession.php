@@ -40,9 +40,7 @@ final class RegistrationSession
      */
     public function getStep(string $step): array
     {
-        $registration = $this->all();
-
-        return $registration[$step] ?? [];
+        return $this->all()[$step] ?? [];
     }
 
     /**
@@ -72,6 +70,47 @@ final class RegistrationSession
     {
         return $this->session->has(
             self::KEY,
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Beneficiaries
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function beneficiaries(): array
+    {
+        return $this->all()['beneficiaries'] ?? [];
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $beneficiaries
+     */
+    public function setBeneficiaries(array $beneficiaries): void
+    {
+        $registration = $this->all();
+
+        $registration['beneficiaries'] = $beneficiaries;
+
+        $this->session->put(
+            self::KEY,
+            $registration,
+        );
+    }
+
+    public function clearBeneficiaries(): void
+    {
+        $registration = $this->all();
+
+        unset($registration['beneficiaries']);
+
+        $this->session->put(
+            self::KEY,
+            $registration,
         );
     }
 }

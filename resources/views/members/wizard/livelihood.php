@@ -4,137 +4,193 @@ declare(strict_types=1);
 
 ?>
 
-<div class="form-section">
+<form
+    method="POST"
+    action="/members/create?step=livelihood">
 
-    <?php
+    <div class="form-section">
 
-    $sectionTitle = 'Livelihood Information';
+        <?php
 
-    $sectionDescription = 'Provide the member\'s primary source of livelihood.';
+        $sectionTitle = 'Livelihood Information';
 
-    require __DIR__ . '/../partials/section-header.php';
+        $sectionDescription = 'Provide the member\'s primary source of livelihood.';
 
-    ?>
+        require __DIR__ . '/../partials/section-header.php';
 
-    <div class="form-grid">
+        ?>
 
-        <div class="form-group">
+        <div class="form-grid">
 
-            <label
-                class="form-label"
-                for="employment_status">
+            <div class="form-group">
 
-                Employment Status
+                <label
+                    class="form-label"
+                    for="employment_status">
 
-            </label>
+                    Employment Status
 
-            <select
-                id="employment_status"
-                class="input"
-                name="employment_status">
+                </label>
 
-                <option value="">
-                    Select Employment Status
-                </option>
+                <select
+                    id="employment_status"
+                    class="input"
+                    name="employment_status"
+                    required>
 
-                <option value="employed"
-                    <?= ($livelihood['employment_status'] ?? '') === 'employed' ? 'selected' : '' ?>>
-                    Employed
-                </option>
+                    <option value="">
+                        Select Employment Status
+                    </option>
 
-                <option value="self_employed"
-                    <?= ($livelihood['employment_status'] ?? '') === 'self_employed' ? 'selected' : '' ?>>
-                    Self-employed
-                </option>
+                    <option
+                        value="employed"
+                        <?= ($livelihood['employment_status'] ?? '') === 'employed'
+                            ? 'selected'
+                            : '' ?>>
 
-                <option value="business_owner"
-                    <?= ($livelihood['employment_status'] ?? '') === 'business_owner' ? 'selected' : '' ?>>
-                    Business Owner
-                </option>
+                        Employed
 
-                <option value="ofw"
-                    <?= ($livelihood['employment_status'] ?? '') === 'ofw' ? 'selected' : '' ?>>
-                    OFW
-                </option>
+                    </option>
 
-                <option value="retired"
-                    <?= ($livelihood['employment_status'] ?? '') === 'retired' ? 'selected' : '' ?>>
-                    Retired
-                </option>
+                    <option
+                        value="self_employed"
+                        <?= ($livelihood['employment_status'] ?? '') === 'self_employed'
+                            ? 'selected'
+                            : '' ?>>
 
-                <option value="student"
-                    <?= ($livelihood['employment_status'] ?? '') === 'student' ? 'selected' : '' ?>>
-                    Student
-                </option>
+                        Self-employed
 
-                <option value="unemployed"
-                    <?= ($livelihood['employment_status'] ?? '') === 'unemployed' ? 'selected' : '' ?>>
-                    Unemployed
-                </option>
+                    </option>
 
-            </select>
+                    <option
+                        value="business_owner"
+                        <?= ($livelihood['employment_status'] ?? '') === 'business_owner'
+                            ? 'selected'
+                            : '' ?>>
 
-        </div>
+                        Business Owner
 
-        <div class="form-group">
+                    </option>
 
-            <label
-                class="form-label"
-                for="occupation">
+                    <option
+                        value="ofw"
+                        <?= ($livelihood['employment_status'] ?? '') === 'ofw'
+                            ? 'selected'
+                            : '' ?>>
 
-                Occupation
+                        OFW
 
-            </label>
+                    </option>
 
-            <input
-                id="occupation"
-                class="input"
-                type="text"
-                name="occupation"
-                value="<?= htmlspecialchars($livelihood['occupation'] ?? '') ?>">
+                    <option
+                        value="retired"
+                        <?= ($livelihood['employment_status'] ?? '') === 'retired'
+                            ? 'selected'
+                            : '' ?>>
 
-        </div>
+                        Retired
 
-        <div class="form-group form-group--full">
+                    </option>
 
-            <label
-                class="form-label"
-                for="employer">
+                    <option
+                        value="student"
+                        <?= ($livelihood['employment_status'] ?? '') === 'student'
+                            ? 'selected'
+                            : '' ?>>
 
-                Employer / Business Name
+                        Student
 
-            </label>
+                    </option>
 
-            <input
-                id="employer"
-                class="input"
-                type="text"
-                name="employer"
-                value="<?= htmlspecialchars($livelihood['employer'] ?? '') ?>">
+                    <option
+                        value="unemployed"
+                        <?= ($livelihood['employment_status'] ?? '') === 'unemployed'
+                            ? 'selected'
+                            : '' ?>>
 
-        </div>
+                        Unemployed
 
-        <div class="form-group">
+                    </option>
 
-            <label
-                class="form-label"
-                for="monthly_income">
+                </select>
 
-                Monthly Income
+            </div>
 
-            </label>
+            <div class="form-group">
 
-            <input
-                id="monthly_income"
-                class="input"
-                type="number"
-                name="monthly_income"
-                min="0"
-                step="0.01"
-                value="<?= htmlspecialchars($livelihood['monthly_income'] ?? '') ?>">
+                <label
+                    class="form-label"
+                    for="occupation">
+
+                    Occupation
+
+                </label>
+
+                <input
+                    id="occupation"
+                    class="input"
+                    type="text"
+                    name="occupation"
+                    data-type="title"
+                    maxlength="150"
+                    value="<?= htmlspecialchars($livelihood['occupation'] ?? '') ?>">
+
+            </div>
+
+            <div class="form-group form-group--full">
+
+                <label
+                    class="form-label"
+                    for="employer">
+
+                    Employer / Business Name
+
+                </label>
+
+                <input
+                    id="employer"
+                    class="input"
+                    type="text"
+                    name="employer"
+                    data-type="title"
+                    maxlength="150"
+                    value="<?= htmlspecialchars($livelihood['employer'] ?? '') ?>">
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    class="form-label"
+                    for="monthly_income">
+
+                    Monthly Income
+
+                </label>
+
+                <input
+                    id="monthly_income"
+                    class="input"
+                    type="text"
+                    name="monthly_income"
+                    data-type="money"
+                    inputmode="decimal"
+                    placeholder="0.00"
+                    value="<?= htmlspecialchars($livelihood['monthly_income'] ?? '') ?>">
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+    <?php
+
+    $previousStep = 'address';
+    $submitLabel = 'Next →';
+
+    require __DIR__ . '/../partials/wizard-navigation.php';
+
+    ?>
+
+</form>

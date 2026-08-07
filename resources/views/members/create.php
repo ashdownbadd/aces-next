@@ -11,13 +11,17 @@ $title = 'Register Member';
     <div class="member-registration__breadcrumb">
 
         <a href="/members">
+
             Members
+
         </a>
 
         <span>/</span>
 
         <span>
+
             Register Member
+
         </span>
 
     </div>
@@ -25,11 +29,15 @@ $title = 'Register Member';
     <div class="member-registration__header">
 
         <h1>
+
             Register Member
+
         </h1>
 
         <p>
+
             Create a new cooperative member.
+
         </p>
 
     </div>
@@ -61,20 +69,11 @@ $title = 'Register Member';
 
     <div class="card">
 
-        <form
-            method="POST"
-            action="/members/create?step=<?= urlencode($step) ?>"
-            autocomplete="off">
+        <div class="wizard__body">
 
-            <div class="wizard__body">
+            <?php require __DIR__ . '/wizard/' . $step . '.php'; ?>
 
-                <?php require __DIR__ . '/wizard/' . $step . '.php'; ?>
-
-            </div>
-
-            <?php require __DIR__ . '/partials/wizard-navigation.php'; ?>
-
-        </form>
+        </div>
 
     </div>
 

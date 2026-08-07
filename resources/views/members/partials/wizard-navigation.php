@@ -1,40 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+?>
+
 <div class="form-actions">
 
-    <?php if ($previousStep !== null): ?>
+    <?php if (! empty($previousStep)): ?>
 
         <a
             href="/members/create?step=<?= urlencode($previousStep) ?>"
             class="btn btn--secondary">
-            ← Back
+
+            ← Previous
+
         </a>
 
     <?php else: ?>
 
-        <button
-            class="btn btn--secondary"
-            type="button"
-            disabled>
-            ← Back
-        </button>
+        <span></span>
 
     <?php endif; ?>
 
-    <?php if ($nextStep !== null): ?>
+    <button
+        type="submit"
+        class="btn btn--primary">
 
-        <button
-            class="btn btn--primary"
-            type="submit">
-            Next →
-        </button>
+        <?= htmlspecialchars($submitLabel ?? 'Next →') ?>
 
-    <?php else: ?>
-
-        <button
-            class="btn btn--primary"
-            type="submit">
-            Register Member
-        </button>
-
-    <?php endif; ?>
+    </button>
 
 </div>

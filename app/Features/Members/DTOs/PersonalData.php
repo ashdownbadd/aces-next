@@ -72,6 +72,33 @@ final class PersonalData
     }
 
     /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(
+        array $data,
+    ): self {
+        return new self(
+            firstName: (string) ($data['first_name'] ?? ''),
+
+            middleName: (string) ($data['middle_name'] ?? ''),
+
+            lastName: (string) ($data['last_name'] ?? ''),
+
+            suffix: (string) ($data['suffix'] ?? ''),
+
+            birthDate: (string) ($data['birth_date'] ?? ''),
+
+            birthPlace: (string) ($data['birth_place'] ?? ''),
+
+            sex: (string) ($data['sex'] ?? ''),
+
+            civilStatus: (string) ($data['civil_status'] ?? ''),
+
+            nationality: (string) ($data['nationality'] ?? ''),
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     public function toArray(): array

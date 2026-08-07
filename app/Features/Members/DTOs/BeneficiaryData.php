@@ -19,17 +19,90 @@ final class BeneficiaryData
         public readonly string $remarks,
     ) {}
 
-    public static function fromRequest(Request $request): self
-    {
+    public static function fromRequest(
+        Request $request,
+    ): self {
         return new self(
-            firstName: (string) $request->input('first_name', ''),
-            middleName: (string) $request->input('middle_name', ''),
-            lastName: (string) $request->input('last_name', ''),
-            suffix: (string) $request->input('suffix', ''),
-            relationship: (string) $request->input('relationship', ''),
-            birthDate: (string) $request->input('birth_date', ''),
-            sharePercentage: (string) $request->input('share_percentage', ''),
-            remarks: (string) $request->input('remarks', ''),
+            firstName: (string) $request->input(
+                'first_name',
+                '',
+            ),
+
+            middleName: (string) $request->input(
+                'middle_name',
+                '',
+            ),
+
+            lastName: (string) $request->input(
+                'last_name',
+                '',
+            ),
+
+            suffix: (string) $request->input(
+                'suffix',
+                '',
+            ),
+
+            relationship: (string) $request->input(
+                'relationship',
+                '',
+            ),
+
+            birthDate: (string) $request->input(
+                'birth_date',
+                '',
+            ),
+
+            sharePercentage: (string) $request->input(
+                'share_percentage',
+                '',
+            ),
+
+            remarks: (string) $request->input(
+                'remarks',
+                '',
+            ),
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(
+        array $data,
+    ): self {
+        return new self(
+            firstName: (string) (
+                $data['first_name'] ?? ''
+            ),
+
+            middleName: (string) (
+                $data['middle_name'] ?? ''
+            ),
+
+            lastName: (string) (
+                $data['last_name'] ?? ''
+            ),
+
+            suffix: (string) (
+                $data['suffix'] ?? ''
+            ),
+
+            relationship: (string) (
+                $data['relationship'] ?? ''
+            ),
+
+            birthDate: (string) (
+                $data['birth_date'] ?? ''
+            ),
+
+            sharePercentage: (string) (
+                $data['share_percentage'] ?? ''
+            ),
+
+            remarks: (string) (
+                $data['remarks'] ?? ''
+            ),
         );
     }
 

@@ -4,116 +4,134 @@ declare(strict_types=1);
 
 ?>
 
-<div class="form-section">
+<form
+    method="POST"
+    action="/members/create?step=membership">
 
-    <?php
+    <div class="form-section">
 
-    $sectionTitle = 'Membership Information';
+        <?php
 
-    $sectionDescription = 'Enter the member\'s membership details.';
+        $sectionTitle = 'Membership Information';
 
-    require __DIR__ . '/../partials/section-header.php';
+        $sectionDescription = 'Enter the member\'s membership details.';
 
-    ?>
+        require __DIR__ . '/../partials/section-header.php';
 
-    <div class="form-grid">
+        ?>
 
-        <div class="form-group">
+        <div class="form-grid">
 
-            <label
-                class="form-label"
-                for="member_number">
+            <div class="form-group">
 
-                Member Number
+                <label
+                    class="form-label"
+                    for="member_number">
 
-            </label>
+                    Member Number
 
-            <input
-                id="member_number"
-                class="input form-input--readonly"
-                type="text"
-                value="Generated upon registration"
-                readonly>
+                </label>
 
-        </div>
+                <input
+                    id="member_number"
+                    class="input form-input--readonly"
+                    type="text"
+                    value="Generated upon registration"
+                    readonly>
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="membership_date">
+            <div class="form-group">
 
-                Membership Date
+                <label
+                    class="form-label"
+                    for="membership_date">
 
-            </label>
+                    Membership Date
 
-            <input
-                id="membership_date"
-                class="input"
-                type="date"
-                name="membership_date"
-                value="<?= htmlspecialchars($membership['membership_date'] ?? date('Y-m-d')) ?>">
+                </label>
 
-        </div>
+                <input
+                    id="membership_date"
+                    class="input"
+                    type="date"
+                    name="membership_date"
+                    data-type="birthdate"
+                    required
+                    value="<?= htmlspecialchars($membership['membership_date'] ?? date('Y-m-d')) ?>">
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="member_status">
+            <div class="form-group">
 
-                Status
+                <label
+                    class="form-label"
+                    for="member_status">
 
-            </label>
+                    Status
 
-            <input
-                id="member_status"
-                class="input form-input--readonly"
-                type="text"
-                value="Active"
-                readonly>
+                </label>
 
-        </div>
+                <input
+                    id="member_status"
+                    class="input form-input--readonly"
+                    type="text"
+                    value="Pending"
+                    readonly>
 
-        <div class="form-group">
+            </div>
 
-            <label
-                class="form-label"
-                for="membership_type">
+            <div class="form-group">
 
-                Membership Type
+                <label
+                    class="form-label"
+                    for="membership_type">
 
-            </label>
+                    Membership Type
 
-            <select
-                id="membership_type"
-                class="input"
-                name="membership_type">
+                </label>
 
-                <option
-                    value="regular"
-                    <?= ($membership['membership_type'] ?? 'regular') === 'regular'
-                        ? 'selected'
-                        : '' ?>>
+                <select
+                    id="membership_type"
+                    class="input"
+                    name="membership_type"
+                    required>
 
-                    Regular
+                    <option
+                        value="regular"
+                        <?= ($membership['membership_type'] ?? 'regular') === 'regular'
+                            ? 'selected'
+                            : '' ?>>
 
-                </option>
+                        Regular
 
-                <option
-                    value="associate"
-                    <?= ($membership['membership_type'] ?? '') === 'associate'
-                        ? 'selected'
-                        : '' ?>>
+                    </option>
 
-                    Associate
+                    <option
+                        value="associate"
+                        <?= ($membership['membership_type'] ?? '') === 'associate'
+                            ? 'selected'
+                            : '' ?>>
 
-                </option>
+                        Associate
 
-            </select>
+                    </option>
+
+                </select>
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+    <?php
+
+    $previousStep = null;
+    $submitLabel = 'Next →';
+
+    require __DIR__ . '/../partials/wizard-navigation.php';
+
+    ?>
+
+</form>

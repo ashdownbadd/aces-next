@@ -24,6 +24,19 @@ final class EducationData
     }
 
     /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(
+        array $data,
+    ): self {
+        return new self(
+            highestEducationalAttainment: (string) (
+                $data['highest_educational_attainment'] ?? ''
+            ),
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     public function toArray(): array
