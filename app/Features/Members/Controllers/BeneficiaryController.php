@@ -21,7 +21,9 @@ final class BeneficiaryController
     public function store(Request $request): Response
     {
         $this->beneficiaryService->add(
-            BeneficiaryData::fromRequest($request)->toArray(),
+            BeneficiaryData::fromRequest(
+                $request
+            )->toArray(),
         );
 
         return Response::redirect(
@@ -38,7 +40,9 @@ final class BeneficiaryController
     ): Response {
         $this->beneficiaryService->update(
             $index,
-            BeneficiaryData::fromRequest($request)->toArray(),
+            BeneficiaryData::fromRequest(
+                $request
+            )->toArray(),
         );
 
         return Response::redirect(
@@ -49,9 +53,23 @@ final class BeneficiaryController
     /**
      * Remove a beneficiary.
      */
-    public function destroy(int $index): Response
-    {
-        $this->beneficiaryService->delete($index);
+    public function destroy(
+        Request $request,
+    ): Response {
+        $index = (int) $request->input(
+            'index',
+            -1,
+        );
+
+        if ($index < 0) {
+            return Response::redirect(
+                '/members/create?step=beneficiaries',
+            );
+        }
+
+        $this->beneficiaryService->delete(
+            $index,
+        );
 
         return Response::redirect(
             '/members/create?step=beneficiaries',

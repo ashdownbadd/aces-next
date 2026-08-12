@@ -1,6 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 $title = 'Members';
+
+$members = $members ?? [];
+$totalMembers = $totalMembers ?? count($members);
+$successMessage = $successMessage ?? null;
 
 ?>
 
@@ -23,10 +29,26 @@ $title = 'Members';
         <a
             href="/members/create"
             class="btn btn--primary">
+
             Register Member
+
         </a>
 
     </div>
+
+    <?php if ($successMessage !== null): ?>
+
+        <div class="alert alert--success">
+
+            <strong>Success</strong>
+
+            <span>
+                <?= htmlspecialchars($successMessage) ?>
+            </span>
+
+        </div>
+
+    <?php endif; ?>
 
     <div class="card">
 
@@ -35,10 +57,11 @@ $title = 'Members';
             <input
                 class="input members__search"
                 type="search"
-                placeholder="Search member...">
+                placeholder="Search member..."
+                id="member-search">
 
             <span class="members__total">
-                Total: 0
+                Total: <?= number_format($totalMembers) ?>
             </span>
 
         </div>
@@ -65,43 +88,116 @@ $title = 'Members';
 
             </thead>
 
-            <tbody>
+            <tbody id="members-table-body">
 
-                <tr>
+                <?php if ($members === []): ?>
 
-                    <td colspan="6">
+                    <tr>
 
-                        <div class="members__empty">
+                        <td colspan="6">
 
-                            <div class="members__empty-icon">
+                            <div class="members__empty">
 
-                                👥
+                                <div class="members__empty-icon">
+                                    👥
+                                </div>
+
+                                <h3>
+                                    No members have been registered yet.
+                                </h3>
+
+                                <p>
+                                    Register your first cooperative member to get started.
+                                </p>
+
+                                <a
+                                    href="/members/create"
+                                    class="btn btn--primary">
+
+                                    Register Member
+
+                                </a>
 
                             </div>
 
-                            <h3>
+                        </td>
 
-                                No members have been registered yet.
+                    </tr>
 
-                            </h3>
+                <?php else: ?>
 
-                            <p>
+                    <?php foreach ($members as $member): ?>
 
-                                Register your first cooperative member to get started.
+                        <tr>
 
-                            </p>
+                            <td>
+                                <?= htmlspecialchars(
+                                    (string) ($member['member_number'] ?? '—')
+                                ) ?>
+                            </td>
 
-                            <a
-                                href="/members/create"
-                                class="btn btn--primary">
-                                Register Member
-                            </a>
+                            <td>
+                                <?= htmlspecialchars(
+                                    (string) ($member['full_name'] ?? '—')
+                                ) ?>
+                            </td>
 
-                        </div>
+                            <td>
+                                <?= htmlspecialchars(
+                                    (string) ($member['mobile_number'] ?? '—')
+                                ) ?>
+                            </td>
 
-                    </td>
+                            <td>
 
-                </tr>
+                                <span class="badge">
+
+                                    <?= htmlspecialchars(
+                                        (string) ($member['status'] ?? '—')
+                                    ) ?>
+
+                                </span>
+
+                            </td>
+
+                            <td>
+                                <?php
+                                $membershipDate =
+                                    $member['membership_date'] ?? null;
+                                ?>
+
+                                <?= $membershipDate
+                                    ? htmlspecialchars(
+                                        date(
+                                            'F j, Y',
+                                            strtotime(
+                                                (string) $membershipDate
+                                            )
+                                        )
+                                    )
+                                    : '—'
+                                ?>
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="/members/<?= urlencode(
+                                                        (string) $member['id']
+                                                    ) ?>"
+                                    class="btn btn--sm">
+
+                                    View
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    <?php endforeach; ?>
+
+                <?php endif; ?>
 
             </tbody>
 
@@ -109,7 +205,11 @@ $title = 'Members';
 
         <div class="members__footer">
 
-            Showing 0 of 0 members
+            Showing
+            <?= number_format(count($members)) ?>
+            of
+            <?= number_format($totalMembers) ?>
+            members
 
         </div>
 

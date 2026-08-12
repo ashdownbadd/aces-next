@@ -34,9 +34,11 @@ final class LivelihoodData
                 '',
             ),
 
-            monthlyIncome: (string) $request->input(
-                'monthly_income',
-                '',
+            monthlyIncome: self::normalizeMoney(
+                (string) $request->input(
+                    'monthly_income',
+                    '',
+                ),
             ),
         );
     }
@@ -60,8 +62,10 @@ final class LivelihoodData
                 $data['employer'] ?? ''
             ),
 
-            monthlyIncome: (string) (
-                $data['monthly_income'] ?? ''
+            monthlyIncome: self::normalizeMoney(
+                (string) (
+                    $data['monthly_income'] ?? ''
+                ),
             ),
         );
     }
@@ -77,5 +81,15 @@ final class LivelihoodData
             'employer' => $this->employer,
             'monthly_income' => $this->monthlyIncome,
         ];
+    }
+
+    private static function normalizeMoney(
+        string $value,
+    ): string {
+        return str_replace(
+            ',',
+            '',
+            trim($value),
+        );
     }
 }

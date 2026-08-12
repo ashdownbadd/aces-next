@@ -13,7 +13,6 @@ declare(strict_types=1);
         <?php
 
         $sectionTitle = 'Livelihood Information';
-
         $sectionDescription = 'Provide the member\'s primary source of livelihood.';
 
         require __DIR__ . '/../partials/section-header.php';
@@ -133,7 +132,9 @@ declare(strict_types=1);
                     name="occupation"
                     data-type="title"
                     maxlength="150"
-                    value="<?= htmlspecialchars($livelihood['occupation'] ?? '') ?>">
+                    value="<?= htmlspecialchars(
+                                $livelihood['occupation'] ?? ''
+                            ) ?>">
 
             </div>
 
@@ -154,7 +155,9 @@ declare(strict_types=1);
                     name="employer"
                     data-type="title"
                     maxlength="150"
-                    value="<?= htmlspecialchars($livelihood['employer'] ?? '') ?>">
+                    value="<?= htmlspecialchars(
+                                $livelihood['employer'] ?? ''
+                            ) ?>">
 
             </div>
 
@@ -173,10 +176,12 @@ declare(strict_types=1);
                     class="input"
                     type="text"
                     name="monthly_income"
-                    data-type="money"
                     inputmode="decimal"
-                    placeholder="0.00"
-                    value="<?= htmlspecialchars($livelihood['monthly_income'] ?? '') ?>">
+                    autocomplete="off"
+                    data-type="money"
+                    value="<?= htmlspecialchars(
+                                $livelihood['monthly_income'] ?? ''
+                            ) ?>">
 
             </div>
 

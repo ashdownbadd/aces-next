@@ -36,7 +36,7 @@ final class MembersServiceProvider extends ServiceProvider
 
         /*
         |--------------------------------------------------------------------------
-        | Support
+        | Registration Session
         |--------------------------------------------------------------------------
         */
 
@@ -49,7 +49,7 @@ final class MembersServiceProvider extends ServiceProvider
 
         /*
         |--------------------------------------------------------------------------
-        | Services
+        | Member Service
         |--------------------------------------------------------------------------
         */
 
@@ -60,12 +60,25 @@ final class MembersServiceProvider extends ServiceProvider
             ),
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | Registration Service
+        |--------------------------------------------------------------------------
+        */
+
         $this->container->singleton(
             RegistrationService::class,
             fn(Container $container) => new RegistrationService(
                 $container->get(RegistrationSession::class),
+                $container->get(MemberRepository::class),
             ),
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Beneficiary Service
+        |--------------------------------------------------------------------------
+        */
 
         $this->container->singleton(
             BeneficiaryService::class,
@@ -76,7 +89,7 @@ final class MembersServiceProvider extends ServiceProvider
 
         /*
         |--------------------------------------------------------------------------
-        | Controllers
+        | Members Controller
         |--------------------------------------------------------------------------
         */
 
@@ -86,8 +99,15 @@ final class MembersServiceProvider extends ServiceProvider
                 $container->get(View::class),
                 $container->get(MemberService::class),
                 $container->get(RegistrationService::class),
+                $container->get(Session::class),
             ),
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Beneficiary Controller
+        |--------------------------------------------------------------------------
+        */
 
         $this->container->singleton(
             BeneficiaryController::class,

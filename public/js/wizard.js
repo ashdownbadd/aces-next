@@ -50,6 +50,50 @@ const Helpers = {
   limit(value, max) {
     return value.substring(0, max);
   },
+
+  formatMoney(value) {
+    value = value.replace(/,/g, "");
+
+    if (!value) {
+      return "";
+    }
+
+    let [whole, decimal] = value.split(".");
+
+    whole = whole.replace(/\D/g, "");
+    decimal = decimal ? decimal.replace(/\D/g, "").substring(0, 2) : "";
+
+    if (!whole) {
+      whole = "0";
+    }
+
+    whole = Number(whole).toLocaleString("en-US");
+
+    if (value.includes(".")) {
+      return `${whole}.${decimal}`;
+    }
+
+    return whole;
+  },
+
+  sanitizeMoney(value) {
+    value = value.replace(/,/g, "");
+    value = value.replace(/[^\d.]/g, "");
+
+    const parts = value.split(".");
+
+    if (parts.length > 2) {
+      value = parts.shift() + "." + parts.join("");
+    }
+
+    if (value.includes(".")) {
+      const [whole, decimal] = value.split(".");
+
+      value = whole + "." + decimal.substring(0, 2);
+    }
+
+    return value;
+  },
 };
 
 const InputTypes = {
@@ -78,7 +122,6 @@ const InputTypes = {
 
     Helpers.onInput(input, (value) => {
       value = Helpers.digits(value);
-
       value = Helpers.limit(value, max);
 
       return value;
@@ -110,22 +153,23 @@ const InputTypes = {
   },
 
   money(input) {
-    Helpers.onInput(input, (value) => {
-      value = value.replace(/[^\d.]/g, "");
+    input.addEventListener("input", () => {
+      let value = input.value.replace(/[^\d.]/g, "");
 
       const parts = value.split(".");
 
-      if (parts.length > 2) {
-        value = parts.shift() + "." + parts.join("");
+      let whole = parts.shift() ?? "";
+      let decimal = parts.join("");
+
+      whole = whole.replace(/^0+(?=\d)/, "");
+
+      if (decimal.length > 2) {
+        decimal = decimal.substring(0, 2);
       }
 
-      if (value.includes(".")) {
-        const [whole, decimal] = value.split(".");
+      whole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-        value = whole + "." + decimal.substring(0, 2);
-      }
-
-      return value;
+      input.value = decimal !== "" ? `${whole}.${decimal}` : whole;
     });
   },
 

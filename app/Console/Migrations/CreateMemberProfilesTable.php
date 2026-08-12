@@ -6,12 +6,12 @@ namespace App\Console\Migrations;
 
 use PDO;
 
-final class CreateMemberProfileTable extends Migration
+final class CreateMemberProfilesTable extends Migration
 {
     public function up(PDO $pdo): void
     {
         $pdo->exec("
-            CREATE TABLE member_profile (
+            CREATE TABLE member_profiles (
 
                 member_id INT UNSIGNED PRIMARY KEY,
 
@@ -37,7 +37,14 @@ final class CreateMemberProfileTable extends Migration
 
                 nationality VARCHAR(100) NULL,
 
-                CONSTRAINT fk_member_profile_member
+                created_at TIMESTAMP NOT NULL
+                    DEFAULT CURRENT_TIMESTAMP,
+
+                updated_at TIMESTAMP NOT NULL
+                    DEFAULT CURRENT_TIMESTAMP
+                    ON UPDATE CURRENT_TIMESTAMP,
+
+                CONSTRAINT fk_member_profiles_member
                     FOREIGN KEY (member_id)
                     REFERENCES members(id)
                     ON DELETE CASCADE
@@ -52,7 +59,7 @@ final class CreateMemberProfileTable extends Migration
     public function down(PDO $pdo): void
     {
         $pdo->exec("
-            DROP TABLE IF EXISTS member_profile;
+            DROP TABLE IF EXISTS member_profiles;
         ");
     }
 }

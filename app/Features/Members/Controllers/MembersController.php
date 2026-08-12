@@ -13,6 +13,7 @@ use App\Features\Members\DTOs\PersonalData;
 use App\Features\Members\Services\MemberService;
 use App\Features\Members\Services\RegistrationService;
 use App\Features\Members\Support\RegistrationWorkflow;
+use App\Foundation\Session;
 use App\Foundation\View;
 use App\Http\Request;
 use App\Http\Response;
@@ -23,10 +24,22 @@ final class MembersController
         private readonly View $view,
         private readonly MemberService $memberService,
         private readonly RegistrationService $registrationService,
+        private readonly Session $session,
     ) {}
 
+    /**
+     * Display the members list.
+     */
     public function index(): Response
     {
+        $successMessage = $this->session->get(
+            'members_success',
+        );
+
+        $this->session->forget(
+            'members_success',
+        );
+
         return new Response(
             $this->view->render(
                 'members.index',
@@ -34,12 +47,16 @@ final class MembersController
                     'title' => 'Members',
                     'members' => $this->memberService->all(),
                     'totalMembers' => $this->memberService->count(),
+                    'successMessage' => $successMessage,
                 ],
                 'layouts.app',
             ),
         );
     }
 
+    /**
+     * Display the member registration wizard.
+     */
     public function create(Request $request): Response
     {
         $step = $this->resolveStep($request);
@@ -56,35 +73,47 @@ final class MembersController
 
                     'steps' => RegistrationWorkflow::all(),
 
-                    'previousStep' => RegistrationWorkflow::previous($step),
+                    'previousStep' =>
+                    RegistrationWorkflow::previous($step),
 
-                    'nextStep' => RegistrationWorkflow::next($step),
+                    'nextStep' =>
+                    RegistrationWorkflow::next($step),
 
                     /*
-                |--------------------------------------------------------------------------
-                | Registration Data
-                |--------------------------------------------------------------------------
-                */
+                    |--------------------------------------------------------------------------
+                    | Registration Data
+                    |--------------------------------------------------------------------------
+                    */
 
-                    'membership' => $registration['membership'] ?? [],
+                    'membership' =>
+                    $registration['membership'] ?? [],
 
-                    'personal' => $registration['personal'] ?? [],
+                    'personal' =>
+                    $registration['personal'] ?? [],
 
-                    'contact' => $registration['contact'] ?? [],
+                    'contact' =>
+                    $registration['contact'] ?? [],
 
-                    'address' => $registration['address'] ?? [],
+                    'address' =>
+                    $registration['address'] ?? [],
 
-                    'livelihood' => $registration['livelihood'] ?? [],
+                    'livelihood' =>
+                    $registration['livelihood'] ?? [],
 
-                    'education' => $registration['education'] ?? [],
+                    'education' =>
+                    $registration['education'] ?? [],
 
-                    'beneficiaries' => $registration['beneficiaries'] ?? [],
+                    'beneficiaries' =>
+                    $registration['beneficiaries'] ?? [],
                 ],
                 'layouts.app',
             ),
         );
     }
 
+    /**
+     * Store the current wizard step.
+     */
     public function storeStep(Request $request): Response
     {
         $step = $this->resolveStep($request);
@@ -95,7 +124,9 @@ final class MembersController
 
                 $this->registrationService->saveStep(
                     $step,
-                    MembershipData::fromRequest($request)->toArray(),
+                    MembershipData::fromRequest(
+                        $request
+                    )->toArray(),
                 );
 
                 break;
@@ -104,7 +135,9 @@ final class MembersController
 
                 $this->registrationService->saveStep(
                     $step,
-                    PersonalData::fromRequest($request)->toArray(),
+                    PersonalData::fromRequest(
+                        $request
+                    )->toArray(),
                 );
 
                 break;
@@ -113,7 +146,9 @@ final class MembersController
 
                 $this->registrationService->saveStep(
                     $step,
-                    ContactData::fromRequest($request)->toArray(),
+                    ContactData::fromRequest(
+                        $request
+                    )->toArray(),
                 );
 
                 break;
@@ -122,7 +157,9 @@ final class MembersController
 
                 $this->registrationService->saveStep(
                     $step,
-                    AddressData::fromRequest($request)->toArray(),
+                    AddressData::fromRequest(
+                        $request
+                    )->toArray(),
                 );
 
                 break;
@@ -131,7 +168,9 @@ final class MembersController
 
                 $this->registrationService->saveStep(
                     $step,
-                    LivelihoodData::fromRequest($request)->toArray(),
+                    LivelihoodData::fromRequest(
+                        $request
+                    )->toArray(),
                 );
 
                 break;
@@ -140,26 +179,28 @@ final class MembersController
 
                 $this->registrationService->saveStep(
                     $step,
-                    EducationData::fromRequest($request)->toArray(),
+                    EducationData::fromRequest(
+                        $request
+                    )->toArray(),
                 );
 
                 break;
 
-            /*
-             |-------------------------------------------------------------
-             | Beneficiaries
-             |-------------------------------------------------------------
-             |
-             | We'll implement this separately because it manages
-             | multiple records instead of a single DTO.
-             |
-             */
-
             case 'beneficiaries':
+
+                /*
+                 * Beneficiaries are managed separately through
+                 * BeneficiaryController / BeneficiaryService.
+                 */
 
                 break;
 
             case 'review':
+
+                /*
+                 * Review is the final submission page.
+                 * Actual persistence is handled by register().
+                 */
 
                 break;
         }
@@ -171,8 +212,37 @@ final class MembersController
         );
     }
 
-    private function resolveStep(Request $request): string
+    /**
+     * Complete the member registration.
+     */
+    public function register(): Response
     {
+        $memberNumber =
+            $this->memberService->nextMemberNumber();
+
+        $this->registrationService->register(
+            $memberNumber,
+            'Pending',
+        );
+
+        /*
+         * Store a one-time success message.
+         * The Members index page will read and remove it.
+         */
+        $this->session->put(
+            'members_success',
+            "Member {$memberNumber} registered successfully.",
+        );
+
+        return Response::redirect('/members');
+    }
+
+    /**
+     * Resolve and validate the current wizard step.
+     */
+    private function resolveStep(
+        Request $request,
+    ): string {
         $step = (string) $request->query(
             'step',
             RegistrationWorkflow::first(),

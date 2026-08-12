@@ -565,11 +565,17 @@ $humanize = static function (?string $value): string {
 
                             <div class="summary__value">
 
-                                <?= htmlspecialchars(
-                                    $formatMoney(
-                                        $livelihood['monthly_income'] ?? null
+                                <?php
+                                $monthlyIncome = $livelihood['monthly_income'] ?? null;
+                                ?>
+
+                                <?= $monthlyIncome !== null && $monthlyIncome !== ''
+                                    ? '₱' . number_format(
+                                        (float) $monthlyIncome,
+                                        2,
                                     )
-                                ) ?>
+                                    : '—'
+                                ?>
 
                             </div>
 

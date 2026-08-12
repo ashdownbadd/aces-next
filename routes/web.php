@@ -53,6 +53,14 @@ $router->post(
 );
 
 $router->post(
+    '/members/register',
+    [MembersController::class, 'register'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
     '/members/beneficiaries',
     [BeneficiaryController::class, 'store'],
     [

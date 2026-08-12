@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Features\Members\Services;
 
-use App\Features\Members\DTOs\MembershipData;
-use App\Features\Members\DTOs\PersonalData;
 use App\Features\Members\Repositories\MemberRepository;
 
 final class MemberService
@@ -24,30 +22,25 @@ final class MemberService
         return $this->repository->count();
     }
 
-    public function create(
-        MembershipData $membership,
-        PersonalData $personal,
-    ): int {
-        $memberNumber = $this->generateMemberNumber();
-
-        return $this->repository->create(
-            $membership,
-            $personal,
-            $memberNumber,
-        );
-    }
-
-    private function generateMemberNumber(): string
+    public function nextMemberNumber(): string
     {
-        $lastMemberNumber = $this->repository->lastMemberNumber();
+        $lastNumber = $this->repository->lastMemberNumber();
 
-        if ($lastMemberNumber === null) {
-            return '000001';
+        if ($lastNumber === null) {
+            return '0001';
+        }
+
+        $nextNumber = (int) $lastNumber + 1;
+
+        if ($nextNumber > 9999) {
+            throw new \RuntimeException(
+                'Member number limit reached. Maximum member number is 9999.'
+            );
         }
 
         return str_pad(
-            (string) (((int) $lastMemberNumber) + 1),
-            6,
+            (string) $nextNumber,
+            4,
             '0',
             STR_PAD_LEFT,
         );
