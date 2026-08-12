@@ -12,16 +12,33 @@ final class MemberService
         private readonly MemberRepository $repository,
     ) {}
 
+    /**
+     * Retrieve all members.
+     */
     public function all(): array
     {
         return $this->repository->all();
     }
 
+    /**
+     * Return the total number of members.
+     */
     public function count(): int
     {
         return $this->repository->count();
     }
 
+    /**
+     * Retrieve one complete member profile.
+     */
+    public function find(int $id): ?array
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
+     * Generate the next 4-digit member number.
+     */
     public function nextMemberNumber(): string
     {
         $lastNumber = $this->repository->lastMemberNumber();

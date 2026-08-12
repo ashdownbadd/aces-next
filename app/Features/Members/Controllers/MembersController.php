@@ -55,6 +55,39 @@ final class MembersController
     }
 
     /**
+     * Display a single member profile.
+     */
+    public function show(
+        Request $request,
+        string $id,
+    ): Response {
+        $memberId = (int) $id;
+
+        if ($memberId <= 0) {
+            return Response::redirect('/members');
+        }
+
+        $member = $this->memberService->find(
+            $memberId,
+        );
+
+        if ($member === null) {
+            return Response::redirect('/members');
+        }
+
+        return new Response(
+            $this->view->render(
+                'members.show',
+                [
+                    'title' => 'Member Profile',
+                    'member' => $member,
+                ],
+                'layouts.app',
+            ),
+        );
+    }
+
+    /**
      * Display the member registration wizard.
      */
     public function create(Request $request): Response
@@ -78,12 +111,6 @@ final class MembersController
 
                     'nextStep' =>
                     RegistrationWorkflow::next($step),
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Registration Data
-                    |--------------------------------------------------------------------------
-                    */
 
                     'membership' =>
                     $registration['membership'] ?? [],
@@ -225,10 +252,6 @@ final class MembersController
             'Pending',
         );
 
-        /*
-         * Store a one-time success message.
-         * The Members index page will read and remove it.
-         */
         $this->session->put(
             'members_success',
             "Member {$memberNumber} registered successfully.",

@@ -470,4 +470,111 @@ final class MemberRepository extends Repository
             ? null
             : $value;
     }
+
+    /**
+     * Retrieve a complete member profile by ID.
+     */
+    public function find(int $id): ?array
+    {
+        $pdo = $this->connection();
+
+        $statement = $pdo->prepare(
+            "
+        SELECT
+            m.id,
+            m.member_number,
+            m.membership_date,
+            m.membership_type,
+            m.status,
+
+            mp.first_name,
+            mp.middle_name,
+            mp.last_name,
+            mp.suffix,
+            mp.birth_date,
+            mp.birth_place,
+            mp.sex,
+            mp.civil_status,
+            mp.nationality,
+
+            mc.mobile_number,
+            mc.telephone_number,
+            mc.email_address,
+
+            ma.house_number,
+            ma.street,
+            ma.barangay,
+            ma.city,
+            ma.province,
+            ma.zip_code,
+
+            ml.employment_status,
+            ml.occupation,
+            ml.employer,
+            ml.monthly_income,
+
+            me.highest_educational_attainment
+
+        FROM members AS m
+
+        LEFT JOIN member_profiles AS mp
+            ON mp.member_id = m.id
+
+        LEFT JOIN member_contacts AS mc
+            ON mc.member_id = m.id
+
+        LEFT JOIN member_addresses AS ma
+            ON ma.member_id = m.id
+
+        LEFT JOIN member_livelihoods AS ml
+            ON ml.member_id = m.id
+
+        LEFT JOIN member_educations AS me
+            ON me.member_id = m.id
+
+        WHERE m.id = :id
+
+        LIMIT 1
+        "
+        );
+
+        $statement->execute([
+            'id' => $id,
+        ]);
+
+        $member = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if ($member === false) {
+            return null;
+        }
+
+        $beneficiaryStatement = $pdo->prepare(
+            "
+        SELECT
+            id,
+            first_name,
+            middle_name,
+            last_name,
+            suffix,
+            relationship,
+            birth_date,
+            share_percentage,
+            remarks
+        FROM member_beneficiaries
+        WHERE member_id = :member_id
+        ORDER BY id ASC
+        "
+        );
+
+        $beneficiaryStatement->execute([
+            'member_id' => $id,
+        ]);
+
+        $member['beneficiaries'] =
+            $beneficiaryStatement->fetchAll(
+                PDO::FETCH_ASSOC
+            );
+
+        return $member;
+    }
 }

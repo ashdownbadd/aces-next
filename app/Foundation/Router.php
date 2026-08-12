@@ -6,7 +6,6 @@ namespace App\Foundation;
 
 use App\Http\Request;
 use App\Http\Response;
-use App\Foundation\Route;
 use ReflectionMethod;
 use RuntimeException;
 
@@ -46,7 +45,6 @@ final class Router
             middleware: $middleware,
         );
     }
-
     public function load(string $file): self
     {
         $router = $this;
@@ -58,21 +56,32 @@ final class Router
 
     public function dispatch(Request $request): Response
     {
-        $key = $request->method() . ':' . $request->uri();
+        $routeMatch = $this->matchRoute(
+            $request->method(),
+            $request->uri(),
+        );
 
-        if (! isset($this->routes[$key])) {
-            return new Response('404 Not Found', 404);
+        if ($routeMatch === null) {
+            return new Response(
+                '404 Not Found',
+                404,
+            );
         }
 
-        $route = $this->routes[$key];
+        $route = $routeMatch['route'];
+        $parameters = $routeMatch['parameters'];
 
         $handler = $route->handler;
 
         foreach ($route->middleware as $middleware) {
 
-            $instance = $this->container->get($middleware);
+            $instance = $this->container->get(
+                $middleware,
+            );
 
-            $response = $instance->handle($request);
+            $response = $instance->handle(
+                $request,
+            );
 
             if ($response !== null) {
                 return $response;
@@ -85,24 +94,151 @@ final class Router
 
         [$controller, $method] = $handler;
 
-        $instance = $this->container->get($controller);
+        $instance = $this->container->get(
+            $controller,
+        );
 
         if (! method_exists($instance, $method)) {
             throw new RuntimeException(
                 sprintf(
                     'Method [%s::%s] does not exist.',
                     $controller,
-                    $method
-                )
+                    $method,
+                ),
             );
         }
 
-        $reflection = new ReflectionMethod($instance, $method);
+        $reflection = new ReflectionMethod(
+            $instance,
+            $method,
+        );
 
-        if ($reflection->getNumberOfParameters() === 0) {
+        $parameterCount =
+            $reflection->getNumberOfParameters();
+
+        if ($parameterCount === 0) {
             return $instance->$method();
         }
 
-        return $instance->$method($request);
+        /*
+         * The first parameter is the Request object.
+         * Any remaining parameters come from the route.
+         */
+        $arguments = [$request];
+
+        foreach ($parameters as $parameter) {
+            $arguments[] = $parameter;
+        }
+
+        return $instance->$method(...$arguments);
+    }
+
+    /**
+     * Match an incoming request against registered routes.
+     *
+     * @return array{
+     *     route: Route,
+     *     parameters: array<int, mixed>
+     * }|null
+     */
+    private function matchRoute(
+        string $method,
+        string $uri,
+    ): ?array {
+        $exactKey = $method . ':' . $uri;
+
+        /*
+         * Try an exact match first.
+         *
+         * This keeps all existing static routes fast
+         * and preserves their current behavior.
+         */
+        if (isset($this->routes[$exactKey])) {
+            return [
+                'route' => $this->routes[$exactKey],
+                'parameters' => [],
+            ];
+        }
+
+        /*
+         * Try routes containing dynamic parameters.
+         */
+        foreach ($this->routes as $route) {
+
+            if ($route->method !== $method) {
+                continue;
+            }
+
+            $routePattern = $this->compileRoute(
+                $route->uri,
+            );
+
+            if (
+                ! preg_match(
+                    $routePattern['pattern'],
+                    $uri,
+                    $matches,
+                )
+            ) {
+                continue;
+            }
+
+            $parameters = [];
+
+            foreach ($routePattern['parameters'] as $name) {
+                $parameters[] = $matches[$name];
+            }
+
+            return [
+                'route' => $route,
+                'parameters' => $parameters,
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Convert a route such as:
+     *
+     * /members/{id}
+     *
+     * into a regular expression.
+     *
+     * @return array{
+     *     pattern: string,
+     *     parameters: array<int, string>
+     * }
+     */
+    private function compileRoute(
+        string $uri,
+    ): array {
+        $parameters = [];
+
+        $pattern = preg_replace_callback(
+            '/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/',
+            function (array $matches) use (&$parameters): string {
+                $name = $matches[1];
+
+                $parameters[] = $name;
+
+                return '(?P<' . $name . '>[^/]+)';
+            },
+            $uri,
+        );
+
+        if ($pattern === null) {
+            throw new RuntimeException(
+                sprintf(
+                    'Unable to compile route [%s].',
+                    $uri,
+                ),
+            );
+        }
+
+        return [
+            'pattern' => '#^' . $pattern . '$#',
+            'parameters' => $parameters,
+        ];
     }
 }
