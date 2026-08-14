@@ -13,7 +13,8 @@ declare(strict_types=1);
         <?php
 
         $sectionTitle = 'Livelihood Information';
-        $sectionDescription = 'Provide the member\'s primary source of livelihood.';
+        $sectionDescription =
+            'Provide the member\'s primary source of livelihood.';
 
         require __DIR__ . '/../partials/section-header.php';
 
@@ -180,7 +181,14 @@ declare(strict_types=1);
                     autocomplete="off"
                     data-type="money"
                     value="<?= htmlspecialchars(
-                                $livelihood['monthly_income'] ?? ''
+                                $livelihood['monthly_income'] !== ''
+                                    ? number_format(
+                                        (float) $livelihood['monthly_income'],
+                                        2,
+                                        '.',
+                                        ','
+                                    )
+                                    : ''
                             ) ?>">
 
             </div>

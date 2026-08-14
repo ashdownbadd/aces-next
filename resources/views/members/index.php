@@ -4,9 +4,55 @@ declare(strict_types=1);
 
 $title = 'Members';
 
-$members = $members ?? [];
-$totalMembers = $totalMembers ?? count($members);
-$successMessage = $successMessage ?? null;
+$members =
+    $members ?? [];
+
+$totalMembers =
+    $totalMembers ?? 0;
+
+$resultCount =
+    $resultCount ?? 0;
+
+$search =
+    $search ?? '';
+
+$currentPage =
+    $currentPage ?? 1;
+
+$perPage =
+    $perPage ?? 25;
+
+$totalPages =
+    $totalPages ?? 1;
+
+$from =
+    $from ?? 0;
+
+$to =
+    $to ?? 0;
+
+$successMessage =
+    $successMessage ?? null;
+
+/**
+ * Build a pagination URL while preserving the search query.
+ */
+$paginationUrl = static function (
+    int $page,
+) use (
+    $search
+): string {
+    $query = [
+        'page' => $page,
+    ];
+
+    if ($search !== '') {
+        $query['search'] = $search;
+    }
+
+    return '/members?' .
+        http_build_query($query);
+};
 
 ?>
 
@@ -27,7 +73,7 @@ $successMessage = $successMessage ?? null;
         </div>
 
         <a
-            href="/members/create"
+            href="/members/create?new=1"
             class="btn btn--primary">
 
             Register Member
@@ -40,10 +86,14 @@ $successMessage = $successMessage ?? null;
 
         <div class="alert alert--success">
 
-            <strong>Success</strong>
+            <strong>
+                Success
+            </strong>
 
             <span>
-                <?= htmlspecialchars($successMessage) ?>
+                <?= htmlspecialchars(
+                    $successMessage
+                ) ?>
             </span>
 
         </div>
@@ -54,14 +104,30 @@ $successMessage = $successMessage ?? null;
 
         <div class="members__toolbar">
 
-            <input
-                class="input members__search"
-                type="search"
-                placeholder="Search member..."
-                id="member-search">
+            <form
+                method="GET"
+                action="/members"
+                class="members__search-form">
+
+                <input
+                    class="input members__search"
+                    type="search"
+                    name="search"
+                    value="<?= htmlspecialchars(
+                                $search
+                            ) ?>"
+                    placeholder="Search member..."
+                    autocomplete="off">
+
+            </form>
 
             <span class="members__total">
-                Total: <?= number_format($totalMembers) ?>
+
+                Total:
+                <?= number_format(
+                    $totalMembers
+                ) ?>
+
             </span>
 
         </div>
@@ -72,17 +138,29 @@ $successMessage = $successMessage ?? null;
 
                 <tr>
 
-                    <th>Member #</th>
+                    <th>
+                        Member #
+                    </th>
 
-                    <th>Name</th>
+                    <th>
+                        Name
+                    </th>
 
-                    <th>Mobile</th>
+                    <th>
+                        Mobile
+                    </th>
 
-                    <th>Status</th>
+                    <th>
+                        Status
+                    </th>
 
-                    <th>Joined</th>
+                    <th>
+                        Joined
+                    </th>
 
-                    <th>Actions</th>
+                    <th>
+                        Actions
+                    </th>
 
                 </tr>
 
@@ -102,21 +180,51 @@ $successMessage = $successMessage ?? null;
                                     👥
                                 </div>
 
-                                <h3>
-                                    No members have been registered yet.
-                                </h3>
+                                <?php if ($search !== ''): ?>
 
-                                <p>
-                                    Register your first cooperative member to get started.
-                                </p>
+                                    <h3>
+                                        No members found.
+                                    </h3>
 
-                                <a
-                                    href="/members/create"
-                                    class="btn btn--primary">
+                                    <p>
+                                        No members matched
+                                        <strong>
+                                            "<?= htmlspecialchars(
+                                                    $search
+                                                ) ?>"
+                                        </strong>.
+                                    </p>
 
-                                    Register Member
+                                    <a
+                                        href="/members"
+                                        class="btn">
 
-                                </a>
+                                        Clear Search
+
+                                    </a>
+
+                                <?php else: ?>
+
+                                    <h3>
+                                        No members have been
+                                        registered yet.
+                                    </h3>
+
+                                    <p>
+                                        Register your first
+                                        cooperative member to
+                                        get started.
+                                    </p>
+
+                                    <a
+                                        href="/members/create?new=1"
+                                        class="btn btn--primary">
+
+                                        Register Member
+
+                                    </a>
+
+                                <?php endif; ?>
 
                             </div>
 
@@ -131,21 +239,33 @@ $successMessage = $successMessage ?? null;
                         <tr>
 
                             <td>
+
                                 <?= htmlspecialchars(
-                                    (string) ($member['member_number'] ?? '—')
+                                    (string) (
+                                        $member['member_number'] ?? '—'
+                                    )
                                 ) ?>
+
                             </td>
 
                             <td>
+
                                 <?= htmlspecialchars(
-                                    (string) ($member['full_name'] ?? '—')
+                                    (string) (
+                                        $member['full_name'] ?? '—'
+                                    )
                                 ) ?>
+
                             </td>
 
                             <td>
+
                                 <?= htmlspecialchars(
-                                    (string) ($member['mobile_number'] ?? '—')
+                                    (string) (
+                                        $member['mobile_number'] ?? '—'
+                                    )
                                 ) ?>
+
                             </td>
 
                             <td>
@@ -153,7 +273,9 @@ $successMessage = $successMessage ?? null;
                                 <span class="badge">
 
                                     <?= htmlspecialchars(
-                                        (string) ($member['status'] ?? '—')
+                                        (string) (
+                                            $member['status'] ?? '—'
+                                        )
                                     ) ?>
 
                                 </span>
@@ -161,9 +283,12 @@ $successMessage = $successMessage ?? null;
                             </td>
 
                             <td>
+
                                 <?php
+
                                 $membershipDate =
                                     $member['membership_date'] ?? null;
+
                                 ?>
 
                                 <?= $membershipDate
@@ -171,19 +296,23 @@ $successMessage = $successMessage ?? null;
                                         date(
                                             'F j, Y',
                                             strtotime(
-                                                (string) $membershipDate
+                                                (string)
+                                                $membershipDate
                                             )
                                         )
                                     )
                                     : '—'
                                 ?>
+
                             </td>
 
                             <td>
 
                                 <a
                                     href="/members/<?= urlencode(
-                                                        (string) $member['id']
+                                                        (string) (
+                                                            $member['id']
+                                                        )
                                                     ) ?>"
                                     class="btn btn--sm">
 
@@ -203,15 +332,203 @@ $successMessage = $successMessage ?? null;
 
         </table>
 
-        <div class="members__footer">
+        <?php if ($resultCount > 0): ?>
 
-            Showing
-            <?= number_format(count($members)) ?>
-            of
-            <?= number_format($totalMembers) ?>
-            members
+            <div class="members__footer">
 
-        </div>
+                <span>
+
+                    Showing
+                    <?= number_format($from) ?>
+                    –
+                    <?= number_format($to) ?>
+
+                    of
+                    <?= number_format($resultCount) ?>
+
+                    <?php if ($search !== ''): ?>
+
+                        matching members
+
+                    <?php else: ?>
+
+                        members
+
+                    <?php endif; ?>
+
+                </span>
+
+            </div>
+
+        <?php endif; ?>
+
+        <?php if ($totalPages > 1): ?>
+
+            <nav
+                class="members__pagination"
+                aria-label="Members pagination">
+
+                <?php if ($currentPage > 1): ?>
+
+                    <a
+                        href="<?= htmlspecialchars(
+                                    $paginationUrl(
+                                        $currentPage - 1
+                                    )
+                                ) ?>"
+                        class="btn btn--sm">
+
+                        ← Previous
+
+                    </a>
+
+                <?php else: ?>
+
+                    <span class="btn btn--sm btn--disabled">
+                        ← Previous
+                    </span>
+
+                <?php endif; ?>
+
+                <div class="members__pagination-pages">
+
+                    <?php
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Determine visible page numbers
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $startPage = max(
+                        1,
+                        $currentPage - 2,
+                    );
+
+                    $endPage = min(
+                        $totalPages,
+                        $currentPage + 2,
+                    );
+
+                    ?>
+
+                    <?php if ($startPage > 1): ?>
+
+                        <a
+                            href="<?= htmlspecialchars(
+                                        $paginationUrl(1)
+                                    ) ?>"
+                            class="btn btn--sm">
+
+                            1
+
+                        </a>
+
+                        <?php if ($startPage > 2): ?>
+
+                            <span
+                                class="members__pagination-ellipsis">
+                                …
+                            </span>
+
+                        <?php endif; ?>
+
+                    <?php endif; ?>
+
+                    <?php for (
+                        $page = $startPage;
+                        $page <= $endPage;
+                        $page++
+                    ): ?>
+
+                        <?php if (
+                            $page === $currentPage
+                        ): ?>
+
+                            <span
+                                class="btn btn--sm btn--primary"
+                                aria-current="page">
+
+                                <?= $page ?>
+
+                            </span>
+
+                        <?php else: ?>
+
+                            <a
+                                href="<?= htmlspecialchars(
+                                            $paginationUrl(
+                                                $page
+                                            )
+                                        ) ?>"
+                                class="btn btn--sm">
+
+                                <?= $page ?>
+
+                            </a>
+
+                        <?php endif; ?>
+
+                    <?php endfor; ?>
+
+                    <?php if (
+                        $endPage < $totalPages
+                    ): ?>
+
+                        <?php if (
+                            $endPage < $totalPages - 1
+                        ): ?>
+
+                            <span
+                                class="members__pagination-ellipsis">
+                                …
+                            </span>
+
+                        <?php endif; ?>
+
+                        <a
+                            href="<?= htmlspecialchars(
+                                        $paginationUrl(
+                                            $totalPages
+                                        )
+                                    ) ?>"
+                            class="btn btn--sm">
+
+                            <?= $totalPages ?>
+
+                        </a>
+
+                    <?php endif; ?>
+
+                </div>
+
+                <?php if (
+                    $currentPage < $totalPages
+                ): ?>
+
+                    <a
+                        href="<?= htmlspecialchars(
+                                    $paginationUrl(
+                                        $currentPage + 1
+                                    )
+                                ) ?>"
+                        class="btn btn--sm">
+
+                        Next →
+
+                    </a>
+
+                <?php else: ?>
+
+                    <span class="btn btn--sm btn--disabled">
+                        Next →
+                    </span>
+
+                <?php endif; ?>
+
+            </nav>
+
+        <?php endif; ?>
 
     </div>
 

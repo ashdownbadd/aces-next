@@ -8,8 +8,10 @@ use App\Features\Members\Controllers\BeneficiaryController;
 use App\Features\Members\Controllers\MembersController;
 use App\Features\Members\Repositories\MemberRepository;
 use App\Features\Members\Services\BeneficiaryService;
+use App\Features\Members\Services\EditService;
 use App\Features\Members\Services\MemberService;
 use App\Features\Members\Services\RegistrationService;
+use App\Features\Members\Support\EditSession;
 use App\Features\Members\Support\RegistrationSession;
 use App\Foundation\Container;
 use App\Foundation\Database;
@@ -49,6 +51,19 @@ final class MembersServiceProvider extends ServiceProvider
 
         /*
         |--------------------------------------------------------------------------
+        | Edit Session
+        |--------------------------------------------------------------------------
+        */
+
+        $this->container->singleton(
+            EditSession::class,
+            fn(Container $container) => new EditSession(
+                $container->get(Session::class),
+            ),
+        );
+
+        /*
+        |--------------------------------------------------------------------------
         | Member Service
         |--------------------------------------------------------------------------
         */
@@ -70,6 +85,20 @@ final class MembersServiceProvider extends ServiceProvider
             RegistrationService::class,
             fn(Container $container) => new RegistrationService(
                 $container->get(RegistrationSession::class),
+                $container->get(MemberRepository::class),
+            ),
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Edit Service
+        |--------------------------------------------------------------------------
+        */
+
+        $this->container->singleton(
+            EditService::class,
+            fn(Container $container) => new EditService(
+                $container->get(EditSession::class),
                 $container->get(MemberRepository::class),
             ),
         );
@@ -100,6 +129,7 @@ final class MembersServiceProvider extends ServiceProvider
                 $container->get(MemberService::class),
                 $container->get(RegistrationService::class),
                 $container->get(Session::class),
+                $container->get(EditService::class),
             ),
         );
 

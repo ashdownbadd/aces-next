@@ -12,7 +12,6 @@ use App\Http\Middleware\GuestMiddleware;
 
 /** @var Router $router */
 
-
 /*
 |--------------------------------------------------------------------------
 | Dashboard
@@ -35,7 +34,6 @@ $router->get(
     ],
 );
 
-
 /*
 |--------------------------------------------------------------------------
 | Members
@@ -50,18 +48,17 @@ $router->get(
     ],
 );
 
-/*
- * View a single member profile.
- *
- * Example:
- * /members/2
- *
- * The number here is the database ID.
- * The displayed member number remains 0001.
- */
 $router->get(
     '/members/{id}',
     [MembersController::class, 'show'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/members/{id}/status',
+    [MembersController::class, 'changeStatus'],
     [
         AuthMiddleware::class,
     ],
@@ -90,7 +87,6 @@ $router->post(
         AuthMiddleware::class,
     ],
 );
-
 
 /*
 |--------------------------------------------------------------------------
@@ -121,7 +117,6 @@ $router->post(
         AuthMiddleware::class,
     ],
 );
-
 
 /*
 |--------------------------------------------------------------------------

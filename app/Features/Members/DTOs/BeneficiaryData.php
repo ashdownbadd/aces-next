@@ -15,7 +15,6 @@ final class BeneficiaryData
         public readonly string $suffix,
         public readonly string $relationship,
         public readonly string $birthDate,
-        public readonly string $sharePercentage,
         public readonly string $remarks,
     ) {}
 
@@ -50,11 +49,6 @@ final class BeneficiaryData
 
             birthDate: (string) $request->input(
                 'birth_date',
-                '',
-            ),
-
-            sharePercentage: (string) $request->input(
-                'share_percentage',
                 '',
             ),
 
@@ -96,10 +90,6 @@ final class BeneficiaryData
                 $data['birth_date'] ?? ''
             ),
 
-            sharePercentage: (string) (
-                $data['share_percentage'] ?? ''
-            ),
-
             remarks: (string) (
                 $data['remarks'] ?? ''
             ),
@@ -118,7 +108,6 @@ final class BeneficiaryData
             'suffix' => $this->suffix,
             'relationship' => $this->relationship,
             'birth_date' => $this->birthDate,
-            'share_percentage' => $this->sharePercentage,
             'remarks' => $this->remarks,
         ];
     }

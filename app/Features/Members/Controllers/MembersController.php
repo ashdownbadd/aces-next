@@ -10,6 +10,7 @@ use App\Features\Members\DTOs\EducationData;
 use App\Features\Members\DTOs\LivelihoodData;
 use App\Features\Members\DTOs\MembershipData;
 use App\Features\Members\DTOs\PersonalData;
+use App\Features\Members\Services\EditService;
 use App\Features\Members\Services\MemberService;
 use App\Features\Members\Services\RegistrationService;
 use App\Features\Members\Support\RegistrationWorkflow;
@@ -25,13 +26,15 @@ final class MembersController
         private readonly MemberService $memberService,
         private readonly RegistrationService $registrationService,
         private readonly Session $session,
+        private readonly EditService $editService,
     ) {}
 
     /**
      * Display the members list.
      */
-    public function index(): Response
-    {
+    public function index(
+        Request $request,
+    ): Response {
         $successMessage = $this->session->get(
             'members_success',
         );
@@ -40,14 +43,105 @@ final class MembersController
             'members_success',
         );
 
+        $search = trim(
+            (string) $request->query(
+                'search',
+                '',
+            )
+        );
+
+        $page = max(
+            1,
+            (int) $request->query(
+                'page',
+                '1',
+            ),
+        );
+
+        $perPage = 25;
+
+        $totalMembers =
+            $this->memberService->count();
+
+        $resultCount =
+            $this->memberService->count(
+                $search,
+            );
+
+        $totalPages = max(
+            1,
+            (int) ceil(
+                $resultCount / $perPage
+            ),
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Prevent invalid pages
+    |--------------------------------------------------------------------------
+    */
+
+        if ($page > $totalPages) {
+            $page = $totalPages;
+        }
+
+        $offset =
+            ($page - 1) * $perPage;
+
+        $members =
+            $this->memberService->all(
+                $search,
+                $perPage,
+                $offset,
+            );
+
+        $from = $resultCount > 0
+            ? $offset + 1
+            : 0;
+
+        $to = $resultCount > 0
+            ? min(
+                $offset + count($members),
+                $resultCount,
+            )
+            : 0;
+
         return new Response(
             $this->view->render(
                 'members.index',
                 [
-                    'title' => 'Members',
-                    'members' => $this->memberService->all(),
-                    'totalMembers' => $this->memberService->count(),
-                    'successMessage' => $successMessage,
+                    'title' =>
+                    'Members',
+
+                    'members' =>
+                    $members,
+
+                    'totalMembers' =>
+                    $totalMembers,
+
+                    'resultCount' =>
+                    $resultCount,
+
+                    'search' =>
+                    $search,
+
+                    'currentPage' =>
+                    $page,
+
+                    'perPage' =>
+                    $perPage,
+
+                    'totalPages' =>
+                    $totalPages,
+
+                    'from' =>
+                    $from,
+
+                    'to' =>
+                    $to,
+
+                    'successMessage' =>
+                    $successMessage,
                 ],
                 'layouts.app',
             ),
@@ -88,29 +182,145 @@ final class MembersController
     }
 
     /**
-     * Display the member registration wizard.
+     * Change the status of an existing member.
+     */
+    public function changeStatus(
+        Request $request,
+        string $id,
+    ): Response {
+        $memberId = (int) $id;
+
+        if ($memberId <= 0) {
+            return Response::redirect('/members');
+        }
+
+        $status = trim(
+            (string) $request->input(
+                'status',
+                '',
+            ),
+        );
+
+        try {
+            $this->memberService->changeStatus(
+                $memberId,
+                $status,
+            );
+
+            $this->session->put(
+                'members_success',
+                'Member status updated successfully.',
+            );
+        } catch (\InvalidArgumentException $exception) {
+            $this->session->put(
+                'members_error',
+                $exception->getMessage(),
+            );
+        } catch (\RuntimeException $exception) {
+            $this->session->put(
+                'members_error',
+                $exception->getMessage(),
+            );
+        }
+
+        return Response::redirect(
+            '/members/' . $memberId,
+        );
+    }
+
+    /**
+     * Start editing an existing member.
+     */
+    public function edit(
+        Request $request,
+        string $id,
+    ): Response {
+        $memberId = (int) $id;
+
+        if ($memberId <= 0) {
+            return Response::redirect('/members');
+        }
+
+        if (! $this->editService->start($memberId)) {
+            return Response::redirect('/members');
+        }
+
+        return Response::redirect(
+            '/members/create?step=membership&edit=' . $memberId,
+        );
+    }
+
+    /**
+     * Display the member registration/edit wizard.
      */
     public function create(Request $request): Response
     {
+        /*
+    |--------------------------------------------------------------------------
+    | Start a new registration
+    |--------------------------------------------------------------------------
+    |
+    | The "new=1" parameter is only sent when the user explicitly
+    | clicks "Register Member".
+    |
+    | This prevents an unfinished previous registration from
+    | appearing in a brand-new registration.
+    |
+    */
+
+        $isNewRegistration =
+            (string) $request->query('new', '') === '1';
+
+        if ($isNewRegistration) {
+            $this->registrationService->clear();
+
+            /*
+        | If an edit session exists, clear that too.
+        | This prevents an old edit session from being mistaken
+        | for a new registration.
+        */
+            if (isset($this->editService)) {
+                $this->editService->clear();
+            }
+        }
+
         $step = $this->resolveStep($request);
 
-        $registration = $this->registrationService->all();
+        $isEditing = $this->editService->has();
+
+        $registration = $isEditing
+            ? $this->editService->all()
+            : $this->registrationService->all();
 
         return new Response(
             $this->view->render(
                 'members.create',
                 [
-                    'title' => 'Register Member',
+                    'title' => $isEditing
+                        ? 'Edit Member'
+                        : 'Register Member',
 
                     'step' => $step,
 
-                    'steps' => RegistrationWorkflow::all(),
+                    'steps' =>
+                    RegistrationWorkflow::all(),
 
                     'previousStep' =>
                     RegistrationWorkflow::previous($step),
 
                     'nextStep' =>
                     RegistrationWorkflow::next($step),
+
+                    'isEditing' =>
+                    $isEditing,
+
+                    'editMemberId' =>
+                    $isEditing
+                        ? $this->editService->memberId()
+                        : null,
+
+                    'registration' =>
+                    $registration,
 
                     'membership' =>
                     $registration['membership'] ?? [],
@@ -141,101 +351,115 @@ final class MembersController
     /**
      * Store the current wizard step.
      */
-    public function storeStep(Request $request): Response
-    {
+    public function storeStep(
+        Request $request,
+    ): Response {
         $step = $this->resolveStep($request);
+
+        $isEditing = $this->editService->has();
 
         switch ($step) {
 
             case 'membership':
 
-                $this->registrationService->saveStep(
-                    $step,
-                    MembershipData::fromRequest(
-                        $request
-                    )->toArray(),
-                );
+                $data = MembershipData::fromRequest(
+                    $request
+                )->toArray();
 
                 break;
 
             case 'personal':
 
-                $this->registrationService->saveStep(
-                    $step,
-                    PersonalData::fromRequest(
-                        $request
-                    )->toArray(),
-                );
+                $data = PersonalData::fromRequest(
+                    $request
+                )->toArray();
 
                 break;
 
             case 'contact':
 
-                $this->registrationService->saveStep(
-                    $step,
-                    ContactData::fromRequest(
-                        $request
-                    )->toArray(),
-                );
+                $data = ContactData::fromRequest(
+                    $request
+                )->toArray();
 
                 break;
 
             case 'address':
 
-                $this->registrationService->saveStep(
-                    $step,
-                    AddressData::fromRequest(
-                        $request
-                    )->toArray(),
-                );
+                $data = AddressData::fromRequest(
+                    $request
+                )->toArray();
 
                 break;
 
             case 'livelihood':
 
-                $this->registrationService->saveStep(
-                    $step,
-                    LivelihoodData::fromRequest(
-                        $request
-                    )->toArray(),
-                );
+                $data = LivelihoodData::fromRequest(
+                    $request
+                )->toArray();
 
                 break;
 
             case 'education':
 
-                $this->registrationService->saveStep(
-                    $step,
-                    EducationData::fromRequest(
-                        $request
-                    )->toArray(),
-                );
+                $data = EducationData::fromRequest(
+                    $request
+                )->toArray();
 
                 break;
 
             case 'beneficiaries':
+            case 'review':
 
-                /*
-                 * Beneficiaries are managed separately through
-                 * BeneficiaryController / BeneficiaryService.
-                 */
+                $data = [];
 
                 break;
 
-            case 'review':
+            default:
 
-                /*
-                 * Review is the final submission page.
-                 * Actual persistence is handled by register().
-                 */
+                $data = [];
 
                 break;
         }
 
+        if ($data !== []) {
+
+            if ($isEditing) {
+                $this->editService->saveStep(
+                    $step,
+                    $data,
+                );
+            } else {
+                $this->registrationService->saveStep(
+                    $step,
+                    $data,
+                );
+            }
+        }
+
+        $nextStep =
+            RegistrationWorkflow::next($step)
+            ?? $step;
+
+        $query = http_build_query([
+            'step' => $nextStep,
+        ]);
+
+        /*
+    |--------------------------------------------------------------------------
+    | Preserve edit mode
+    |--------------------------------------------------------------------------
+    */
+
+        if ($isEditing) {
+            $query = http_build_query([
+                'step' => $nextStep,
+                'edit' => $this->editService->memberId(),
+            ]);
+        }
+
         return Response::redirect(
-            '/members/create?step=' . urlencode(
-                RegistrationWorkflow::next($step) ?? $step,
-            ),
+            '/members/create?' . $query,
         );
     }
 
@@ -244,6 +468,35 @@ final class MembersController
      */
     public function register(): Response
     {
+        /*
+    |--------------------------------------------------------------------------
+    | Edit existing member
+    |--------------------------------------------------------------------------
+    */
+
+        if ($this->editService->has()) {
+
+            $memberId =
+                $this->editService->memberId();
+
+            $this->editService->update();
+
+            $this->session->put(
+                'members_success',
+                "Member #{$memberId} updated successfully.",
+            );
+
+            return Response::redirect(
+                '/members/' . $memberId,
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | New member registration
+    |--------------------------------------------------------------------------
+    */
+
         $memberNumber =
             $this->memberService->nextMemberNumber();
 

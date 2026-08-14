@@ -6,6 +6,9 @@ $member = $member ?? [];
 
 $beneficiaries = $member['beneficiaries'] ?? [];
 
+$successMessage = $successMessage ?? null;
+$errorMessage = $errorMessage ?? null;
+
 $fullName = trim(
     implode(
         ' ',
@@ -181,7 +184,7 @@ $statusLabel = $formatLabel(
         <div class="member-profile__actions">
 
             <a
-                href="#"
+                href="/members/<?= (int) ($member['id'] ?? 0) ?>/edit"
                 class="btn btn--primary">
 
                 Edit Member
@@ -192,6 +195,163 @@ $statusLabel = $formatLabel(
 
     </div>
 
+
+    <?php if ($successMessage !== null): ?>
+
+        <div class="alert alert--success">
+
+            <div class="alert__title">
+                Success
+            </div>
+
+            <div class="alert__body">
+                <?= htmlspecialchars($successMessage) ?>
+            </div>
+
+        </div>
+
+    <?php endif; ?>
+
+    <?php if ($errorMessage !== null): ?>
+
+        <div class="alert alert--danger">
+
+            <div class="alert__title">
+                Error
+            </div>
+
+            <div class="alert__body">
+                <?= htmlspecialchars($errorMessage) ?>
+            </div>
+
+        </div>
+
+    <?php endif; ?>
+
+    <!--
+    |--------------------------------------------------------------------------
+    | Status Management
+    |--------------------------------------------------------------------------
+    -->
+
+    <section class="card">
+
+        <div class="card__header">
+
+            <div>
+                <h2 class="card__title">
+                    Member Status
+                </h2>
+
+                <p class="card__subtitle">
+                    Manage the member's current lifecycle status.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="form-grid form-grid--2">
+
+            <div class="form-group">
+
+                <span class="form-label">
+                    Current Status
+                </span>
+
+                <div class="form-value">
+                    <?= $statusLabel ?>
+                </div>
+
+            </div>
+
+            <?php
+            $allowedStatuses = match ($member['status'] ?? '') {
+                'Pending' => [
+                    'Active',
+                    'Inactive',
+                ],
+                'Active' => [
+                    'Inactive',
+                ],
+                'Inactive' => [
+                    'Active',
+                ],
+                default => [],
+            };
+            ?>
+
+            <?php if ($allowedStatuses !== []): ?>
+
+                <form
+                    method="POST"
+                    action="/members/<?= (int) ($member['id'] ?? 0) ?>/status">
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="member_status">
+
+                            Change Status
+
+                        </label>
+
+                        <select
+                            class="form-control"
+                            id="member_status"
+                            name="status"
+                            required>
+
+                            <option value="">
+                                -- Select Status --
+                            </option>
+
+                            <?php foreach ($allowedStatuses as $allowedStatus): ?>
+
+                                <option value="<?= htmlspecialchars($allowedStatus) ?>">
+                                    <?= htmlspecialchars($allowedStatus) ?>
+                                </option>
+
+                            <?php endforeach; ?>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn--secondary"
+                            onclick="return confirm('Are you sure you want to change this member\'s status?');">
+
+                            Change Status
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            <?php else: ?>
+
+                <div class="form-group">
+
+                    <span class="form-label">
+                        Status Management
+                    </span>
+
+                    <div class="form-value">
+                        No status transition is currently available.
+                    </div>
+
+                </div>
+
+            <?php endif; ?>
+
+        </div>
+
+    </section>
 
     <!--
     |--------------------------------------------------------------------------
@@ -787,8 +947,6 @@ $statusLabel = $formatLabel(
 
                             <th>Birth Date</th>
 
-                            <th>Share</th>
-
                             <th>Remarks</th>
 
                         </tr>
@@ -846,24 +1004,6 @@ $statusLabel = $formatLabel(
                                     <?= $formatDate(
                                         $beneficiary['birth_date'] ?? null,
                                     ) ?>
-
-                                </td>
-
-                                <td>
-
-                                    <?php
-                                    $share =
-                                        $beneficiary['share_percentage'] ?? null;
-                                    ?>
-
-                                    <?= $share !== null
-                                        && $share !== ''
-                                        ? number_format(
-                                            (float) $share,
-                                            2,
-                                        ) . '%'
-                                        : '—'
-                                    ?>
 
                                 </td>
 

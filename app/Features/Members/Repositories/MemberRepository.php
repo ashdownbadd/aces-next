@@ -12,55 +12,189 @@ use Throwable;
 final class MemberRepository extends Repository
 {
     /**
-     * Retrieve all members for the members list.
+     * Retrieve a paginated list of members.
+     *
+     * Search fields:
+     * - Member number
+     * - First name
+     * - Middle name
+     * - Last name
+     * - Full name
+     * - Mobile number
+     *
+     * @return array<int, array<string, mixed>>
      */
-    public function all(): array
-    {
-        $statement = $this->connection()->query(
-            "
-            SELECT
-                m.id,
-                m.member_number,
-                m.membership_date,
-                m.membership_type,
-                m.status,
+    public function all(
+        string $search = '',
+        int $limit = 25,
+        int $offset = 0,
+    ): array {
+        $pdo = $this->connection();
 
-                CONCAT_WS(
+        $limit = max(1, $limit);
+        $offset = max(0, $offset);
+
+        $sql = "
+        SELECT
+            m.id,
+            m.member_number,
+            m.membership_date,
+            m.membership_type,
+            m.status,
+
+            CONCAT_WS(
+                ' ',
+                mp.first_name,
+                NULLIF(mp.middle_name, ''),
+                mp.last_name,
+                NULLIF(mp.suffix, '')
+            ) AS full_name,
+
+            mc.mobile_number
+
+        FROM members AS m
+
+        LEFT JOIN member_profiles AS mp
+            ON mp.member_id = m.id
+
+        LEFT JOIN member_contacts AS mc
+            ON mc.member_id = m.id
+    ";
+
+        $parameters = [];
+
+        $search = trim($search);
+
+        if ($search !== '') {
+            $sql .= "
+            WHERE
+                m.member_number LIKE :search_member_number
+
+                OR mp.first_name LIKE :search_first_name
+
+                OR mp.middle_name LIKE :search_middle_name
+
+                OR mp.last_name LIKE :search_last_name
+
+                OR CONCAT_WS(
                     ' ',
                     mp.first_name,
                     NULLIF(mp.middle_name, ''),
                     mp.last_name,
                     NULLIF(mp.suffix, '')
-                ) AS full_name,
+                ) LIKE :search_full_name
 
-                mc.mobile_number
+                OR mc.mobile_number LIKE :search_mobile
+        ";
 
-            FROM members AS m
+            $searchValue = '%' . $search . '%';
 
-            LEFT JOIN member_profiles AS mp
-                ON mp.member_id = m.id
+            $parameters = [
+                'search_member_number' => $searchValue,
+                'search_first_name' => $searchValue,
+                'search_middle_name' => $searchValue,
+                'search_last_name' => $searchValue,
+                'search_full_name' => $searchValue,
+                'search_mobile' => $searchValue,
+            ];
+        }
 
-            LEFT JOIN member_contacts AS mc
-                ON mc.member_id = m.id
+        $sql .= "
+        ORDER BY m.member_number ASC
+        LIMIT :limit
+        OFFSET :offset
+    ";
 
-            ORDER BY m.member_number ASC
-            "
+        $statement = $pdo->prepare($sql);
+
+        foreach ($parameters as $key => $value) {
+            $statement->bindValue(
+                ':' . $key,
+                $value,
+                PDO::PARAM_STR,
+            );
+        }
+
+        $statement->bindValue(
+            ':limit',
+            $limit,
+            PDO::PARAM_INT,
         );
 
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        $statement->bindValue(
+            ':offset',
+            $offset,
+            PDO::PARAM_INT,
+        );
+
+        $statement->execute();
+
+        return $statement->fetchAll(
+            PDO::FETCH_ASSOC,
+        );
     }
 
     /**
-     * Return the total number of members.
+     * Return the total number of members matching a search query.
      */
-    public function count(): int
-    {
-        $statement = $this->connection()->query(
-            "
-            SELECT COUNT(*)
-            FROM members
-            "
-        );
+    public function count(
+        string $search = '',
+    ): int {
+        $pdo = $this->connection();
+
+        $sql = "
+        SELECT COUNT(*)
+
+        FROM members AS m
+
+        LEFT JOIN member_profiles AS mp
+            ON mp.member_id = m.id
+
+        LEFT JOIN member_contacts AS mc
+            ON mc.member_id = m.id
+    ";
+
+        $parameters = [];
+
+        $search = trim($search);
+
+        if ($search !== '') {
+            $sql .= "
+            WHERE
+                m.member_number LIKE :search_member_number
+
+                OR mp.first_name LIKE :search_first_name
+
+                OR mp.middle_name LIKE :search_middle_name
+
+                OR mp.last_name LIKE :search_last_name
+
+                OR CONCAT_WS(
+                    ' ',
+                    mp.first_name,
+                    NULLIF(mp.middle_name, ''),
+                    mp.last_name,
+                    NULLIF(mp.suffix, '')
+                ) LIKE :search_full_name
+
+                OR mc.mobile_number LIKE :search_mobile
+        ";
+
+            $searchValue = '%' . $search . '%';
+
+            $parameters = [
+                'search_member_number' => $searchValue,
+                'search_first_name' => $searchValue,
+                'search_middle_name' => $searchValue,
+                'search_last_name' => $searchValue,
+                'search_full_name' => $searchValue,
+                'search_mobile' => $searchValue,
+            ];
+        }
+
+        $statement = $pdo->prepare($sql);
+
+        $statement->execute($parameters);
 
         return (int) $statement->fetchColumn();
     }
@@ -397,7 +531,6 @@ final class MemberRepository extends Repository
                         suffix,
                         relationship,
                         birth_date,
-                        share_percentage,
                         remarks
                     )
                     VALUES
@@ -409,7 +542,6 @@ final class MemberRepository extends Repository
                         :suffix,
                         :relationship,
                         :birth_date,
-                        :share_percentage,
                         :remarks
                     )
                     "
@@ -436,8 +568,6 @@ final class MemberRepository extends Repository
                         $this->nullable(
                             $beneficiary->birthDate
                         ),
-                        'share_percentage' =>
-                        $beneficiary->sharePercentage,
                         'remarks' =>
                         $this->nullable(
                             $beneficiary->remarks
@@ -469,6 +599,381 @@ final class MemberRepository extends Repository
         return $value === ''
             ? null
             : $value;
+    }
+
+    /**
+     * Update the status of an existing member.
+     */
+    public function updateStatus(
+        int $memberId,
+        string $status,
+    ): void {
+        $statement = $this->connection()->prepare(
+            "
+            UPDATE members
+            SET status = :status
+            WHERE id = :id
+            "
+        );
+
+        $statement->execute([
+            'status' => $status,
+            'id' => $memberId,
+        ]);
+    }
+
+    /**
+     * Update a complete existing member profile.
+     *
+     * Every related record is updated inside the same
+     * database transaction.
+     */
+    public function update(
+        int $memberId,
+        MemberRegistrationData $registration,
+    ): void {
+        $pdo = $this->connection();
+
+        $pdo->beginTransaction();
+
+        try {
+            /*
+        |--------------------------------------------------------------------------
+        | Member
+        |--------------------------------------------------------------------------
+        */
+
+            $statement = $pdo->prepare(
+                "
+            UPDATE members
+            SET
+                membership_date = :membership_date,
+                membership_type = :membership_type
+            WHERE id = :id
+            "
+            );
+
+            $statement->execute([
+                'membership_date' =>
+                $registration->membership->membershipDate,
+
+                'membership_type' =>
+                $registration->membership->membershipType,
+
+                'id' => $memberId,
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Personal Profile
+        |--------------------------------------------------------------------------
+        */
+
+            $statement = $pdo->prepare(
+                "
+            UPDATE member_profiles
+            SET
+                first_name = :first_name,
+                middle_name = :middle_name,
+                last_name = :last_name,
+                suffix = :suffix,
+                birth_date = :birth_date,
+                birth_place = :birth_place,
+                sex = :sex,
+                civil_status = :civil_status,
+                nationality = :nationality
+            WHERE member_id = :member_id
+            "
+            );
+
+            $statement->execute([
+                'first_name' =>
+                $registration->personal->firstName,
+
+                'middle_name' =>
+                $this->nullable(
+                    $registration->personal->middleName
+                ),
+
+                'last_name' =>
+                $registration->personal->lastName,
+
+                'suffix' =>
+                $this->nullable(
+                    $registration->personal->suffix
+                ),
+
+                'birth_date' =>
+                $this->nullable(
+                    $registration->personal->birthDate
+                ),
+
+                'birth_place' =>
+                $this->nullable(
+                    $registration->personal->birthPlace
+                ),
+
+                'sex' =>
+                $this->nullable(
+                    $registration->personal->sex
+                ),
+
+                'civil_status' =>
+                $this->nullable(
+                    $registration->personal->civilStatus
+                ),
+
+                'nationality' =>
+                $this->nullable(
+                    $registration->personal->nationality
+                ),
+
+                'member_id' => $memberId,
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Contact
+        |--------------------------------------------------------------------------
+        */
+
+            $statement = $pdo->prepare(
+                "
+            UPDATE member_contacts
+            SET
+                mobile_number = :mobile_number,
+                telephone_number = :telephone_number,
+                email_address = :email_address
+            WHERE member_id = :member_id
+            "
+            );
+
+            $statement->execute([
+                'mobile_number' =>
+                $this->nullable(
+                    $registration->contact->mobileNumber
+                ),
+
+                'telephone_number' =>
+                $this->nullable(
+                    $registration->contact->telephoneNumber
+                ),
+
+                'email_address' =>
+                $this->nullable(
+                    $registration->contact->emailAddress
+                ),
+
+                'member_id' => $memberId,
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Address
+        |--------------------------------------------------------------------------
+        */
+
+            $statement = $pdo->prepare(
+                "
+            UPDATE member_addresses
+            SET
+                house_number = :house_number,
+                street = :street,
+                barangay = :barangay,
+                city = :city,
+                province = :province,
+                zip_code = :zip_code
+            WHERE member_id = :member_id
+            "
+            );
+
+            $statement->execute([
+                'house_number' =>
+                $this->nullable(
+                    $registration->address->houseNumber
+                ),
+
+                'street' =>
+                $registration->address->street,
+
+                'barangay' =>
+                $registration->address->barangay,
+
+                'city' =>
+                $registration->address->city,
+
+                'province' =>
+                $registration->address->province,
+
+                'zip_code' =>
+                $registration->address->zipCode,
+
+                'member_id' => $memberId,
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Livelihood
+        |--------------------------------------------------------------------------
+        */
+
+            $statement = $pdo->prepare(
+                "
+            UPDATE member_livelihoods
+            SET
+                employment_status = :employment_status,
+                occupation = :occupation,
+                employer = :employer,
+                monthly_income = :monthly_income
+            WHERE member_id = :member_id
+            "
+            );
+
+            $statement->execute([
+                'employment_status' =>
+                $this->nullable(
+                    $registration->livelihood->livelihoodType
+                ),
+
+                'occupation' =>
+                $this->nullable(
+                    $registration->livelihood->occupation
+                ),
+
+                'employer' =>
+                $this->nullable(
+                    $registration->livelihood->employer
+                ),
+
+                'monthly_income' =>
+                $this->nullable(
+                    $registration->livelihood->monthlyIncome
+                ),
+
+                'member_id' => $memberId,
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Education
+        |--------------------------------------------------------------------------
+        */
+
+            $statement = $pdo->prepare(
+                "
+            UPDATE member_educations
+            SET
+                highest_educational_attainment =
+                    :highest_educational_attainment
+            WHERE member_id = :member_id
+            "
+            );
+
+            $statement->execute([
+                'highest_educational_attainment' =>
+                $this->nullable(
+                    $registration
+                        ->education
+                        ->highestEducationalAttainment
+                ),
+
+                'member_id' => $memberId,
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Beneficiaries
+        |--------------------------------------------------------------------------
+        |
+        | Beneficiaries are treated as a complete collection.
+        | We remove the old collection and insert the current one.
+        |
+        */
+
+            $statement = $pdo->prepare(
+                "
+            DELETE FROM member_beneficiaries
+            WHERE member_id = :member_id
+            "
+            );
+
+            $statement->execute([
+                'member_id' => $memberId,
+            ]);
+
+            if ($registration->beneficiaries !== []) {
+                $statement = $pdo->prepare(
+                    "
+                INSERT INTO member_beneficiaries
+                (
+                    member_id,
+                    first_name,
+                    middle_name,
+                    last_name,
+                    suffix,
+                    relationship,
+                    birth_date,
+                    remarks
+                )
+                VALUES
+                (
+                    :member_id,
+                    :first_name,
+                    :middle_name,
+                    :last_name,
+                    :suffix,
+                    :relationship,
+                    :birth_date,
+                    :remarks
+                )
+                "
+                );
+
+                foreach ($registration->beneficiaries as $beneficiary) {
+                    $statement->execute([
+                        'member_id' => $memberId,
+
+                        'first_name' =>
+                        $beneficiary->firstName,
+
+                        'middle_name' =>
+                        $this->nullable(
+                            $beneficiary->middleName
+                        ),
+
+                        'last_name' =>
+                        $beneficiary->lastName,
+
+                        'suffix' =>
+                        $this->nullable(
+                            $beneficiary->suffix
+                        ),
+
+                        'relationship' =>
+                        $beneficiary->relationship,
+
+                        'birth_date' =>
+                        $this->nullable(
+                            $beneficiary->birthDate
+                        ),
+
+                        'remarks' =>
+                        $this->nullable(
+                            $beneficiary->remarks
+                        ),
+                    ]);
+                }
+            }
+
+            $pdo->commit();
+        } catch (Throwable $exception) {
+
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
+        }
     }
 
     /**
@@ -558,7 +1063,6 @@ final class MemberRepository extends Repository
             suffix,
             relationship,
             birth_date,
-            share_percentage,
             remarks
         FROM member_beneficiaries
         WHERE member_id = :member_id

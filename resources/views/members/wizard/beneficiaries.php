@@ -157,28 +157,6 @@ declare(strict_types=1);
 
                     </div>
 
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="share_percentage">
-
-                            Share Percentage
-
-                        </label>
-
-                        <input
-                            id="share_percentage"
-                            class="input"
-                            type="text"
-                            name="share_percentage"
-                            data-type="percentage"
-                            inputmode="decimal"
-                            placeholder="100"
-                            required>
-
-                    </div>
-
                     <div class="form-group form-group--full">
 
                         <label

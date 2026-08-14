@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Support;
 
+use App\Console\Seeders\MemberSeeder;
 use App\Console\Seeders\UserSeeder;
 use App\Foundation\Database;
 
@@ -17,10 +18,13 @@ final readonly class SeederRunner
     {
         $seeders = [
             UserSeeder::class,
+            MemberSeeder::class,
         ];
 
         foreach ($seeders as $seeder) {
-            (new $seeder($this->database))->run();
+            (new $seeder(
+                $this->database
+            ))->run();
         }
     }
 }
