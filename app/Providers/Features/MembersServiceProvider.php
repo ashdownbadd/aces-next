@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers\Features;
 
+use App\Features\ActivityLogs\Services\ActivityLogService;
 use App\Features\Members\Controllers\BeneficiaryController;
 use App\Features\Members\Controllers\MembersController;
 use App\Features\Members\Repositories\MemberRepository;
@@ -72,6 +73,8 @@ final class MembersServiceProvider extends ServiceProvider
             MemberService::class,
             fn(Container $container) => new MemberService(
                 $container->get(MemberRepository::class),
+                $container->get(ActivityLogService::class),
+                $container->get(Session::class),
             ),
         );
 
@@ -86,6 +89,8 @@ final class MembersServiceProvider extends ServiceProvider
             fn(Container $container) => new RegistrationService(
                 $container->get(RegistrationSession::class),
                 $container->get(MemberRepository::class),
+                $container->get(ActivityLogService::class),
+                $container->get(Session::class),
             ),
         );
 
@@ -100,6 +105,8 @@ final class MembersServiceProvider extends ServiceProvider
             fn(Container $container) => new EditService(
                 $container->get(EditSession::class),
                 $container->get(MemberRepository::class),
+                $container->get(ActivityLogService::class),
+                $container->get(Session::class),
             ),
         );
 
@@ -113,6 +120,7 @@ final class MembersServiceProvider extends ServiceProvider
             BeneficiaryService::class,
             fn(Container $container) => new BeneficiaryService(
                 $container->get(RegistrationSession::class),
+                $container->get(EditSession::class),
             ),
         );
 
@@ -143,6 +151,7 @@ final class MembersServiceProvider extends ServiceProvider
             BeneficiaryController::class,
             fn(Container $container) => new BeneficiaryController(
                 $container->get(BeneficiaryService::class),
+                $container->get(EditSession::class),
             ),
         );
     }

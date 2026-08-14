@@ -49,6 +49,14 @@ $router->get(
 );
 
 $router->get(
+    '/members/{id}/edit',
+    [MembersController::class, 'edit'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
     '/members/{id}',
     [MembersController::class, 'show'],
     [

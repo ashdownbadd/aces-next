@@ -22,11 +22,44 @@ declare(strict_types=1);
         <!-- Add Beneficiary -->
         <!-- ========================================================= -->
 
+        <?php
+        $editingIndex = isset($_GET['edit'])
+            ? (int) $_GET['edit']
+            : null;
+
+        $editingBeneficiary = $editingIndex !== null
+            ? ($beneficiaries[$editingIndex] ?? null)
+            : null;
+
+        $isEditing = $editingBeneficiary !== null;
+
+        $formAction = $isEditing
+            ? '/members/beneficiaries/update'
+            : '/members/beneficiaries';
+
+        $submitLabel = $isEditing
+            ? 'Update Beneficiary'
+            : 'Add Beneficiary';
+        ?>
+
         <form
             method="POST"
-            action="/members/beneficiaries">
+            action="<?= htmlspecialchars($formAction) ?>">
+
+            <?php if ($isEditing): ?>
+                <input
+                    type="hidden"
+                    name="index"
+                    value="<?= $editingIndex ?>">
+            <?php endif; ?>
 
             <div class="beneficiary-manager__form">
+
+                <h3 class="beneficiary-manager__title">
+
+                    <?= htmlspecialchars($submitLabel) ?>
+
+                </h3>
 
                 <div class="form-grid">
 
@@ -44,11 +77,7 @@ declare(strict_types=1);
                             id="beneficiary_first_name"
                             class="input"
                             type="text"
-                            name="first_name"
-                            data-type="personName"
-                            maxlength="100"
-                            autocomplete="given-name"
-                            required>
+                            name="first_name" value="<?= htmlspecialchars($editingBeneficiary["first_name"] ?? "") ?>">
 
                     </div>
 
@@ -66,10 +95,7 @@ declare(strict_types=1);
                             id="beneficiary_middle_name"
                             class="input"
                             type="text"
-                            name="middle_name"
-                            data-type="personName"
-                            maxlength="100"
-                            autocomplete="additional-name">
+                            name="middle_name" value="<?= htmlspecialchars($editingBeneficiary["middle_name"] ?? "") ?>">
 
                     </div>
 
@@ -87,11 +113,7 @@ declare(strict_types=1);
                             id="beneficiary_last_name"
                             class="input"
                             type="text"
-                            name="last_name"
-                            data-type="personName"
-                            maxlength="100"
-                            autocomplete="family-name"
-                            required>
+                            name="last_name" value="<?= htmlspecialchars($editingBeneficiary["last_name"] ?? "") ?>">
 
                     </div>
 
@@ -109,10 +131,7 @@ declare(strict_types=1);
                             id="beneficiary_suffix"
                             class="input"
                             type="text"
-                            name="suffix"
-                            data-type="uppercase"
-                            maxlength="10"
-                            placeholder="Jr., Sr., III">
+                            name="suffix" value="<?= htmlspecialchars($editingBeneficiary["suffix"] ?? "") ?>">
 
                     </div>
 
@@ -130,10 +149,7 @@ declare(strict_types=1);
                             id="relationship"
                             class="input"
                             type="text"
-                            name="relationship"
-                            data-type="title"
-                            maxlength="100"
-                            required>
+                            name="relationship" value="<?= htmlspecialchars($editingBeneficiary["relationship"] ?? "") ?>">
 
                     </div>
 
@@ -151,11 +167,10 @@ declare(strict_types=1);
                             id="beneficiary_birth_date"
                             class="input"
                             type="date"
-                            name="birth_date"
-                            data-type="birthdate"
-                            required>
+                            name="birth_date" value="<?= htmlspecialchars($editingBeneficiary["birth_date"] ?? "") ?>">
 
                     </div>
+
 
                     <div class="form-group form-group--full">
 
@@ -171,8 +186,7 @@ declare(strict_types=1);
                             id="remarks"
                             class="input"
                             name="remarks"
-                            rows="3"
-                            maxlength="500"></textarea>
+                            rows="3"><?= htmlspecialchars($editingBeneficiary["remarks"] ?? "") ?></textarea>
 
                     </div>
 
@@ -184,9 +198,17 @@ declare(strict_types=1);
                         type="submit"
                         class="btn btn--secondary">
 
-                        Add Beneficiary
+                        <?= htmlspecialchars($submitLabel) ?>
 
                     </button>
+                    <?php if ($isEditing): ?>
+                        <a
+                            href="/members/create?step=beneficiaries"
+                            class="btn btn--ghost">
+                            Cancel
+                        </a>
+                    <?php endif; ?>
+
 
                 </div>
 
@@ -197,10 +219,16 @@ declare(strict_types=1);
         <hr>
 
         <!-- ========================================================= -->
-        <!-- Current Beneficiaries -->
+        <!-- Beneficiary List -->
         <!-- ========================================================= -->
 
         <div class="beneficiary-manager__list">
+
+            <h3>
+
+                Beneficiary List
+
+            </h3>
 
             <?php if (empty($beneficiaries)): ?>
 
@@ -220,40 +248,70 @@ declare(strict_types=1);
 
                             <strong>
 
-                                <?= htmlspecialchars(trim(implode(' ', array_filter([
-                                    $beneficiary['first_name'] ?? '',
-                                    $beneficiary['middle_name'] ?? '',
-                                    $beneficiary['last_name'] ?? '',
-                                    $beneficiary['suffix'] ?? '',
-                                ])))) ?>
+                                <?= htmlspecialchars(
+                                    trim(
+                                        implode(
+                                            ' ',
+                                            array_filter([
+                                                $beneficiary['first_name'] ?? '',
+                                                $beneficiary['middle_name'] ?? '',
+                                                $beneficiary['last_name'] ?? '',
+                                                $beneficiary['suffix'] ?? '',
+                                            ])
+                                        )
+                                    )
+                                ) ?>
 
                             </strong>
 
                             <div>
 
-                                <?= htmlspecialchars($beneficiary['relationship'] ?? '') ?>
+                                <?= htmlspecialchars(
+                                    $beneficiary['relationship'] ?? ''
+                                ) ?>
 
                             </div>
 
                         </div>
-                        <form
-                            method="POST"
-                            action="/members/beneficiaries/delete">
 
-                            <input
-                                type="hidden"
-                                name="index"
-                                value="<?= $index ?>">
+                        <div class="beneficiary-card__actions">
 
-                            <button
-                                type="submit"
-                                class="btn btn--danger btn--sm">
+                            <a
 
-                                Remove
 
-                            </button>
+                                href="/members/create?step=beneficiaries&edit=<?= $index ?>"
 
-                        </form>
+
+                                class="btn btn--secondary btn--sm">
+
+
+                                Edit
+
+
+                            </a>
+
+
+
+                            <form
+                                method="POST"
+                                action="/members/beneficiaries/delete">
+
+                                <input
+                                    type="hidden"
+                                    name="index"
+                                    value="<?= $index ?>">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn--danger btn--sm">
+
+                                    Remove
+
+                                </button>
+
+                            </form>
+
+                        </div>
 
                     </div>
 
@@ -285,26 +343,3 @@ declare(strict_types=1);
     </div>
 
 </div>
-
-<?php
-
-/*
-|--------------------------------------------------------------------------
-| End of Beneficiaries Wizard Page
-|--------------------------------------------------------------------------
-|
-| Input Types Used
-|
-| personName
-| uppercase
-| title
-| birthdate
-| percentage
-|
-| All formatting and input behavior is handled by:
-|
-| public/js/wizard.js
-|
-*/
-
-// END OF FILE

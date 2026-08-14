@@ -4,20 +4,37 @@ declare(strict_types=1);
 
 namespace App\Features\Members\Services;
 
+use App\Features\Members\Support\EditSession;
 use App\Features\Members\Support\RegistrationSession;
 
 final class BeneficiaryService
 {
     public function __construct(
-        private readonly RegistrationSession $session,
+        private readonly RegistrationSession $registrationSession,
+        private readonly EditSession $editSession,
     ) {}
+
+    /**
+     * Return the session belonging to the current wizard mode.
+     *
+     * Existing member edits use EditSession; new registrations use
+     * RegistrationSession.
+     */
+    private function activeSession(): EditSession|RegistrationSession
+    {
+        if ($this->editSession->has()) {
+            return $this->editSession;
+        }
+
+        return $this->registrationSession;
+    }
 
     /**
      * @return array<int, array<string, mixed>>
      */
     public function all(): array
     {
-        return $this->session->beneficiaries();
+        return $this->activeSession()->beneficiaries();
     }
 
     /**
@@ -25,11 +42,12 @@ final class BeneficiaryService
      */
     public function add(array $beneficiary): void
     {
-        $beneficiaries = $this->session->beneficiaries();
+        $session = $this->activeSession();
+        $beneficiaries = $session->beneficiaries();
 
         $beneficiaries[] = $beneficiary;
 
-        $this->session->setBeneficiaries($beneficiaries);
+        $session->setBeneficiaries($beneficiaries);
     }
 
     /**
@@ -39,20 +57,28 @@ final class BeneficiaryService
         int $index,
         array $beneficiary,
     ): void {
-        $beneficiaries = $this->session->beneficiaries();
+        $session = $this->activeSession();
+        $beneficiaries = $session->beneficiaries();
 
         if (! isset($beneficiaries[$index])) {
             return;
         }
 
+        $existing = $beneficiaries[$index];
+
+        if (isset($existing['id'])) {
+            $beneficiary['id'] = (int) $existing['id'];
+        }
+
         $beneficiaries[$index] = $beneficiary;
 
-        $this->session->setBeneficiaries($beneficiaries);
+        $session->setBeneficiaries($beneficiaries);
     }
 
     public function delete(int $index): void
     {
-        $beneficiaries = $this->session->beneficiaries();
+        $session = $this->activeSession();
+        $beneficiaries = $session->beneficiaries();
 
         if (! isset($beneficiaries[$index])) {
             return;
@@ -60,7 +86,7 @@ final class BeneficiaryService
 
         unset($beneficiaries[$index]);
 
-        $this->session->setBeneficiaries(
+        $session->setBeneficiaries(
             array_values($beneficiaries),
         );
     }
@@ -70,7 +96,7 @@ final class BeneficiaryService
      */
     public function find(int $index): ?array
     {
-        return $this->session->beneficiaries()[$index] ?? null;
+        return $this->activeSession()->beneficiaries()[$index] ?? null;
     }
 
     public function count(): int
@@ -82,6 +108,6 @@ final class BeneficiaryService
 
     public function clear(): void
     {
-        $this->session->setBeneficiaries([]);
+        $this->activeSession()->setBeneficiaries([]);
     }
 }

@@ -264,74 +264,151 @@ $statusLabel = $formatLabel(
 
             </div>
 
-            <?php
-            $allowedStatuses = match ($member['status'] ?? '') {
-                'Pending' => [
-                    'Active',
-                    'Inactive',
-                ],
-                'Active' => [
-                    'Inactive',
-                ],
-                'Inactive' => [
-                    'Active',
-                ],
-                default => [],
-            };
-            ?>
+            <?php if (($member['status'] ?? '') === 'Pending'): ?>
 
-            <?php if ($allowedStatuses !== []): ?>
+                <div class="form-group">
 
-                <form
-                    method="POST"
-                    action="/members/<?= (int) ($member['id'] ?? 0) ?>/status">
+                    <span class="form-label">
+                        Approval
+                    </span>
 
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="member_status">
-
-                            Change Status
-
-                        </label>
-
-                        <select
-                            class="form-control"
-                            id="member_status"
-                            name="status"
-                            required>
-
-                            <option value="">
-                                -- Select Status --
-                            </option>
-
-                            <?php foreach ($allowedStatuses as $allowedStatus): ?>
-
-                                <option value="<?= htmlspecialchars($allowedStatus) ?>">
-                                    <?= htmlspecialchars($allowedStatus) ?>
-                                </option>
-
-                            <?php endforeach; ?>
-
-                        </select>
-
+                    <div class="form-value">
+                        This member is awaiting approval.
                     </div>
+
+                </div>
+
+                <div class="form-group form-group--full">
 
                     <div class="form-actions">
 
-                        <button
-                            type="submit"
-                            class="btn btn--secondary"
-                            onclick="return confirm('Are you sure you want to change this member\'s status?');">
+                        <form
+                            method="POST"
+                            action="/members/<?= (int) ($member['id'] ?? 0) ?>/status"
+                            onsubmit="return confirm('Are you sure you want to approve <?= htmlspecialchars($fullName !== '' ? $fullName : 'this member', ENT_QUOTES) ?>? The member will become Active.');">
 
-                            Change Status
+                            <input
+                                type="hidden"
+                                name="status"
+                                value="Active">
 
-                        </button>
+                            <button
+                                type="submit"
+                                class="btn btn--primary">
+
+                                Approve Member
+
+                            </button>
+
+                        </form>
+
+                        <form
+                            method="POST"
+                            action="/members/<?= (int) ($member['id'] ?? 0) ?>/status"
+                            onsubmit="return confirm('Are you sure you want to mark <?= htmlspecialchars($fullName !== '' ? $fullName : 'this member', ENT_QUOTES) ?> as Inactive?');">
+
+                            <input
+                                type="hidden"
+                                name="status"
+                                value="Inactive">
+
+                            <button
+                                type="submit"
+                                class="btn btn--secondary">
+
+                                Mark Inactive
+
+                            </button>
+
+                        </form>
 
                     </div>
 
-                </form>
+                </div>
+
+            <?php elseif (($member['status'] ?? '') === 'Active'): ?>
+
+                <div class="form-group">
+
+                    <span class="form-label">
+                        Member Status
+                    </span>
+
+                    <div class="form-value">
+                        This member is currently active.
+                    </div>
+
+                </div>
+
+                <div class="form-group form-group--full">
+
+                    <div class="form-actions">
+
+                        <form
+                            method="POST"
+                            action="/members/<?= (int) ($member['id'] ?? 0) ?>/status"
+                            onsubmit="return confirm('Are you sure you want to deactivate <?= htmlspecialchars($fullName !== '' ? $fullName : 'this member', ENT_QUOTES) ?>?');">
+
+                            <input
+                                type="hidden"
+                                name="status"
+                                value="Inactive">
+
+                            <button
+                                type="submit"
+                                class="btn btn--secondary">
+
+                                Deactivate Member
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            <?php elseif (($member['status'] ?? '') === 'Inactive'): ?>
+
+                <div class="form-group">
+
+                    <span class="form-label">
+                        Member Status
+                    </span>
+
+                    <div class="form-value">
+                        This member is currently inactive.
+                    </div>
+
+                </div>
+
+                <div class="form-group form-group--full">
+
+                    <div class="form-actions">
+
+                        <form
+                            method="POST"
+                            action="/members/<?= (int) ($member['id'] ?? 0) ?>/status"
+                            onsubmit="return confirm('Are you sure you want to reactivate <?= htmlspecialchars($fullName !== '' ? $fullName : 'this member', ENT_QUOTES) ?>? The member will become Active.');">
+
+                            <input
+                                type="hidden"
+                                name="status"
+                                value="Active">
+
+                            <button
+                                type="submit"
+                                class="btn btn--primary">
+
+                                Reactivate Member
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
 
             <?php else: ?>
 

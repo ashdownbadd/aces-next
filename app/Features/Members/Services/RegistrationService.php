@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Features\Members\Services;
 
+use App\Features\ActivityLogs\Services\ActivityLogService;
 use App\Features\Members\DTOs\AddressData;
 use App\Features\Members\DTOs\BeneficiaryData;
 use App\Features\Members\DTOs\ContactData;
@@ -15,12 +16,15 @@ use App\Features\Members\DTOs\PersonalData;
 use App\Features\Members\Repositories\MemberRepository;
 use App\Features\Members\Support\RegistrationSession;
 use App\Features\Members\Support\RegistrationWorkflow;
+use App\Foundation\Session;
 
 final class RegistrationService
 {
     public function __construct(
         private readonly RegistrationSession $session,
         private readonly MemberRepository $members,
+        private readonly ActivityLogService $activityLog,
+        private readonly Session $userSession,
     ) {}
 
     /**
@@ -85,9 +89,51 @@ final class RegistrationService
             $status,
         );
 
+        $userId = $this->userSession->get('user_id');
+
+        $userId = $userId !== null
+            ? (int) $userId
+            : null;
+
+        foreach ($registration->beneficiaries as $beneficiary) {
+            $this->activityLog->record(
+                userId: $userId,
+                action: 'MEMBER_BENEFICIARY_ADDED',
+                description: sprintf(
+                    'Beneficiary "%s" was added to Member #%s.',
+                    $this->beneficiaryName($beneficiary),
+                    $memberNumber,
+                ),
+                subjectType: 'Member',
+                subjectId: $memberId,
+                ipAddress: $_SERVER['REMOTE_ADDR'] ?? null,
+            );
+        }
+
         $this->clear();
 
         return $memberId;
+    }
+
+    /**
+     * @param BeneficiaryData $beneficiary
+     */
+    private function beneficiaryName(
+        BeneficiaryData $beneficiary,
+    ): string {
+        $name = trim(
+            implode(
+                ' ',
+                array_filter([
+                    $beneficiary->firstName,
+                    $beneficiary->middleName,
+                    $beneficiary->lastName,
+                    $beneficiary->suffix,
+                ]),
+            ),
+        );
+
+        return $name !== '' ? $name : 'Unnamed beneficiary';
     }
 
     /**

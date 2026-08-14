@@ -26,6 +26,7 @@ final class MemberRepository extends Repository
      */
     public function all(
         string $search = '',
+        string $status = '',
         int $limit = 25,
         int $offset = 0,
     ): array {
@@ -62,20 +63,17 @@ final class MemberRepository extends Repository
     ";
 
         $parameters = [];
+        $conditions = [];
 
         $search = trim($search);
+        $status = trim($status);
 
         if ($search !== '') {
-            $sql .= "
-            WHERE
+            $conditions[] = "(
                 m.member_number LIKE :search_member_number
-
                 OR mp.first_name LIKE :search_first_name
-
                 OR mp.middle_name LIKE :search_middle_name
-
                 OR mp.last_name LIKE :search_last_name
-
                 OR CONCAT_WS(
                     ' ',
                     mp.first_name,
@@ -83,9 +81,8 @@ final class MemberRepository extends Repository
                     mp.last_name,
                     NULLIF(mp.suffix, '')
                 ) LIKE :search_full_name
-
                 OR mc.mobile_number LIKE :search_mobile
-        ";
+            )";
 
             $searchValue = '%' . $search . '%';
 
@@ -97,6 +94,17 @@ final class MemberRepository extends Repository
                 'search_full_name' => $searchValue,
                 'search_mobile' => $searchValue,
             ];
+        }
+
+        if ($status !== '') {
+            $conditions[] = "m.status = :status";
+            $parameters['status'] = $status;
+        }
+
+        if ($conditions !== []) {
+            $sql .= "
+            WHERE " . implode("
+                AND ", $conditions);
         }
 
         $sql .= "
@@ -139,6 +147,7 @@ final class MemberRepository extends Repository
      */
     public function count(
         string $search = '',
+        string $status = '',
     ): int {
         $pdo = $this->connection();
 
@@ -155,20 +164,17 @@ final class MemberRepository extends Repository
     ";
 
         $parameters = [];
+        $conditions = [];
 
         $search = trim($search);
+        $status = trim($status);
 
         if ($search !== '') {
-            $sql .= "
-            WHERE
+            $conditions[] = "(
                 m.member_number LIKE :search_member_number
-
                 OR mp.first_name LIKE :search_first_name
-
                 OR mp.middle_name LIKE :search_middle_name
-
                 OR mp.last_name LIKE :search_last_name
-
                 OR CONCAT_WS(
                     ' ',
                     mp.first_name,
@@ -176,9 +182,8 @@ final class MemberRepository extends Repository
                     mp.last_name,
                     NULLIF(mp.suffix, '')
                 ) LIKE :search_full_name
-
                 OR mc.mobile_number LIKE :search_mobile
-        ";
+            )";
 
             $searchValue = '%' . $search . '%';
 
@@ -190,6 +195,17 @@ final class MemberRepository extends Repository
                 'search_full_name' => $searchValue,
                 'search_mobile' => $searchValue,
             ];
+        }
+
+        if ($status !== '') {
+            $conditions[] = "m.status = :status";
+            $parameters['status'] = $status;
+        }
+
+        if ($conditions !== []) {
+            $sql .= "
+            WHERE " . implode("
+                AND ", $conditions);
         }
 
         $statement = $pdo->prepare($sql);

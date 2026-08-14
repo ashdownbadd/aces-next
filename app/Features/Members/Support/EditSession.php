@@ -10,15 +10,13 @@ final class EditSession
 {
     private const KEY = 'member_edit';
 
+    private const ORIGINAL_BENEFICIARIES_KEY =
+    '_original_beneficiaries';
+
     public function __construct(
         private readonly Session $session,
     ) {}
 
-    /**
-     * Store one edit wizard step.
-     *
-     * @param array<string, mixed> $data
-     */
     public function putStep(
         string $step,
         array $data,
@@ -33,22 +31,12 @@ final class EditSession
         );
     }
 
-    /**
-     * Get one edit wizard step.
-     *
-     * @return array<string, mixed>
-     */
     public function getStep(
         string $step,
     ): array {
         return $this->all()[$step] ?? [];
     }
 
-    /**
-     * Get the complete edit session.
-     *
-     * @return array<string, mixed>
-     */
     public function all(): array
     {
         return $this->session->get(
@@ -57,9 +45,6 @@ final class EditSession
         );
     }
 
-    /**
-     * Store the member being edited.
-     */
     public function setMemberId(
         int $memberId,
     ): void {
@@ -73,9 +58,6 @@ final class EditSession
         );
     }
 
-    /**
-     * Return the member currently being edited.
-     */
     public function memberId(): ?int
     {
         $memberId = $this->all()['_member_id'] ?? null;
@@ -109,6 +91,34 @@ final class EditSession
             self::KEY,
             $edit,
         );
+    }
+
+    /**
+     * Store the beneficiary collection as it existed
+     * when the edit session was started.
+     *
+     * @param array<int, array<string, mixed>> $beneficiaries
+     */
+    public function setOriginalBeneficiaries(
+        array $beneficiaries,
+    ): void {
+        $edit = $this->all();
+
+        $edit[self::ORIGINAL_BENEFICIARIES_KEY] =
+            $beneficiaries;
+
+        $this->session->put(
+            self::KEY,
+            $edit,
+        );
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function originalBeneficiaries(): array
+    {
+        return $this->all()[self::ORIGINAL_BENEFICIARIES_KEY] ?? [];
     }
 
     public function clear(): void

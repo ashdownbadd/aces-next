@@ -50,6 +50,26 @@ final class MembersController
             )
         );
 
+        $status = trim(
+            (string) $request->query(
+                'status',
+                '',
+            )
+        );
+
+        if (! in_array(
+            $status,
+            [
+                '',
+                'Pending',
+                'Active',
+                'Inactive',
+            ],
+            true,
+        )) {
+            $status = '';
+        }
+
         $page = max(
             1,
             (int) $request->query(
@@ -66,6 +86,7 @@ final class MembersController
         $resultCount =
             $this->memberService->count(
                 $search,
+                $status,
             );
 
         $totalPages = max(
@@ -91,6 +112,7 @@ final class MembersController
         $members =
             $this->memberService->all(
                 $search,
+                $status,
                 $perPage,
                 $offset,
             );
@@ -124,6 +146,9 @@ final class MembersController
 
                     'search' =>
                     $search,
+
+                    'status' =>
+                    $status,
 
                     'currentPage' =>
                     $page,

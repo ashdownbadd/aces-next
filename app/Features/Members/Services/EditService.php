@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace App\Features\Members\Services;
 
+use App\Features\ActivityLogs\Services\ActivityLogService;
 use App\Features\Members\Repositories\MemberRepository;
 use App\Features\Members\Support\EditSession;
+use App\Foundation\Session;
 
 final class EditService
 {
     public function __construct(
         private readonly EditSession $session,
         private readonly MemberRepository $members,
+        private readonly ActivityLogService $activityLog,
+        private readonly Session $userSession,
     ) {}
 
     /**
@@ -247,8 +251,15 @@ final class EditService
         |--------------------------------------------------------------------------
         */
 
+        $originalBeneficiaries =
+            $member['beneficiaries'] ?? [];
+
         $this->session->setBeneficiaries(
-            $member['beneficiaries'] ?? [],
+            $originalBeneficiaries,
+        );
+
+        $this->session->setOriginalBeneficiaries(
+            $originalBeneficiaries,
         );
 
         return true;
@@ -343,7 +354,169 @@ final class EditService
             $registration,
         );
 
+        $userId = $this->userSession->get('user_id');
+
+        $this->activityLog->record(
+            userId: $userId !== null
+                ? (int) $userId
+                : null,
+            action: 'MEMBER_UPDATED',
+            description: sprintf(
+                'Member #%d was updated.',
+                $memberId,
+            ),
+            subjectType: 'Member',
+            subjectId: $memberId,
+            ipAddress: $_SERVER['REMOTE_ADDR'] ?? null,
+        );
+
+        $this->logBeneficiaryChanges(
+            $memberId,
+            $this->session->originalBeneficiaries(),
+            $data['beneficiaries'] ?? [],
+            $userId !== null ? (int) $userId : null,
+        );
+
         $this->clear();
+    }
+
+    /**
+     * Record beneficiary collection changes made during an edit.
+     *
+     * Existing beneficiaries retain their original database ID in the
+     * edit session so a changed record can be identified as an update.
+     *
+     * @param array<int, array<string, mixed>> $original
+     * @param array<int, array<string, mixed>> $current
+     */
+    private function logBeneficiaryChanges(
+        int $memberId,
+        array $original,
+        array $current,
+        ?int $userId,
+    ): void {
+        $originalById = [];
+
+        foreach ($original as $beneficiary) {
+            if (isset($beneficiary['id'])) {
+                $originalById[(int) $beneficiary['id']] = $beneficiary;
+            }
+        }
+
+        $currentIds = [];
+
+        foreach ($current as $beneficiary) {
+            $beneficiaryId = isset($beneficiary['id'])
+                ? (int) $beneficiary['id']
+                : null;
+
+            if ($beneficiaryId === null) {
+                $this->activityLog->record(
+                    userId: $userId,
+                    action: 'MEMBER_BENEFICIARY_ADDED',
+                    description: sprintf(
+                        'Beneficiary "%s" was added to Member #%d.',
+                        $this->beneficiaryName($beneficiary),
+                        $memberId,
+                    ),
+                    subjectType: 'Member',
+                    subjectId: $memberId,
+                    ipAddress: $_SERVER['REMOTE_ADDR'] ?? null,
+                );
+
+                continue;
+            }
+
+            $currentIds[$beneficiaryId] = true;
+
+            if (
+                isset($originalById[$beneficiaryId]) &&
+                $this->beneficiaryChanged(
+                    $originalById[$beneficiaryId],
+                    $beneficiary,
+                )
+            ) {
+                $this->activityLog->record(
+                    userId: $userId,
+                    action: 'MEMBER_BENEFICIARY_UPDATED',
+                    description: sprintf(
+                        'Beneficiary "%s" was updated for Member #%d.',
+                        $this->beneficiaryName($beneficiary),
+                        $memberId,
+                    ),
+                    subjectType: 'Member',
+                    subjectId: $memberId,
+                    ipAddress: $_SERVER['REMOTE_ADDR'] ?? null,
+                );
+            }
+        }
+
+        foreach ($originalById as $beneficiaryId => $beneficiary) {
+            if (! isset($currentIds[$beneficiaryId])) {
+                $this->activityLog->record(
+                    userId: $userId,
+                    action: 'MEMBER_BENEFICIARY_REMOVED',
+                    description: sprintf(
+                        'Beneficiary "%s" was removed from Member #%d.',
+                        $this->beneficiaryName($beneficiary),
+                        $memberId,
+                    ),
+                    subjectType: 'Member',
+                    subjectId: $memberId,
+                    ipAddress: $_SERVER['REMOTE_ADDR'] ?? null,
+                );
+            }
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $before
+     * @param array<string, mixed> $after
+     */
+    private function beneficiaryChanged(
+        array $before,
+        array $after,
+    ): bool {
+        $fields = [
+            'first_name',
+            'middle_name',
+            'last_name',
+            'suffix',
+            'relationship',
+            'birth_date',
+            'remarks',
+        ];
+
+        foreach ($fields as $field) {
+            if (
+                (string) ($before[$field] ?? '') !==
+                (string) ($after[$field] ?? '')
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array<string, mixed> $beneficiary
+     */
+    private function beneficiaryName(array $beneficiary): string
+    {
+        $name = trim(
+            implode(
+                ' ',
+                array_filter([
+                    $beneficiary['first_name'] ?? '',
+                    $beneficiary['middle_name'] ?? '',
+                    $beneficiary['last_name'] ?? '',
+                    $beneficiary['suffix'] ?? '',
+                ]),
+            ),
+        );
+
+        return $name !== '' ? $name : 'Unnamed beneficiary';
     }
 
     /**

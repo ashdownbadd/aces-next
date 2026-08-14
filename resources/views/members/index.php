@@ -16,6 +16,9 @@ $resultCount =
 $search =
     $search ?? '';
 
+$status =
+    $status ?? '';
+
 $currentPage =
     $currentPage ?? 1;
 
@@ -35,12 +38,14 @@ $successMessage =
     $successMessage ?? null;
 
 /**
- * Build a pagination URL while preserving the search query.
+ * Build a pagination URL while preserving
+ * the current search and status filters.
  */
 $paginationUrl = static function (
     int $page,
 ) use (
-    $search
+    $search,
+    $status
 ): string {
     $query = [
         'page' => $page,
@@ -48,6 +53,10 @@ $paginationUrl = static function (
 
     if ($search !== '') {
         $query['search'] = $search;
+    }
+
+    if ($status !== '') {
+        $query['status'] = $status;
     }
 
     return '/members?' .
@@ -119,6 +128,66 @@ $paginationUrl = static function (
                     placeholder="Search member..."
                     autocomplete="off">
 
+                <select
+                    class="input members__status-filter"
+                    name="status"
+                    aria-label="Filter members by status"
+                    onchange="this.form.submit()">
+
+                    <option
+                        value=""
+                        <?= $status === ''
+                            ? 'selected'
+                            : '' ?>>
+
+                        All Statuses
+
+                    </option>
+
+                    <option
+                        value="Pending"
+                        <?= $status === 'Pending'
+                            ? 'selected'
+                            : '' ?>>
+
+                        Pending
+
+                    </option>
+
+                    <option
+                        value="Active"
+                        <?= $status === 'Active'
+                            ? 'selected'
+                            : '' ?>>
+
+                        Active
+
+                    </option>
+
+                    <option
+                        value="Inactive"
+                        <?= $status === 'Inactive'
+                            ? 'selected'
+                            : '' ?>>
+
+                        Inactive
+
+                    </option>
+
+                </select>
+
+                <noscript>
+
+                    <button
+                        type="submit"
+                        class="btn">
+
+                        Filter
+
+                    </button>
+
+                </noscript>
+
             </form>
 
             <span class="members__total">
@@ -180,26 +249,60 @@ $paginationUrl = static function (
                                     👥
                                 </div>
 
-                                <?php if ($search !== ''): ?>
+                                <?php if (
+                                    $search !== '' ||
+                                    $status !== ''
+                                ): ?>
 
                                     <h3>
                                         No members found.
                                     </h3>
 
                                     <p>
-                                        No members matched
-                                        <strong>
-                                            "<?= htmlspecialchars(
-                                                    $search
-                                                ) ?>"
-                                        </strong>.
+
+                                        <?php if (
+                                            $search !== ''
+                                        ): ?>
+
+                                            No members matched
+                                            <strong>
+                                                "<?= htmlspecialchars(
+                                                        $search
+                                                    ) ?>"
+                                            </strong>
+
+                                        <?php endif; ?>
+
+                                        <?php if (
+                                            $search !== '' &&
+                                            $status !== ''
+                                        ): ?>
+
+                                            with status
+
+                                        <?php endif; ?>
+
+                                        <?php if (
+                                            $status !== ''
+                                        ): ?>
+
+                                            <strong>
+                                                <?= htmlspecialchars(
+                                                    $status
+                                                ) ?>
+                                            </strong>
+
+                                        <?php endif; ?>
+
+                                        .
+
                                     </p>
 
                                     <a
                                         href="/members"
                                         class="btn">
 
-                                        Clear Search
+                                        Clear Filters
 
                                     </a>
 
@@ -234,7 +337,9 @@ $paginationUrl = static function (
 
                 <?php else: ?>
 
-                    <?php foreach ($members as $member): ?>
+                    <?php foreach (
+                        $members as $member
+                    ): ?>
 
                         <tr>
 
@@ -242,7 +347,8 @@ $paginationUrl = static function (
 
                                 <?= htmlspecialchars(
                                     (string) (
-                                        $member['member_number'] ?? '—'
+                                        $member['member_number']
+                                        ?? '—'
                                     )
                                 ) ?>
 
@@ -252,7 +358,8 @@ $paginationUrl = static function (
 
                                 <?= htmlspecialchars(
                                     (string) (
-                                        $member['full_name'] ?? '—'
+                                        $member['full_name']
+                                        ?? '—'
                                     )
                                 ) ?>
 
@@ -262,7 +369,8 @@ $paginationUrl = static function (
 
                                 <?= htmlspecialchars(
                                     (string) (
-                                        $member['mobile_number'] ?? '—'
+                                        $member['mobile_number']
+                                        ?? '—'
                                     )
                                 ) ?>
 
@@ -274,7 +382,8 @@ $paginationUrl = static function (
 
                                     <?= htmlspecialchars(
                                         (string) (
-                                            $member['status'] ?? '—'
+                                            $member['status']
+                                            ?? '—'
                                         )
                                     ) ?>
 
@@ -346,7 +455,10 @@ $paginationUrl = static function (
                     of
                     <?= number_format($resultCount) ?>
 
-                    <?php if ($search !== ''): ?>
+                    <?php if (
+                        $search !== '' ||
+                        $status !== ''
+                    ): ?>
 
                         matching members
 
@@ -385,7 +497,9 @@ $paginationUrl = static function (
                 <?php else: ?>
 
                     <span class="btn btn--sm btn--disabled">
+
                         ← Previous
+
                     </span>
 
                 <?php endif; ?>
@@ -393,12 +507,6 @@ $paginationUrl = static function (
                 <div class="members__pagination-pages">
 
                     <?php
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Determine visible page numbers
-                    |--------------------------------------------------------------------------
-                    */
 
                     $startPage = max(
                         1,
@@ -412,7 +520,9 @@ $paginationUrl = static function (
 
                     ?>
 
-                    <?php if ($startPage > 1): ?>
+                    <?php if (
+                        $startPage > 1
+                    ): ?>
 
                         <a
                             href="<?= htmlspecialchars(
@@ -424,11 +534,15 @@ $paginationUrl = static function (
 
                         </a>
 
-                        <?php if ($startPage > 2): ?>
+                        <?php if (
+                            $startPage > 2
+                        ): ?>
 
                             <span
                                 class="members__pagination-ellipsis">
+
                                 …
+
                             </span>
 
                         <?php endif; ?>
@@ -476,12 +590,15 @@ $paginationUrl = static function (
                     ): ?>
 
                         <?php if (
-                            $endPage < $totalPages - 1
+                            $endPage <
+                            $totalPages - 1
                         ): ?>
 
                             <span
                                 class="members__pagination-ellipsis">
+
                                 …
+
                             </span>
 
                         <?php endif; ?>
@@ -521,7 +638,9 @@ $paginationUrl = static function (
                 <?php else: ?>
 
                     <span class="btn btn--sm btn--disabled">
+
                         Next →
+
                     </span>
 
                 <?php endif; ?>
