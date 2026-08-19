@@ -12,6 +12,68 @@ final readonly class ActivityLogService
         private ActivityLogRepository $repository,
     ) {}
 
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function all(
+        string $search = '',
+        string $action = '',
+        int $userId = 0,
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+        int $limit = 25,
+        int $offset = 0,
+    ): array {
+        return $this->repository->all(
+            $search,
+            $action,
+            $userId,
+            $dateFrom,
+            $dateTo,
+            $limit,
+            $offset,
+        );
+    }
+
+    public function count(
+        string $search = '',
+        string $action = '',
+        int $userId = 0,
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+    ): int {
+        return $this->repository->count(
+            $search,
+            $action,
+            $userId,
+            $dateFrom,
+            $dateTo,
+        );
+    }
+
+    /** @return array<int, string> */
+    public function actions(): array
+    {
+        return $this->repository->actions();
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public function users(): array
+    {
+        return $this->repository->users();
+    }
+
+    /**
+     * Retrieve one activity log by ID.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function find(int $id): ?array
+    {
+        return $this->repository->find($id);
+    }
+
     /**
      * Record a system activity.
      *

@@ -749,7 +749,7 @@ $humanize = static function (?string $value): string {
         <?php
 
         $previousStep = 'beneficiaries';
-        $submitLabel = 'Register Member';
+        $submitLabel = $isEditing ? 'Update Member' : 'Register Member';
 
         require __DIR__ . '/../partials/wizard-navigation.php';
 

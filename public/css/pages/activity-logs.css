@@ -1,0 +1,367 @@
+/* ==========================================================================
+   Activity Logs Page
+   ========================================================================== */
+
+.activity-logs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+/* Filters */
+
+.activity-logs__filters {
+  display: grid;
+  grid-template-columns:
+    minmax(220px, 1.6fr)
+    minmax(180px, 1fr)
+    minmax(180px, 1fr)
+    repeat(2, minmax(150px, 0.8fr))
+    auto;
+  align-items: end;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.activity-logs__filters > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.activity-logs__filters label {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.activity-logs__filters input,
+.activity-logs__filters select {
+  width: 100%;
+}
+
+.activity-logs__filter-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+/* Table */
+
+.activity-logs__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.activity-logs__table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+}
+
+.activity-logs__table th,
+.activity-logs__table td {
+  padding: var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.activity-logs__table th {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  background: #f8fafc;
+}
+
+.activity-logs__table td {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.activity-logs__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.activity-logs__table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.activity-logs__table td:first-child {
+  white-space: nowrap;
+}
+
+.activity-logs__description {
+  min-width: 280px;
+  max-width: 460px;
+  overflow-wrap: anywhere;
+}
+
+/* Action */
+
+.activity-logs__action {
+  white-space: nowrap;
+}
+
+.activity-logs__action-link {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.activity-logs__action-link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-full);
+}
+
+.activity-logs__badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.activity-logs__badge--created,
+.activity-logs__badge--beneficiary-added {
+  background: #dcfce7;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+.activity-logs__badge--updated,
+.activity-logs__badge--beneficiary-updated {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+
+.activity-logs__badge--status-changed {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+.activity-logs__badge--beneficiary-removed {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.activity-logs__badge--default {
+  background: var(--color-surface-muted, #f1f5f9);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* Empty state */
+
+.activity-logs__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+}
+
+.activity-logs__empty h3,
+.activity-logs__empty p {
+  margin: 0;
+}
+
+.activity-logs__empty p {
+  color: var(--color-text-muted);
+}
+
+/* Pagination */
+
+.activity-logs__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.activity-logs__pagination-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Detail */
+
+.activity-logs__detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.activity-logs__detail .card {
+  width: 100%;
+}
+
+.activity-logs__detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.activity-logs__detail-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.activity-logs__detail-header h2 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  color: var(--color-text);
+}
+
+.activity-logs__detail-id {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.activity-logs__detail-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin: 0;
+  padding-top: var(--space-6);
+}
+
+.activity-logs__detail-list > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.activity-logs__detail-list dt {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.activity-logs__detail-list dd {
+  margin: 0;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.activity-logs__detail-list > div:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+  .activity-logs__filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .activity-logs__filter-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .activity-logs__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: var(--space-4);
+  }
+
+  .activity-logs__filter-actions {
+    grid-column: 1 / -1;
+  }
+
+  .activity-logs__pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .activity-logs__pagination-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .activity-logs__detail-header {
+    flex-direction: column;
+  }
+
+  .activity-logs__detail-list {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-logs__detail-list > div:nth-child(3) {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .activity-logs__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-logs__filter-actions {
+    grid-column: auto;
+    flex-wrap: wrap;
+  }
+
+  .activity-logs__filter-actions .btn {
+    flex: 1;
+  }
+
+  .activity-logs__detail-header h2 {
+    font-size: var(--font-size-lg);
+  }
+}
+CSS
+
+# syntax check PHP
+php -l "$base/resources/views/activity_logs/index.php"
+php -l "$base/resources/views/activity_logs/show.php"
+
+# show diffs against original
+cd /tmp/aces/aces-next && git diff --no-index -- resources/views/activity_logs/index.php /dev/null >/dev/null 2>&1 || true

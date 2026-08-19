@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Features\ActivityLogs\Controllers\ActivityLogController;
 use App\Features\Authentication\Controllers\LoginController;
 use App\Features\Dashboard\Controllers\DashboardController;
 use App\Features\Members\Controllers\MembersController;
@@ -33,6 +34,30 @@ $router->get(
         AuthMiddleware::class,
     ],
 );
+
+/*
+|--------------------------------------------------------------------------
+| Activity Logs
+|--------------------------------------------------------------------------
+*/
+
+$router->get(
+    '/activity-logs',
+    [ActivityLogController::class, 'index'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
+    '/activity-logs/{id}',
+    [ActivityLogController::class, 'show'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+
 
 /*
 |--------------------------------------------------------------------------

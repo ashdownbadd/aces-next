@@ -95,6 +95,19 @@ final class RegistrationService
             ? (int) $userId
             : null;
 
+        $this->activityLog->record(
+            userId: $userId,
+            action: 'MEMBER_CREATED',
+            description: sprintf(
+                'Member #%s was registered with status %s.',
+                $memberNumber,
+                $status,
+            ),
+            subjectType: 'Member',
+            subjectId: $memberId,
+            ipAddress: $_SERVER['REMOTE_ADDR'] ?? null,
+        );
+
         foreach ($registration->beneficiaries as $beneficiary) {
             $this->activityLog->record(
                 userId: $userId,
