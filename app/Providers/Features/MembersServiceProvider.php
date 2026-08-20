@@ -121,6 +121,7 @@ final class MembersServiceProvider extends ServiceProvider
             fn(Container $container) => new BeneficiaryService(
                 $container->get(RegistrationSession::class),
                 $container->get(EditSession::class),
+                $container->get(ActivityLogService::class),
             ),
         );
 
