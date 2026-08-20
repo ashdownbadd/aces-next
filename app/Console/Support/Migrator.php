@@ -28,6 +28,11 @@ final class Migrator
         'CreateMemberEducationsTable',
         'CreateMemberLivelihoodsTable',
         'CreateMemberBeneficiariesTable',
+
+        'CreateLoansTable',
+        'CreateLoanAmortizationsTable',
+        'CreateLoanPaymentsTable',
+        'CreateLoanPaymentAllocationsTable',
     ];
 
     public function __construct(

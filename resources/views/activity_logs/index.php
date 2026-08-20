@@ -7,6 +7,12 @@ $actionLabels = [
     'MEMBER_BENEFICIARY_ADDED' => 'Beneficiary Added',
     'MEMBER_BENEFICIARY_UPDATED' => 'Beneficiary Updated',
     'MEMBER_BENEFICIARY_REMOVED' => 'Beneficiary Removed',
+    'LOAN_PAYMENT_APPLIED' => 'Loan Payment Applied',
+    'LOAN_PAYMENT_REVERSED' => 'Loan Payment Reversed',
+    'LOAN_REACTIVATED' => 'Loan Reactivated',
+    'LOAN_FULLY_PAID' => 'Loan Fully Paid',
+    'LOAN_RELEASED' => 'Loan Released',
+    'LOAN_AMORTIZATION_GENERATED' => 'Loan Amortization Generated',
 ];
 
 $actionBadgeTypes = [
@@ -16,6 +22,12 @@ $actionBadgeTypes = [
     'MEMBER_BENEFICIARY_ADDED' => 'beneficiary-added',
     'MEMBER_BENEFICIARY_UPDATED' => 'beneficiary-updated',
     'MEMBER_BENEFICIARY_REMOVED' => 'beneficiary-removed',
+    'LOAN_PAYMENT_APPLIED' => 'created',
+    'LOAN_PAYMENT_REVERSED' => 'status-changed',
+    'LOAN_REACTIVATED' => 'status-changed',
+    'LOAN_FULLY_PAID' => 'status-changed',
+    'LOAN_RELEASED' => 'created',
+    'LOAN_AMORTIZATION_GENERATED' => 'created',
 ];
 
 $formatActionLabel = static function (string $action) use ($actionLabels): string {
