@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Features\Loans\Services;
 
+use App\Features\Ledger\Services\LedgerService;
+
 use App\Features\ActivityLogs\Services\ActivityLogService;
 use App\Features\Loans\DTOs\LoanData;
 use App\Features\Loans\Domain\AmortizationType;
@@ -22,6 +24,7 @@ final class LoanService
 {
     public function __construct(
         private readonly LoanRepository $repository,
+        private readonly LedgerService $ledger,
         private readonly AmortizationService $amortization,
         private readonly ActivityLogService $activityLog,
         private readonly Session $session,
@@ -353,6 +356,19 @@ final class LoanService
             releasedAt: $this->now(),
             releaseDate: $releaseDate,
             schedule: $schedule,
+            accountingCallback: function () use (
+                $loanId,
+                $actorId,
+                $loan,
+                $releaseDate,
+            ): void {
+                $this->createLoanReleaseJournalVoucher(
+                    loan: $loan,
+                    loanId: $loanId,
+                    actorId: $actorId,
+                    releaseDate: $releaseDate,
+                );
+            },
         );
 
         $this->log(
@@ -410,6 +426,178 @@ final class LoanService
     /**
      * @return array<string, mixed>
      */
+    /**
+     * Create the initial accounting representation of a released loan.
+     *
+     * Current release deductions are mapped to dedicated income/recovery
+     * accounts as a provisional ACES mapping:
+     * - processing fee -> 4040
+     * - insurance -> 4050
+     * - notarial fee -> 4060
+     *
+     * The mapping should be confirmed against the cooperative's accounting
+     * policy before production posting.
+     *
+     * @param array<string,mixed> $loan
+     */
+    private function createLoanReleaseJournalVoucher(
+        array $loan,
+        int $loanId,
+        int $actorId,
+        string $releaseDate,
+    ): void {
+        $principal = round(
+            (float) $loan['principal_amount'],
+            2,
+        );
+
+        $processingFee = round(
+            (float) ($loan['processing_fee'] ?? 0.00),
+            2,
+        );
+
+        $insurance = round(
+            (float) ($loan['insurance'] ?? 0.00),
+            2,
+        );
+
+        $notarialFee = round(
+            (float) ($loan['notarial_fee'] ?? 0.00),
+            2,
+        );
+
+        $netProceeds = round(
+            (float) ($loan['net_proceeds'] ?? 0.00),
+            2,
+        );
+
+        if ($principal <= 0.00 || $netProceeds < 0.00) {
+            throw new RuntimeException(
+                'Invalid loan release accounting amounts.'
+            );
+        }
+
+        $cashAccount = $this->ledger->accountId('1010');
+        $principalAccount = $this->ledger->accountId('1110');
+        $processingFeeAccount = $this->ledger->accountId('4040');
+        $insuranceAccount = $this->ledger->accountId('4050');
+        $notarialAccount = $this->ledger->accountId('4060');
+
+        foreach ([
+            '1010' => $cashAccount,
+            '1110' => $principalAccount,
+            '4040' => $processingFeeAccount,
+            '4050' => $insuranceAccount,
+            '4060' => $notarialAccount,
+        ] as $code => $accountId) {
+            if ($accountId <= 0) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Ledger account %s is not configured.',
+                        $code,
+                    )
+                );
+            }
+        }
+
+        $lines = [
+            [
+                'account_id' => $principalAccount,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Principal released to member',
+                'debit' => $principal,
+                'credit' => 0.00,
+            ],
+            [
+                'account_id' => $cashAccount,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Net loan proceeds paid to member',
+                'debit' => 0.00,
+                'credit' => $netProceeds,
+            ],
+        ];
+
+        if ($processingFee > 0.005) {
+            $lines[] = [
+                'account_id' => $processingFeeAccount,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Processing fee withheld from release',
+                'debit' => 0.00,
+                'credit' => $processingFee,
+            ];
+        }
+
+        if ($insurance > 0.005) {
+            $lines[] = [
+                'account_id' => $insuranceAccount,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Insurance deduction withheld from release',
+                'debit' => 0.00,
+                'credit' => $insurance,
+            ];
+        }
+
+        if ($notarialFee > 0.005) {
+            $lines[] = [
+                'account_id' => $notarialAccount,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Notarial fee withheld from release',
+                'debit' => 0.00,
+                'credit' => $notarialFee,
+            ];
+        }
+
+        /*
+         * The individual release components must reconcile to the
+         * principal amount exactly.
+         */
+        $creditTotal = 0.00;
+
+        foreach ($lines as $line) {
+            $creditTotal += (float) $line['credit'];
+        }
+
+        if (abs($principal - $creditTotal) > 0.005) {
+            throw new RuntimeException(
+                sprintf(
+                    'Loan release accounting does not balance. Principal: %.2f, Credits: %.2f.',
+                    $principal,
+                    $creditTotal,
+                )
+            );
+        }
+
+        $this->ledger->createPending(
+            voucher: [
+                'reference_number' => sprintf(
+                    'LR-%d-%s',
+                    $loanId,
+                    strtoupper(
+                        substr(
+                            bin2hex(random_bytes(3)),
+                            0,
+                            6,
+                        ),
+                    ),
+                ),
+                'transaction_date' => $releaseDate,
+                'particulars' => sprintf(
+                    'Loan #%d release accounting.',
+                    $loanId,
+                ),
+                'source_type' => 'LoanRelease',
+                'source_id' => $loanId,
+            ],
+            lines: $lines,
+            createdBy: $actorId,
+        );
+    }
+
     private function prepareLoanData(LoanData $loan): array
     {
         $processingFee = round(

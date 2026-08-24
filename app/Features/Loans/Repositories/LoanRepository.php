@@ -563,12 +563,22 @@ final class LoanRepository extends Repository
      *
      * @param array<int, array<string, mixed>> $schedule
      */
+    /**
+     * Persist the Active transition and amortization schedule.
+     *
+     * The accounting callback runs before COMMIT so the release and its
+     * Journal Voucher succeed or fail together.
+     *
+     * @param array<int, array<string, mixed>> $schedule
+     * @param callable():void $accountingCallback
+     */
     public function releaseWithSchedule(
         int $id,
         int $userId,
         string $releasedAt,
         string $releaseDate,
         array $schedule,
+        callable $accountingCallback,
     ): void {
         $pdo = $this->connection();
         $pdo->beginTransaction();
@@ -657,6 +667,8 @@ final class LoanRepository extends Repository
                     'remarks' => $row['remarks'] ?? null,
                 ]);
             }
+
+            $accountingCallback();
 
             $pdo->commit();
         } catch (\Throwable $exception) {

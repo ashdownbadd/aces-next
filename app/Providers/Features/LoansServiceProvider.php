@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Providers\Features;
 
 use App\Features\ActivityLogs\Services\ActivityLogService;
+use App\Features\Ledger\Repositories\JournalVoucherRepository;
+use App\Features\Ledger\Services\LedgerService;
 use App\Features\Loans\Repositories\LoanRepository;
 use App\Features\Loans\Repositories\LoanPaymentRepository;
 use App\Features\Loans\Services\AmortizationService;
@@ -39,6 +41,7 @@ final class LoansServiceProvider extends ServiceProvider
             LoanService::class,
             fn (Container $container) => new LoanService(
                 $container->get(LoanRepository::class),
+                $container->get(LedgerService::class),
                 $container->get(AmortizationService::class),
                 $container->get(ActivityLogService::class),
                 $container->get(Session::class),
@@ -56,6 +59,8 @@ final class LoansServiceProvider extends ServiceProvider
             PaymentService::class,
             fn (Container $container) => new PaymentService(
                 $container->get(LoanPaymentRepository::class),
+                $container->get(LedgerService::class),
+                $container->get(JournalVoucherRepository::class),
                 $container->get(LoanRepository::class),
                 $container->get(AmortizationService::class),
                 $container->get(ActivityLogService::class),

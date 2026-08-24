@@ -252,6 +252,133 @@ final class LoanPaymentRepository extends Repository
         }
     }
 
+    /**
+     * Persist a payment, amortization updates, allocations, and accounting
+     * callback in one transaction.
+     *
+     * @param array<string, mixed> $payment
+     * @param array<int, array<string, mixed>> $allocations
+     * @param array<int, array<string, mixed>> $updatedRows
+     * @param callable(int):void $accountingCallback
+     */
+    public function persistPaymentWithAccounting(
+        array $payment,
+        array $allocations,
+        array $updatedRows,
+        callable $accountingCallback,
+    ): int {
+        $pdo = $this->connection();
+        $pdo->beginTransaction();
+
+        try {
+            $statement = $pdo->prepare(
+                'INSERT INTO loan_payments (
+                    loan_id, payment_datetime, amount_paid,
+                    penalty_applied, interest_applied, principal_applied,
+                    excess, type, remarks, created_by
+                 ) VALUES (
+                    :loan_id, :payment_datetime, :amount_paid,
+                    :penalty_applied, :interest_applied, :principal_applied,
+                    :excess, :type, :remarks, :created_by
+                 )'
+            );
+
+            $statement->execute([
+                'loan_id' => $payment['loan_id'],
+                'payment_datetime' => $payment['payment_datetime'],
+                'amount_paid' => $payment['amount_paid'],
+                'penalty_applied' => $payment['penalty_applied'],
+                'interest_applied' => $payment['interest_applied'],
+                'principal_applied' => $payment['principal_applied'],
+                'excess' => $payment['excess'],
+                'type' => $payment['type'],
+                'remarks' => $payment['remarks'],
+                'created_by' => $payment['created_by'],
+            ]);
+
+            $paymentId = (int) $pdo->lastInsertId();
+
+            $update = $pdo->prepare(
+                'UPDATE loan_amortizations
+                 SET rem_principal = :rem_principal,
+                     rem_interest = :rem_interest,
+                     rem_penalty = :rem_penalty,
+                     status = :status,
+                     remarks = :remarks
+                 WHERE id = :id AND loan_id = :loan_id'
+            );
+
+            foreach ($updatedRows as $row) {
+                $update->execute([
+                    'id' => $row['id'],
+                    'loan_id' => $payment['loan_id'],
+                    'rem_principal' => $row['rem_principal'],
+                    'rem_interest' => $row['rem_interest'],
+                    'rem_penalty' => $row['rem_penalty'],
+                    'status' => $row['status'],
+                    'remarks' => $row['remarks'],
+                ]);
+
+                if ($update->rowCount() === 0) {
+                    $exists = $pdo->prepare(
+                        'SELECT COUNT(*)
+                         FROM loan_amortizations
+                         WHERE id = :id
+                           AND loan_id = :loan_id'
+                    );
+
+                    $exists->execute([
+                        'id' => $row['id'],
+                        'loan_id' => $payment['loan_id'],
+                    ]);
+
+                    if ((int) $exists->fetchColumn() !== 1) {
+                        throw new RuntimeException(
+                            sprintf(
+                                'Failed to update amortization row #%d: row does not exist for Loan #%d.',
+                                (int) $row['id'],
+                                (int) $payment['loan_id'],
+                            )
+                        );
+                    }
+                }
+            }
+
+            $allocation = $pdo->prepare(
+                'INSERT INTO loan_payment_allocations (
+                    payment_id, amortization_id, allocation_type, amount
+                 ) VALUES (
+                    :payment_id, :amortization_id, :allocation_type, :amount
+                 )'
+            );
+
+            foreach ($allocations as $item) {
+                if ((float) $item['amount'] <= 0.0) {
+                    continue;
+                }
+
+                $allocation->execute([
+                    'payment_id' => $paymentId,
+                    'amortization_id' => $item['amortization_id'],
+                    'allocation_type' => $item['allocation_type'],
+                    'amount' => $item['amount'],
+                ]);
+            }
+
+            $accountingCallback($paymentId);
+
+            $pdo->commit();
+
+            return $paymentId;
+        } catch (\Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
     /** @return array<string, mixed>|null */
     public function findPayment(int $paymentId): ?array
     {
@@ -297,11 +424,17 @@ final class LoanPaymentRepository extends Repository
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function reversePayment(
+    /**
+     * Reverse a payment and invoke the accounting callback before COMMIT.
+     *
+     * @param callable(int,int):void $accountingCallback
+     */
+    public function reversePaymentWithAccounting(
         int $paymentId,
         int $userId,
         string $reversedAt,
         string $reason,
+        callable $accountingCallback,
     ): array {
         $pdo = $this->connection();
         $pdo->beginTransaction();
@@ -385,7 +518,9 @@ final class LoanPaymentRepository extends Repository
                         $penalty += $amount;
                         break;
                     default:
-                        throw new RuntimeException('Unknown payment allocation type.');
+                        throw new RuntimeException(
+                            'Unknown payment allocation type.'
+                        );
                 }
 
                 $principal = round(max(0.0, $principal), 2);
@@ -442,6 +577,11 @@ final class LoanPaymentRepository extends Repository
                 );
             }
 
+            $accountingCallback(
+                (int) $payment['loan_id'],
+                $paymentId,
+            );
+
             $pdo->commit();
 
             return [
@@ -453,8 +593,33 @@ final class LoanPaymentRepository extends Repository
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
+
             throw $exception;
         }
     }
+
+    /**
+     * Backward-compatible payment-only reversal.
+     *
+     * @return array<string,mixed>
+     */
+    public function reversePayment(
+        int $paymentId,
+        int $userId,
+        string $reversedAt,
+        string $reason,
+    ): array {
+        return $this->reversePaymentWithAccounting(
+            paymentId: $paymentId,
+            userId: $userId,
+            reversedAt: $reversedAt,
+            reason: $reason,
+            accountingCallback: static function (
+                int $loanId,
+                int $paymentId,
+            ): void {},
+        );
+    }
+
 
 }

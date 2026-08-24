@@ -7,6 +7,8 @@ namespace App\Features\Loans\Services;
 use App\Features\ActivityLogs\Services\ActivityLogService;
 use App\Features\Loans\Domain\AmortizationStatus;
 use App\Features\Loans\Domain\LoanStatus;
+use App\Features\Ledger\Repositories\JournalVoucherRepository;
+use App\Features\Ledger\Services\LedgerService;
 use App\Features\Loans\Repositories\LoanPaymentRepository;
 use App\Features\Loans\Repositories\LoanRepository;
 use App\Foundation\Session;
@@ -18,6 +20,8 @@ final class PaymentService
 {
     public function __construct(
         private readonly LoanPaymentRepository $repository,
+        private readonly LedgerService $ledger,
+        private readonly JournalVoucherRepository $journalVoucherRepository,
         private readonly LoanRepository $loanRepository,
         private readonly AmortizationService $amortization,
         private readonly ActivityLogService $activityLog,
@@ -260,7 +264,68 @@ final class PaymentService
 
         $actorId = $this->actorId();
 
-        $paymentId = $this->repository->persistPayment(
+        /*
+         * Accounting integration:
+         *
+         * The payment and its accounting voucher must be persisted
+         * atomically. The voucher callback runs inside the same database
+         * transaction opened by LoanPaymentRepository.
+         */
+        if ($totalPenalty > 0.005) {
+            throw new RuntimeException(
+                'Loan payment ledger integration does not yet support penalty accounting.'
+            );
+        }
+
+        if (
+            $totalPrincipal <= 0.005
+            && $totalInterest <= 0.005
+        ) {
+            throw new RuntimeException(
+                'Loan payment cannot create an accounting voucher with no principal or interest.'
+            );
+        }
+
+        $cashAccountId = $this->ledgerAccountId('1010');
+        $principalAccountId = $this->ledgerAccountId('1110');
+        $interestAccountId = $this->ledgerAccountId('4010');
+
+        $ledgerLines = [
+            [
+                'account_id' => $cashAccountId,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Loan payment cash receipt',
+                'debit' => $this->money(
+                    $totalPrincipal + $totalInterest
+                ),
+                'credit' => 0.00,
+            ],
+        ];
+
+        if ($totalPrincipal > 0.005) {
+            $ledgerLines[] = [
+                'account_id' => $principalAccountId,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Principal applied to loan',
+                'debit' => 0.00,
+                'credit' => $totalPrincipal,
+            ];
+        }
+
+        if ($totalInterest > 0.005) {
+            $ledgerLines[] = [
+                'account_id' => $interestAccountId,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Interest income from loan payment',
+                'debit' => 0.00,
+                'credit' => $totalInterest,
+            ];
+        }
+
+        $paymentId = $this->repository->persistPaymentWithAccounting(
             payment: [
                 'loan_id' => $loanId,
                 'payment_datetime' => $this->now(),
@@ -275,6 +340,44 @@ final class PaymentService
             ],
             allocations: $allocations,
             updatedRows: $updatedRows,
+            accountingCallback: function (int $persistedPaymentId) use (
+                $loanId,
+                $loan,
+                $actorId,
+                $totalPrincipal,
+                $totalInterest,
+                $ledgerLines,
+            ): void {
+                $this->ledger->createPending(
+                    voucher: [
+                        'reference_number' => sprintf(
+                            'LP-%d-%s',
+                            $persistedPaymentId,
+                            strtoupper(
+                                substr(
+                                    bin2hex(random_bytes(3)),
+                                    0,
+                                    6,
+                                ),
+                            ),
+                        ),
+                        'transaction_date' => substr(
+                            $this->now(),
+                            0,
+                            10,
+                        ),
+                        'particulars' => sprintf(
+                            'Loan payment #%d for Loan #%d.',
+                            $persistedPaymentId,
+                            $loanId,
+                        ),
+                        'source_type' => 'LoanPayment',
+                        'source_id' => $persistedPaymentId,
+                    ],
+                    lines: $ledgerLines,
+                    createdBy: $actorId,
+                );
+            },
         );
 
         if ($allPaid) {
@@ -376,16 +479,80 @@ final class PaymentService
             throw new RuntimeException('Loan not found.');
         }
 
-        $result = $this->repository->reversePayment(
+        $actorId = $this->actorId();
+        $wasFullyPaid = ($loan['loan_status'] ?? null) === LoanStatus::FULLY_PAID;
+
+        $result = $this->repository->reversePaymentWithAccounting(
             paymentId: $paymentId,
-            userId: $this->actorId(),
+            userId: $actorId,
             reversedAt: $this->now(),
             reason: $reason,
+            accountingCallback: function (
+                int $callbackLoanId,
+                int $callbackPaymentId,
+            ) use (
+                $actorId,
+                $loan,
+                $loanId,
+            ): void {
+                if ($callbackLoanId !== $loanId) {
+                    throw new RuntimeException(
+                        'Payment reversal loan mismatch.'
+                    );
+                }
+
+                $originalVoucher = $this->journalVoucherRepository->findBySource(
+                    'LoanPayment',
+                    $callbackPaymentId,
+                );
+
+                if ($originalVoucher === null) {
+                    throw new RuntimeException(
+                        'Original Loan payment Journal Voucher not found.'
+                    );
+                }
+
+                if (($originalVoucher['status'] ?? null) === 'Rejected') {
+                    throw new RuntimeException(
+                        'A rejected Journal Voucher cannot be reversed.'
+                    );
+                }
+
+                $this->ledger->createReversalPending(
+                    originalVoucherId: (int) $originalVoucher['id'],
+                    referenceNumber: sprintf(
+                        'LPR-%d-%s',
+                        $callbackPaymentId,
+                        strtoupper(
+                            substr(
+                                bin2hex(random_bytes(3)),
+                                0,
+                                6,
+                            ),
+                        ),
+                    ),
+                    transactionDate: substr(
+                        $this->now(),
+                        0,
+                        10,
+                    ),
+                    particulars: sprintf(
+                        'Reversal of Loan payment #%d for Loan #%d.',
+                        $callbackPaymentId,
+                        $callbackLoanId,
+                    ),
+                    createdBy: $actorId,
+                    sourceType: 'LoanPaymentReversal',
+                    sourceId: $callbackPaymentId,
+                );
+
+                if (($loan['loan_status'] ?? null) === LoanStatus::FULLY_PAID) {
+                    $this->loanRepository->reactivate($callbackLoanId);
+                }
+            },
         );
 
-        if (($loan['loan_status'] ?? null) === LoanStatus::FULLY_PAID) {
-            $this->loanRepository->reactivate($loanId);
-
+        if ($wasFullyPaid) {
             $this->activityLog->record(
                 userId: $this->actorId(),
                 action: 'LOAN_REACTIVATED',
@@ -415,6 +582,22 @@ final class PaymentService
         );
 
         return $result;
+    }
+
+    private function ledgerAccountId(string $accountCode): int
+    {
+        $id = $this->ledger->accountId($accountCode);
+
+        if ($id <= 0) {
+            throw new RuntimeException(
+                sprintf(
+                    'Ledger account %s is not configured.',
+                    $accountCode,
+                )
+            );
+        }
+
+        return $id;
     }
 
     private function actorId(): int

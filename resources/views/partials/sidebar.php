@@ -33,6 +33,12 @@ function sidebarActive(
             : '';
     }
 
+    if ($path === '/ledger') {
+        return str_starts_with($currentRoute, '/ledger')
+            ? ' class="is-active"'
+            : '';
+    }
+
     return $currentRoute === $path ? ' class="is-active"' : '';
 }
 ?>
@@ -66,7 +72,11 @@ function sidebarActive(
         </a>
 
         <a href="#">Savings</a>
-        <a href="#">Accounting</a>
+        <a
+            href="/ledger"
+            <?= sidebarActive('/ledger', $currentRoute) ?>>
+            Ledger
+        </a>
         <a href="#">Reports</a>
         <a href="#">Settings</a>
 

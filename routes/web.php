@@ -8,6 +8,7 @@ use App\Features\Dashboard\Controllers\DashboardController;
 use App\Features\Members\Controllers\MembersController;
 use App\Features\Members\Controllers\BeneficiaryController;
 use App\Features\Loans\Controllers\LoanController;
+use App\Features\Ledger\Controllers\LedgerController;
 use App\Foundation\Router;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
@@ -250,6 +251,79 @@ $router->post(
 $router->post(
     '/loans/{id}/reject',
     [LoanController::class, 'reject'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+/*
+|--------------------------------------------------------------------------
+
+/*
+|--------------------------------------------------------------------------
+| Ledger / Accounting
+|--------------------------------------------------------------------------
+*/
+
+$router->get(
+    '/ledger',
+    [LedgerController::class, 'index'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
+    '/ledger/general',
+    [LedgerController::class, 'general'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
+    '/ledger/trial-balance',
+    [LedgerController::class, 'trialBalance'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
+    '/ledger/accounts',
+    [LedgerController::class, 'accounts'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
+    '/ledger/{id}',
+    [LedgerController::class, 'show'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/ledger/{id}/approve',
+    [LedgerController::class, 'approve'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/ledger/{id}/reject',
+    [LedgerController::class, 'reject'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/ledger/{id}/post',
+    [LedgerController::class, 'post'],
     [
         AuthMiddleware::class,
     ],

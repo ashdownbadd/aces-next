@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Console\Commands\MigrateCommand;
 use App\Console\Commands\SeedCommand;
+use App\Console\Commands\SeedLedgerCommand;
 use App\Console\Kernel;
 use App\Console\Support\Migrator;
 use App\Console\Support\SeederRunner;
@@ -45,6 +46,12 @@ final class ConsoleServiceProvider extends ServiceProvider
                 $kernel->register(
                     new SeedCommand(
                         $container->get(SeederRunner::class),
+                    ),
+                );
+
+                $kernel->register(
+                    new SeedLedgerCommand(
+                        $container->get(Database::class),
                     ),
                 );
 
