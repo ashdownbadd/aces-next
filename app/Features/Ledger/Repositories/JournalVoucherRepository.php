@@ -417,11 +417,68 @@ final class JournalVoucherRepository extends Repository
         );
     }
 
-    /**
-     * Return ending debit/credit balances for Posted vouchers only.
-     *
-     * @return array<int,array<string,mixed>>
-     */
+    /** @return array<int,array<string,mixed>> */
+    public function incomeStatement(
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+    ): array {
+        $sql = "
+            SELECT
+                a.id,
+                a.account_code,
+                a.account_name,
+                a.account_type,
+                a.normal_balance,
+                COALESCE(SUM(jl.debit), 0) AS debit_total,
+                COALESCE(SUM(jl.credit), 0) AS credit_total
+            FROM accounts AS a
+            LEFT JOIN journal_lines AS jl
+                ON jl.account_id = a.id
+            LEFT JOIN journal_vouchers AS jv
+                ON jv.id = jl.journal_voucher_id
+               AND jv.status = 'Posted'
+        ";
+
+        $parameters = [];
+
+        if ($dateFrom !== null && $dateFrom !== '') {
+            $sql .= " AND jv.transaction_date >= :date_from";
+            $parameters['date_from'] = $dateFrom;
+        }
+
+        if ($dateTo !== null && $dateTo !== '') {
+            $sql .= " AND jv.transaction_date <= :date_to";
+            $parameters['date_to'] = $dateTo;
+        }
+
+        $sql .= "
+            WHERE a.is_active = 1
+              AND a.account_type IN ('Income', 'Expense')
+            GROUP BY
+                a.id,
+                a.account_code,
+                a.account_name,
+                a.account_type,
+                a.normal_balance
+            ORDER BY a.account_type ASC, a.account_code ASC
+        ";
+
+        $statement = $this->connection()->prepare($sql);
+
+        foreach ($parameters as $name => $value) {
+            $statement->bindValue(
+                ':' . $name,
+                $value,
+                PDO::PARAM_STR,
+            );
+        }
+
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /** @return array<int,array<string,mixed>> */
     public function trialBalance(
         ?string $asOfDate = null,
     ): array {
@@ -445,10 +502,7 @@ final class JournalVoucherRepository extends Repository
         $parameters = [];
 
         if ($asOfDate !== null && $asOfDate !== '') {
-            $sql .= "
-                AND jv.transaction_date <= :as_of_date
-            ";
-
+            $sql .= " AND jv.transaction_date <= :as_of_date";
             $parameters['as_of_date'] = $asOfDate;
         }
 
@@ -461,6 +515,60 @@ final class JournalVoucherRepository extends Repository
                 a.account_type,
                 a.normal_balance
             ORDER BY a.account_code ASC
+        ";
+
+        $statement = $this->connection()->prepare($sql);
+
+        foreach ($parameters as $name => $value) {
+            $statement->bindValue(
+                ':' . $name,
+                $value,
+                PDO::PARAM_STR,
+            );
+        }
+
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /** @return array<int,array<string,mixed>> */
+    public function balanceSheet(
+        ?string $asOfDate = null,
+    ): array {
+        $sql = "
+            SELECT
+                a.id,
+                a.account_code,
+                a.account_name,
+                a.account_type,
+                a.normal_balance,
+                COALESCE(SUM(jl.debit), 0) AS debit_total,
+                COALESCE(SUM(jl.credit), 0) AS credit_total
+            FROM accounts AS a
+            LEFT JOIN journal_lines AS jl
+                ON jl.account_id = a.id
+            LEFT JOIN journal_vouchers AS jv
+                ON jv.id = jl.journal_voucher_id
+               AND jv.status = 'Posted'
+        ";
+
+        $parameters = [];
+
+        if ($asOfDate !== null && $asOfDate !== '') {
+            $sql .= " AND jv.transaction_date <= :as_of_date";
+            $parameters['as_of_date'] = $asOfDate;
+        }
+
+        $sql .= "
+            WHERE a.is_active = 1
+            GROUP BY
+                a.id,
+                a.account_code,
+                a.account_name,
+                a.account_type,
+                a.normal_balance
+            ORDER BY a.account_type ASC, a.account_code ASC
         ";
 
         $statement = $this->connection()->prepare($sql);

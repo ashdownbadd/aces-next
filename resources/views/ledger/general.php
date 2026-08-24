@@ -9,8 +9,12 @@ $money=static fn(float $v):string=>'₱'.number_format($v,2,'.',',');
 <p>View posted transactions and running account balances.</p>
 </div>
 <div class="ledger-page__header-actions">
-<a href="/ledger" class="btn btn--secondary">Journal Vouchers</a>
-<a href="/ledger/accounts" class="btn btn--secondary">Chart of Accounts</a>
+    <a href="/ledger" class="btn btn--secondary">Journal Vouchers</a>
+    <a href="/ledger/general" class="btn btn--secondary">General Ledger</a>
+    <a href="/ledger/trial-balance" class="btn btn--secondary">Trial Balance</a>
+    <a href="/ledger/balance-sheet" class="btn btn--secondary">Financial Position</a>
+    <a href="/ledger/income-statement" class="btn btn--secondary">Statement of Operations</a>
+    <a href="/ledger/accounts" class="btn btn--secondary">Chart of Accounts</a>
 </div>
 </header>
 

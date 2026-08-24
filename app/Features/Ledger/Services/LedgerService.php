@@ -201,27 +201,144 @@ final class LedgerService
      * }
      */
     /**
-     * Build the Trial Balance from Posted account activity.
-     *
-     * Each account receives one ending balance: debit OR credit.
-     * This is independent of its normal balance so unusual balances
-     * remain visible rather than being hidden.
-     *
      * @return array{
-     *   rows:array<int,array<string,mixed>>,
-     *   total_debit:float,
-     *   total_credit:float,
+     *   date_from:string|null,
+     *   date_to:string|null,
+     *   income:array<int,array<string,mixed>>,
+     *   expenses:array<int,array<string,mixed>>,
+     *   total_income:float,
+     *   total_expenses:float,
+     *   net_surplus:float,
      *   balanced:bool
      * }
      */
+    public function incomeStatement(
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+    ): array {
+        $validateDate = static function (
+            ?string $date,
+            string $label,
+        ): void {
+            if ($date === null || $date === '') {
+                return;
+            }
+
+            $parsed = \DateTimeImmutable::createFromFormat(
+                '!Y-m-d',
+                $date,
+            );
+
+            if (
+                $parsed === false
+                || $parsed->format('Y-m-d') !== $date
+            ) {
+                throw new InvalidArgumentException(
+                    $label . ' must be a valid YYYY-MM-DD date.'
+                );
+            }
+        };
+
+        $validateDate($dateFrom, 'Start date');
+        $validateDate($dateTo, 'End date');
+
+        if (
+            $dateFrom !== null
+            && $dateFrom !== ''
+            && $dateTo !== null
+            && $dateTo !== ''
+            && $dateFrom > $dateTo
+        ) {
+            throw new InvalidArgumentException(
+                'Start date cannot be later than end date.'
+            );
+        }
+
+        $sourceRows = $this->repository->incomeStatement(
+            $dateFrom,
+            $dateTo,
+        );
+
+        $income = [];
+        $expenses = [];
+        $totalIncome = 0.00;
+        $totalExpenses = 0.00;
+
+        foreach ($sourceRows as $row) {
+            $debit = round((float) $row['debit_total'], 2);
+            $credit = round((float) $row['credit_total'], 2);
+
+            if ($row['account_type'] === 'Income') {
+                $balance = round(
+                    $credit - $debit,
+                    2,
+                );
+
+                if (abs($balance) < 0.005) {
+                    continue;
+                }
+
+                $income[] = [
+                    'id' => (int) $row['id'],
+                    'account_code' => $row['account_code'],
+                    'account_name' => $row['account_name'],
+                    'balance' => $balance,
+                ];
+
+                $totalIncome = round(
+                    $totalIncome + $balance,
+                    2,
+                );
+
+                continue;
+            }
+
+            if ($row['account_type'] === 'Expense') {
+                $balance = round(
+                    $debit - $credit,
+                    2,
+                );
+
+                if (abs($balance) < 0.005) {
+                    continue;
+                }
+
+                $expenses[] = [
+                    'id' => (int) $row['id'],
+                    'account_code' => $row['account_code'],
+                    'account_name' => $row['account_name'],
+                    'balance' => $balance,
+                ];
+
+                $totalExpenses = round(
+                    $totalExpenses + $balance,
+                    2,
+                );
+            }
+        }
+
+        $netSurplus = round(
+            $totalIncome - $totalExpenses,
+            2,
+        );
+
+        return [
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'income' => $income,
+            'expenses' => $expenses,
+            'total_income' => $totalIncome,
+            'total_expenses' => $totalExpenses,
+            'net_surplus' => $netSurplus,
+            'balanced' => true,
+        ];
+    }
+
     public function trialBalance(
         ?string $asOfDate = null,
     ): array {
         if ($asOfDate !== null && $asOfDate !== '') {
-            $date = \DateTimeImmutable::createFromFormat(
-                '!Y-m-d',
-                $asOfDate,
-            );
+            $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $asOfDate);
 
             if (
                 $date === false
@@ -234,24 +351,14 @@ final class LedgerService
         }
 
         $sourceRows = $this->repository->trialBalance($asOfDate);
-
         $rows = [];
         $totalDebit = 0.00;
         $totalCredit = 0.00;
 
         foreach ($sourceRows as $row) {
-            $debitActivity = round(
-                (float) $row['debit_total'],
-                2,
-            );
-
-            $creditActivity = round(
-                (float) $row['credit_total'],
-                2,
-            );
-
             $net = round(
-                $debitActivity - $creditActivity,
+                (float) $row['debit_total']
+                - (float) $row['credit_total'],
                 2,
             );
 
@@ -259,23 +366,11 @@ final class LedgerService
                 continue;
             }
 
-            $endingDebit = $net > 0
-                ? $net
-                : 0.00;
+            $debit = $net > 0 ? $net : 0.00;
+            $credit = $net < 0 ? abs($net) : 0.00;
 
-            $endingCredit = $net < 0
-                ? abs($net)
-                : 0.00;
-
-            $totalDebit = round(
-                $totalDebit + $endingDebit,
-                2,
-            );
-
-            $totalCredit = round(
-                $totalCredit + $endingCredit,
-                2,
-            );
+            $totalDebit = round($totalDebit + $debit, 2);
+            $totalCredit = round($totalCredit + $credit, 2);
 
             $rows[] = [
                 'id' => (int) $row['id'],
@@ -283,8 +378,8 @@ final class LedgerService
                 'account_name' => $row['account_name'],
                 'account_type' => $row['account_type'],
                 'normal_balance' => $row['normal_balance'],
-                'debit' => $endingDebit,
-                'credit' => $endingCredit,
+                'debit' => $debit,
+                'credit' => $credit,
             ];
         }
 
@@ -293,6 +388,123 @@ final class LedgerService
             'total_debit' => $totalDebit,
             'total_credit' => $totalCredit,
             'balanced' => abs($totalDebit - $totalCredit) < 0.005,
+        ];
+    }
+
+    public function balanceSheet(
+        ?string $asOfDate = null,
+    ): array {
+        if ($asOfDate !== null && $asOfDate !== '') {
+            $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $asOfDate);
+
+            if (
+                $date === false
+                || $date->format('Y-m-d') !== $asOfDate
+            ) {
+                throw new InvalidArgumentException(
+                    'Balance Sheet date must be a valid YYYY-MM-DD date.'
+                );
+            }
+        }
+
+        $rows = $this->repository->balanceSheet($asOfDate);
+
+        $assets = [];
+        $liabilities = [];
+        $equity = [];
+        $totalAssets = 0.00;
+        $totalLiabilities = 0.00;
+        $totalEquity = 0.00;
+        $income = 0.00;
+        $expenses = 0.00;
+
+        foreach ($rows as $row) {
+            $net = round(
+                (float) $row['debit_total']
+                - (float) $row['credit_total'],
+                2,
+            );
+
+            switch ($row['account_type']) {
+                case 'Asset':
+                    if (abs($net) < 0.005) {
+                        continue 2;
+                    }
+                    $assets[] = [
+                        'id' => (int) $row['id'],
+                        'account_code' => $row['account_code'],
+                        'account_name' => $row['account_name'],
+                        'balance' => $net,
+                    ];
+                    $totalAssets = round($totalAssets + $net, 2);
+                    break;
+
+                case 'Liability':
+                    $balance = -$net;
+                    if (abs($balance) < 0.005) {
+                        continue 2;
+                    }
+                    $liabilities[] = [
+                        'id' => (int) $row['id'],
+                        'account_code' => $row['account_code'],
+                        'account_name' => $row['account_name'],
+                        'balance' => $balance,
+                    ];
+                    $totalLiabilities = round($totalLiabilities + $balance, 2);
+                    break;
+
+                case 'Equity':
+                    $balance = -$net;
+                    if (abs($balance) < 0.005) {
+                        continue 2;
+                    }
+                    $equity[] = [
+                        'id' => (int) $row['id'],
+                        'account_code' => $row['account_code'],
+                        'account_name' => $row['account_name'],
+                        'balance' => $balance,
+                    ];
+                    $totalEquity = round($totalEquity + $balance, 2);
+                    break;
+
+                case 'Income':
+                    $income = round($income - $net, 2);
+                    break;
+
+                case 'Expense':
+                    $expenses = round($expenses + $net, 2);
+                    break;
+            }
+        }
+
+        $netSurplus = round($income - $expenses, 2);
+
+        if (abs($netSurplus) >= 0.005) {
+            $equity[] = [
+                'id' => null,
+                'account_code' => '—',
+                'account_name' => 'Current Period Surplus (Deficit)',
+                'balance' => $netSurplus,
+            ];
+            $totalEquity = round($totalEquity + $netSurplus, 2);
+        }
+
+        $liabilitiesAndEquity = round(
+            $totalLiabilities + $totalEquity,
+            2,
+        );
+
+        return [
+            'as_of' => $asOfDate,
+            'assets' => $assets,
+            'liabilities' => $liabilities,
+            'equity' => $equity,
+            'total_assets' => $totalAssets,
+            'total_liabilities' => $totalLiabilities,
+            'total_equity' => $totalEquity,
+            'net_surplus' => $netSurplus,
+            'liabilities_and_equity' => $liabilitiesAndEquity,
+            'balanced' => abs($totalAssets - $liabilitiesAndEquity) < 0.005,
         ];
     }
 

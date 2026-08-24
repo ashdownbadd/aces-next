@@ -274,6 +274,14 @@ $router->get(
 );
 
 $router->get(
+    '/ledger/accounts',
+    [LedgerController::class, 'accounts'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
     '/ledger/general',
     [LedgerController::class, 'general'],
     [
@@ -290,8 +298,16 @@ $router->get(
 );
 
 $router->get(
-    '/ledger/accounts',
-    [LedgerController::class, 'accounts'],
+    '/ledger/balance-sheet',
+    [LedgerController::class, 'balanceSheet'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
+    '/ledger/income-statement',
+    [LedgerController::class, 'incomeStatement'],
     [
         AuthMiddleware::class,
     ],
@@ -330,7 +346,6 @@ $router->post(
 );
 
 /*
-|--------------------------------------------------------------------------
 | Authentication
 |--------------------------------------------------------------------------
 */

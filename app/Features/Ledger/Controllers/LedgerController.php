@@ -248,6 +248,84 @@ final class LedgerController
         );
     }
 
+    public function balanceSheet(Request $request): Response
+    {
+        $asOfDate = trim(
+            (string) $request->query('as_of', '')
+        );
+
+        $result = null;
+        $error = $this->session->get('ledger_error');
+        $this->session->forget('ledger_error');
+
+        if ($asOfDate !== '') {
+            try {
+                $result = $this->ledger->balanceSheet(
+                    asOfDate: $asOfDate,
+                );
+            } catch (
+                InvalidArgumentException |
+                RuntimeException $exception
+            ) {
+                $error = $exception->getMessage();
+            }
+        }
+
+        return new Response(
+            $this->view->render(
+                'ledger.balance_sheet',
+                [
+                    'title' => 'Statement of Financial Position',
+                    'asOfDate' => $asOfDate,
+                    'balanceSheet' => $result,
+                    'error' => $error,
+                ],
+                'layouts.app',
+            ),
+        );
+    }
+
+    public function incomeStatement(Request $request): Response
+    {
+        $dateFrom = trim(
+            (string) $request->query('date_from', '')
+        );
+
+        $dateTo = trim(
+            (string) $request->query('date_to', '')
+        );
+
+        $result = null;
+        $error = $this->session->get('ledger_error');
+        $this->session->forget('ledger_error');
+
+        try {
+            $result = $this->ledger->incomeStatement(
+                dateFrom: $dateFrom !== '' ? $dateFrom : null,
+                dateTo: $dateTo !== '' ? $dateTo : null,
+            );
+        } catch (
+            InvalidArgumentException |
+            RuntimeException $exception
+        ) {
+            $error = $exception->getMessage();
+        }
+
+        return new Response(
+            $this->view->render(
+                'ledger.income_statement',
+                [
+                    'title' => 'Statement of Operations',
+                    'dateFrom' => $dateFrom,
+                    'dateTo' => $dateTo,
+                    'incomeStatement' => $result,
+                    'error' => $error,
+                ],
+                'layouts.app',
+            ),
+        );
+    }
+
     public function accounts(Request $request): Response
     {
         return new Response(

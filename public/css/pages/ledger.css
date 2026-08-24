@@ -345,3 +345,47 @@
   background: #f8fafc;
   border-top: 1px solid var(--color-border);
 }
+
+
+.balance-sheet {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+.balance-sheet__table {
+  min-width: 620px;
+}
+
+.balance-sheet__equation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-5);
+}
+
+.balance-sheet__equation > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.balance-sheet__equation strong {
+  font-size: var(--font-size-lg);
+}
+
+@media (max-width: 900px) {
+  .balance-sheet__equation {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.ledger-page__header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
