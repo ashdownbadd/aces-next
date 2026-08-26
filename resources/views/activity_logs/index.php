@@ -81,7 +81,7 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
         </div>
     </div>
 
-    <form method="GET" action="/activity-logs" class="activity-logs__filters">
+    <form method="GET" action="/activity-logs" class="activity-logs__filters" data-live-search data-live-search-server="true"-container>
 
         <div>
             <label for="activity-search">Search</label>
@@ -90,6 +90,8 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
                 type="search"
                 name="search"
                 value="<?= htmlspecialchars($search) ?>"
+                data-live-search
+                data-live-search-target="#activity-logs-table-body"
                 placeholder="Search activity...">
         </div>
 
@@ -146,18 +148,8 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
         </div>
 
         <div class="activity-logs__filter-actions">
-            <button type="submit" class="btn activity-logs__filter-submit">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 5h16l-6.2 7v5l-3.6 2v-7L4 5Z" />
-                </svg>
-                <span>Filter</span>
-            </button>
-
-            <a
-                href="/activity-logs"
-                class="btn btn--outline activity-logs__filter-clear">
-                Clear
-            </a>
+            <button type="submit" class="btn">Filter</button>
+            <a href="/activity-logs" class="btn btn--outline">Clear</a>
         </div>
 
     </form>
@@ -186,9 +178,9 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="activity-logs-table-body">
                     <?php foreach ($logs as $log): ?>
-                        <tr>
+                        <tr data-live-search-item="true">
                             <td>
                                 <?= htmlspecialchars(
                                     date(

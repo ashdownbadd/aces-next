@@ -1,17 +1,21 @@
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
 
-  min-height: 34px;
-  padding: 0 13px;
+  min-height: 38px;
+  padding: 0 14px;
 
   border: 1px solid transparent;
   border-radius: 8px;
 
   font: inherit;
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 700;
 
   cursor: pointer;
@@ -19,10 +23,10 @@
   white-space: nowrap;
 
   transition:
-    color 0.16s ease,
-    background-color 0.16s ease,
-    border-color 0.16s ease,
-    opacity 0.16s ease;
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .btn:hover,
@@ -51,7 +55,7 @@
 
 .btn--secondary {
   background: var(--color-surface);
-  border-color: var(--color-border);
+  border-color: var(--color-border-strong);
   color: var(--color-text);
 }
 
@@ -59,6 +63,12 @@
 .btn--outline:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
+}
+
+.btn--outline {
+  background: transparent;
+  border-color: var(--color-border-strong);
+  color: var(--color-text-muted);
 }
 
 .btn--success {
@@ -71,16 +81,10 @@
   color: #fff;
 }
 
-.btn--outline {
-  background: transparent;
-  border-color: var(--color-border-strong);
-  color: var(--color-text-muted);
-}
-
 .btn--sm {
   min-height: 32px;
   padding-inline: 10px;
-  font-size: 0.70rem;
+  font-size: 0.68rem;
 }
 
 .btn--block {

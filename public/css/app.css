@@ -15,6 +15,7 @@
 @import url("./components/stat-card.css");
 @import url("./components/form.css");
 @import url("./components/input.css");
+@import url("./components/live-search.css");
 @import url("./components/table.css");
 @import url("./components/alert.css");
 @import url("./components/badge.css");
@@ -29,11 +30,3 @@
 @import url("./pages/activity-logs.css");
 @import url("./pages/loans.css");
 @import url("./pages/ledger.css");
-
-/* ACES stable interaction */
-.btn:hover,
-.btn:active,
-.card:hover,
-.stat-card:hover {
-  transform: none !important;
-}

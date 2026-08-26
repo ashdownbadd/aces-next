@@ -49,7 +49,7 @@ $statuses = [
 
     <section class="card loan-list__filters">
 
-        <form method="GET" action="/loans" class="loan-list__filter-form">
+        <form method="GET" action="/loans" class="loan-list__filter-form" data-live-search data-live-search-server="true"-container>
 
             <div class="form-group">
                 <label class="form-label" for="loan-search">Search</label>
@@ -59,6 +59,8 @@ $statuses = [
                     class="input"
                     type="search"
                     value="<?= $e($search) ?>"
+                    data-live-search
+                    data-live-search-target="#loans-table-body"
                     placeholder="Loan ID, member, or loan type">
             </div>
 
@@ -116,10 +118,10 @@ $statuses = [
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody id="loans-table-body">
                         <?php foreach ($loans as $loan): ?>
 
-                            <tr>
+                            <tr data-live-search-item="true">
                                 <td>
                                     <strong>
                                         #<?= (int) ($loan['id'] ?? 0) ?>
