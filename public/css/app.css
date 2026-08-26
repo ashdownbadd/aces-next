@@ -28,3 +28,11 @@
 @import url("./pages/activity-logs.css");
 @import url("./pages/loans.css");
 @import url("./pages/ledger.css");
+
+/* ACES stable interaction */
+.btn:hover,
+.btn:active,
+.card:hover,
+.stat-card:hover {
+  transform: none !important;
+}

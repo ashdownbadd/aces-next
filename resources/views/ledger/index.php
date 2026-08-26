@@ -39,7 +39,7 @@ $statusClass = static fn(string $value): string => match ($value) {
         </div>
     </section>
 
-    <form method="GET" action="/ledger" class="ledger-page__filters card">
+    <form method="GET" action="/ledger" class="ledger-page__filters card" data-live-search data-live-search-server="true"-container>
         <div class="ledger-page__filter-field">
             <label for="ledger-search">Search</label>
             <input
@@ -48,6 +48,8 @@ $statusClass = static fn(string $value): string => match ($value) {
                 type="search"
                 name="search"
                 value="<?= $e($search) ?>"
+                data-live-search
+                data-live-search-target="#ledger-table-body"
                 placeholder="Reference, particulars, or source">
         </div>
 
@@ -91,9 +93,9 @@ $statusClass = static fn(string $value): string => match ($value) {
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="ledger-table-body">
                         <?php foreach ($vouchers as $voucher): ?>
-                            <tr>
+                            <tr data-live-search-item="true">
                                 <td><strong><?= $e($voucher['reference_number'] ?? '—') ?></strong></td>
                                 <td><?= $e($voucher['transaction_date'] ?? '—') ?></td>
                                 <td class="ledger-page__particulars">

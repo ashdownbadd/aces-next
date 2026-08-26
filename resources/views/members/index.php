@@ -116,12 +116,12 @@ $paginationUrl = static function (
             <form
                 method="GET"
                 action="/members"
-                class="members__search-form">
+                class="members__search-form" data-live-search data-live-search-server="true"-container>
 
                 <input
                     class="input members__search"
                     type="search"
-                    name="search"
+                    name="search" data-live-search data-live-search-target="#members-table-body"
                     value="<?= htmlspecialchars(
                                 $search
                             ) ?>"
@@ -341,7 +341,7 @@ $paginationUrl = static function (
                         $members as $member
                     ): ?>
 
-                        <tr>
+                        <tr data-live-search-item="true">
 
                             <td>
 

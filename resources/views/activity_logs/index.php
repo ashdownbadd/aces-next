@@ -81,7 +81,7 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
         </div>
     </div>
 
-    <form method="GET" action="/activity-logs" class="activity-logs__filters">
+    <form method="GET" action="/activity-logs" class="activity-logs__filters" data-live-search data-live-search-server="true"-container>
 
         <div>
             <label for="activity-search">Search</label>
@@ -90,6 +90,8 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
                 type="search"
                 name="search"
                 value="<?= htmlspecialchars($search) ?>"
+                data-live-search
+                data-live-search-target="#activity-logs-table-body"
                 placeholder="Search activity...">
         </div>
 
@@ -176,9 +178,9 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="activity-logs-table-body">
                     <?php foreach ($logs as $log): ?>
-                        <tr>
+                        <tr data-live-search-item="true">
                             <td>
                                 <?= htmlspecialchars(
                                     date(

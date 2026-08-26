@@ -11,6 +11,12 @@
 
     <title><?= $title ?? 'ACES'; ?></title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
     <link
         rel="stylesheet"
         href="/css/app.css">
@@ -23,17 +29,9 @@
 
         <?= $view->partial('partials.header') ?>
 
-        <div class="app__body">
-
-            <?= $view->partial('partials.sidebar') ?>
-
-            <main class="app__content">
-
-                <?= $content ?>
-
-            </main>
-
-        </div>
+        <main class="app__content">
+            <?= $content ?>
+        </main>
 
     </div>
 
