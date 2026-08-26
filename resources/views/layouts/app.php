@@ -36,6 +36,7 @@
     </div>
 
     <script src="/js/wizard.js"></script>
+    <script src="/js/live-search.js"></script>
     <script src="/js/app.js"></script>
 
 </body>

@@ -1,132 +1,73 @@
 /* ==========================================================================
    Form
+   ACES registration form controls
    ========================================================================== */
 
 .form {
   width: 100%;
 }
 
-/* ==========================================================================
-   Sections
-   ========================================================================== */
-
 .form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  width: 100%;
 }
-
-.form-section__header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-section__title {
-  margin: 0;
-
-  font-size: 1.5rem;
-  font-weight: 700;
-
-  color: var(--color-text);
-}
-
-.form-section__description {
-  margin: 0;
-
-  color: var(--color-text-muted);
-
-  line-height: 1.5;
-}
-
-/* ==========================================================================
-   Layout
-   ========================================================================== */
 
 .form-grid {
   display: grid;
-
   grid-template-columns: repeat(2, minmax(0, 1fr));
-
-  gap: 1.5rem;
+  gap: 16px 18px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-
-  gap: 0.5rem;
+  gap: 7px;
+  min-width: 0;
 }
 
+.form-group--full,
 .form-group--span-2 {
   grid-column: 1 / -1;
 }
 
-/* ==========================================================================
-   Labels
-   ========================================================================== */
-
 .form-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-
   color: var(--color-text);
+
+  font-size: 0.72rem;
+  font-weight: 650;
 }
 
 .form-required {
   color: var(--color-danger);
 }
 
-/* ==========================================================================
-   Messages
-   ========================================================================== */
-
 .form-help {
-  font-size: 0.875rem;
-
+  margin-top: 1px;
   color: var(--color-text-muted);
+  font-size: 0.64rem;
 }
 
 .form-error {
-  font-size: 0.875rem;
-
   color: var(--color-danger);
+  font-size: 0.64rem;
 }
 
-/* ==========================================================================
-   States
-   ========================================================================== */
-
 .form-input--readonly {
-  background: var(--color-surface-secondary);
-
+  background: var(--color-background);
   color: var(--color-text-muted);
-
   cursor: default;
 }
 
-/* ==========================================================================
-   Actions
-   ========================================================================== */
-
-.form-actions {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  margin-top: 2rem;
+.form-value {
+  color: var(--color-text);
+  font-size: 0.75rem;
 }
 
-/* ==========================================================================
-   Responsive
-   ========================================================================== */
-
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
 
+  .form-group--full,
   .form-group--span-2 {
     grid-column: auto;
   }
