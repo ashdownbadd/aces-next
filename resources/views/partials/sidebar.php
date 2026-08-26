@@ -70,9 +70,7 @@ function sidebarActive(
             <?= sidebarActive('/loans', $currentRoute) ?>>
             Loans
         </a>
-
-        <a href="#">Savings</a>
-        <a
+<a
             href="/ledger"
             <?= sidebarActive('/ledger', $currentRoute) ?>>
             Ledger

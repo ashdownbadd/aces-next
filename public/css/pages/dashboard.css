@@ -1,158 +1,394 @@
-/* ==========================================================
-   DASHBOARD
-   Page-specific dashboard layout.
-========================================================== */
+/* ==========================================================================
+   Dashboard — ACES v2 visual language
+   ========================================================================== */
 
 .dashboard {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .dashboard-hero {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .dashboard-hero__eyebrow {
-    color: var(--text-muted);
-    font-size: var(--text-sm);
+  color: var(--color-text-soft);
+  font-family: var(--font-family-mono);
+  font-size: 0.60rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
 }
 
 .dashboard-hero__title {
-    margin: 0;
-    color: var(--text);
-    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
-    font-weight: var(--fw-bold);
-    line-height: var(--leading-tight);
+  margin: 0;
+
+  color: var(--color-text);
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.55rem, 2.4vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
 }
 
 .dashboard-hero__description {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: var(--text-base);
+  margin: 0;
+
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
 }
 
 .dashboard__stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-5);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
 }
 
+/* Uniform metric cards */
 .dashboard__stats .stat-card {
-    min-width: 0;
-    height: 100%;
+  min-width: 0;
+  min-height: 148px;
+  height: 148px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 20px;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  box-shadow: none;
+
+  color: inherit;
+  text-decoration: none;
+
+  transition:
+    border-color 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.dashboard__stats .stat-card:hover {
+  transform: none;
+  border-color: var(--color-border-strong);
+  box-shadow: none;
 }
 
 .dashboard__stats .stat-card__body {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  height: 100%;
+}
+
+.dashboard__stats .stat-card__content {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  height: 100%;
+}
+
+.dashboard__stats .stat-card__title {
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.dashboard__stats .stat-card__value {
+  margin: 0;
+
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard__stats .stat-card__subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.dashboard__stats .stat-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+
+  background: var(--color-surface);
+  color: var(--color-primary);
+
+  font-size: 0.82rem;
+}
+
+.dashboard__stats .stat-card--success .stat-card__icon {
+  color: var(--color-success);
+}
+
+.dashboard__stats .stat-card--warning .stat-card__icon {
+  color: var(--color-warning);
+}
+
+.dashboard__stats .stat-card--danger .stat-card__icon {
+  color: var(--color-danger);
+}
+
+.dashboard__stats-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -2px;
+}
+
+.dashboard__show-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 4px 0;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--color-text-muted);
+
+  font-family: var(--font-family);
+  font-size: 0.72rem;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.dashboard__show-more:hover {
+  color: var(--color-primary);
+}
+
+.dashboard__show-more svg {
+  width: 13px;
+  height: 13px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  transition: transform 0.16s ease;
+}
+
+.dashboard__show-more svg.is-open {
+  transform: rotate(180deg);
+}
+
+.dashboard > .section {
+  margin: 0;
+}
+
+.dashboard > .section:first-of-type .section__header {
+  margin-bottom: 14px;
+}
+
+.dashboard-health {
+  margin-top: 0;
+}
+
+@media (max-width: 1050px) {
+  .dashboard__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__stats .stat-card {
+    height: 144px;
+    min-height: 144px;
+  }
+}
+
+.dashboard__stats .stat-card[hidden] {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Cooperative Alerts
+   Matches the statistic-card visual language.
+   ========================================================================== */
+
+.dashboard-health {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dashboard-health .section__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 0;
+}
+
+.dashboard-health__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    min-height: 28px;
+    padding: 0 10px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+
+    font-family: var(--font-family-mono);
+    font-size: 0.60rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.dashboard-health__status--healthy {
+    color: var(--color-success);
+    background: rgba(39, 168, 88, 0.05);
+    border-color: rgba(39, 168, 88, 0.18);
+}
+
+.dashboard-health__status--attention {
+    color: var(--color-danger);
+    background: rgba(217, 61, 61, 0.05);
+    border-color: rgba(217, 61, 61, 0.18);
+}
+
+.dashboard-health__status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.dashboard-health__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.dashboard-health__card {
+    min-width: 0;
+    min-height: 148px;
+    height: 148px;
+
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
-    gap: var(--space-4);
-    width: 100%;
+    gap: 14px;
+
+    padding: 20px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+
+    background: var(--color-surface);
+    color: inherit;
 }
 
-.dashboard__stats .stat-card__content {
+.dashboard-health__card--healthy {
+    border-color: var(--color-border);
+}
+
+.dashboard-health__card--warning {
+    border-color: var(--color-border-strong);
+}
+
+.dashboard-health__card-content {
     min-width: 0;
-}
+    height: 100%;
 
-.dashboard__stats .stat-card__value {
-    margin: 0;
-    overflow-wrap: anywhere;
-}
-
-.dashboard__stats .stat-card__subtitle {
-    display: block;
-    line-height: var(--leading-normal);
-}
-
-.dashboard__stats .stat-card__icon {
-    flex: 0 0 auto;
-}
-
-/* Fallback styling for installations where the reusable
-   stat-card widget CSS is not imported by app.css. */
-
-.dashboard__stats .stat-card {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-    padding: var(--space-5);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    color: inherit;
-    text-decoration: none;
-    transition: var(--transition);
+    justify-content: space-between;
 }
 
-.dashboard__stats .stat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+.dashboard-health__label {
+    display: block;
+
+    color: var(--color-text-muted);
+
+    font-size: 0.76rem;
+    font-weight: 600;
 }
 
-.dashboard__stats .stat-card__title {
-    color: var(--text-muted);
-    font-size: var(--text-sm);
-    font-weight: var(--fw-semibold);
-}
+.dashboard-health__value {
+    display: block;
+    margin: 0;
 
-.dashboard__stats .stat-card__value {
-    color: var(--text);
-    font-size: var(--text-3xl);
-    font-weight: var(--fw-bold);
-    line-height: var(--leading-tight);
+    color: var(--color-text);
+
+    font-family: var(--font-family);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
 }
 
-.dashboard__stats .stat-card__subtitle {
-    color: var(--text-muted);
-    font-size: var(--text-xs);
+.dashboard-health__description {
+    margin: 0;
+
+    color: var(--color-text-muted);
+
+    font-size: 0.68rem;
+    line-height: 1.35;
 }
 
-.dashboard__stats .stat-card__icon {
+.dashboard-health__card-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 52px;
-    height: 52px;
-    border-radius: var(--radius-lg);
-    background: rgba(37, 99, 235, 0.1);
-    color: var(--primary);
-    font-size: 1.25rem;
+
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+
+    background: var(--color-surface);
+    color: var(--color-success);
+
+    font-size: 0.82rem;
 }
 
-.dashboard__stats .stat-card--success .stat-card__icon {
-    background: rgba(22, 163, 74, 0.1);
-    color: var(--success);
+.dashboard-health__card--warning .dashboard-health__card-icon {
+    color: var(--color-danger);
 }
 
-.dashboard__stats .stat-card--warning .stat-card__icon {
-    background: rgba(245, 158, 11, 0.1);
-    color: var(--warning);
-}
-
-.dashboard__stats .stat-card--danger .stat-card__icon {
-    background: rgba(220, 38, 38, 0.1);
-    color: var(--danger);
-}
-
-.dashboard__stats .stat-card--gold .stat-card__icon {
-    background: rgba(217, 142, 22, 0.12);
-    color: var(--gold);
-}
-
-@media (max-width: 1200px) {
-    .dashboard__stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 760px) {
+    .dashboard-health .section__header {
+        align-items: flex-start;
+        flex-direction: column;
     }
-}
 
-@media (max-width: 640px) {
-    .dashboard__stats {
+    .dashboard-health__grid {
         grid-template-columns: 1fr;
     }
 }

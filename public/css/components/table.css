@@ -1,28 +1,29 @@
-/* ==========================================
-   Table
-========================================== */
-
 .table {
   width: 100%;
-
   border-collapse: collapse;
 }
 
 .table th,
 .table td {
-  padding: 1rem;
-
-  text-align: left;
-
+  padding: 11px 14px;
   border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: middle;
 }
 
 .table th {
-  font-weight: 600;
-
-  background: #f8fafc;
+  background: var(--color-surface);
+  color: var(--color-text-soft);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .table tbody tr:hover {
-  background: #f8fafc;
+  background: rgba(245, 155, 10, 0.035);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
 }

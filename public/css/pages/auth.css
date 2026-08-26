@@ -1,31 +1,129 @@
 .auth {
-  display: flex;
+  min-height: 100vh;
 
+  display: flex;
   align-items: center;
   justify-content: center;
 
-  min-height: 100vh;
+  padding: 24px;
 
-  padding: var(--space-6);
+  background: var(--color-background);
 }
 
 .auth__card {
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
+  padding: 20px;
+
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .auth__header {
-  margin-bottom: var(--space-8);
-
-  text-align: center;
+  margin-bottom: 34px;
 }
 
 .auth__title {
-  margin-bottom: var(--space-2);
+  position: relative;
 
-  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 0 6px;
+
+  color: var(--color-text);
+
+  font-family: var(--font-family-heading);
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.auth__title::before {
+  content: "";
+
+  position: absolute;
+  top: -36px;
+  left: 0;
+  right: 0;
+
+  height: 1px;
+
+  background: var(--color-border);
 }
 
 .auth__subtitle {
+  margin: 0;
+  text-align: center;
   color: var(--color-text-muted);
+  font-size: 0.86rem;
+}
+
+.auth__header::before {
+  content: "COOPERATIVE MANAGEMENT";
+
+  display: block;
+
+  margin-bottom: 30px;
+
+  color: var(--color-primary);
+
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-align: center;
+}
+
+.input-group {
+  margin-bottom: 13px;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 7px;
+
+  color: var(--color-text-soft);
+
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.auth .input {
+  height: 50px;
+  padding: 0 16px;
+
+  border-radius: 10px;
+  background: var(--color-surface);
+  border-color: var(--color-border-strong);
+}
+
+.auth .btn--primary {
+  height: 50px;
+  margin-top: 3px;
+
+  border-radius: 10px;
+
+  font-family: var(--font-family-heading);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 480px) {
+  .auth {
+    padding: 16px;
+  }
+
+  .auth__card {
+    max-width: 360px;
+    padding: 16px;
+  }
 }

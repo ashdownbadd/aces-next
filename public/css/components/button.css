@@ -1,72 +1,48 @@
-/* ==========================================================================
-   Button
-   ========================================================================== */
-
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
 
-  gap: var(--space-2);
-
-  padding: 0.75rem 1.25rem;
+  min-height: 34px;
+  padding: 0 13px;
 
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-
-  background: transparent;
+  border-radius: 8px;
 
   font: inherit;
-  font-weight: 600;
+  font-size: 0.76rem;
+  font-weight: 700;
 
   cursor: pointer;
-
-  user-select: none;
-
   text-decoration: none;
   white-space: nowrap;
 
   transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
+    color 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    opacity 0.16s ease;
 }
 
-/* ==========================================================================
-   States
-   ========================================================================== */
-
-.btn:hover {
-  transform: translateY(-1px);
-}
-
+.btn:hover,
 .btn:active {
-  transform: translateY(0);
+  transform: none;
 }
 
 .btn:focus-visible {
   outline: none;
-
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
 }
 
 .btn:disabled {
-  opacity: 0.6;
-
+  opacity: 0.45;
   cursor: not-allowed;
-
-  transform: none;
 }
-
-/* ==========================================================================
-   Variants
-   ========================================================================== */
 
 .btn--primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-surface);
 }
 
 .btn--primary:hover {
@@ -74,15 +50,15 @@
 }
 
 .btn--secondary {
-  background: var(--color-surface-secondary);
-
+  background: var(--color-surface);
   border-color: var(--color-border);
-
   color: var(--color-text);
 }
 
-.btn--secondary:hover {
-  background: var(--color-surface);
+.btn--secondary:hover,
+.btn--outline:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .btn--success {
@@ -97,35 +73,15 @@
 
 .btn--outline {
   background: transparent;
-
-  border-color: var(--color-border);
-
-  color: var(--color-primary);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-muted);
 }
-
-/* ==========================================================================
-   Sizes
-   ========================================================================== */
 
 .btn--sm {
-  padding: 0.5rem 0.875rem;
-
-  font-size: 0.875rem;
+  min-height: 32px;
+  padding-inline: 10px;
+  font-size: 0.70rem;
 }
-
-.btn--md {
-  padding: 0.75rem 1.25rem;
-}
-
-.btn--lg {
-  padding: 1rem 1.5rem;
-
-  font-size: 1rem;
-}
-
-/* ==========================================================================
-   Width
-   ========================================================================== */
 
 .btn--block {
   width: 100%;

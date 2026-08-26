@@ -25,6 +25,15 @@
 @import url("./pages/auth.css");
 @import url("./pages/dashboard.css");
 @import url("./pages/members.css");
+@import url("./pages/member-profile.css");
 @import url("./pages/activity-logs.css");
 @import url("./pages/loans.css");
 @import url("./pages/ledger.css");
+
+/* ACES stable interaction */
+.btn:hover,
+.btn:active,
+.card:hover,
+.stat-card:hover {
+  transform: none !important;
+}

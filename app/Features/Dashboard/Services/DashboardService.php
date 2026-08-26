@@ -12,7 +12,12 @@ final class DashboardService
         private readonly DashboardRepository $repository,
     ) {}
 
-    /** @return array{cards: array<int, array<string, mixed>>, alerts: array<string, array<int, array<string, mixed>>>} */
+    /**
+     * @return array{
+     *   cards: array<int, array<string, mixed>>,
+     *   alerts: array<string, array<int, array<string, mixed>>>
+     * }
+     */
     public function snapshot(): array
     {
         $members = $this->repository->memberCounts();
@@ -21,72 +26,90 @@ final class DashboardService
         return [
             'cards' => [
                 [
-                    'title' => 'Members',
+                    'key' => 'total_members',
+                    'title' => 'Total Members',
                     'value' => $members['total'],
-                    'subtitle' => 'Registered Members',
-                    'description' => 'Total cooperative members',
+                    'description' => 'All registered cooperative members',
                     'icon' => 'fas fa-users',
                     'color' => 'primary',
                     'url' => '/members',
                 ],
                 [
-                    'title' => 'Regular Members',
-                    'value' => $members['regular'],
-                    'subtitle' => 'Membership Type',
-                    'description' => 'Associate: ' . $members['associate'],
-                    'icon' => 'fas fa-id-card',
-                    'color' => 'gold',
-                    'url' => '/members',
-                ],
-                [
+                    'key' => 'active_members',
                     'title' => 'Active Members',
                     'value' => $members['active'],
-                    'subtitle' => 'Membership Status',
-                    'description' => 'Inactive: ' . $members['inactive'],
+                    'description' => 'Members currently in active status',
                     'icon' => 'fas fa-user-check',
                     'color' => 'success',
                     'url' => '/members?status=Active',
                 ],
                 [
+                    'key' => 'regular_members',
+                    'title' => 'Regular Members',
+                    'value' => $members['regular'],
+                    'description' => 'Members with regular membership',
+                    'icon' => 'fas fa-id-card',
+                    'color' => 'gold',
+                    'url' => '/members',
+                ],
+                [
+                    'key' => 'associate_members',
+                    'title' => 'Associate Members',
+                    'value' => $members['associate'],
+                    'description' => 'Members with associate membership',
+                    'icon' => 'fas fa-user-group',
+                    'color' => 'primary',
+                    'url' => '/members',
+                ],
+                [
+                    'key' => 'inactive_members',
+                    'title' => 'Inactive Members',
+                    'value' => $members['inactive'],
+                    'description' => 'Members currently in inactive status',
+                    'icon' => 'fas fa-user-slash',
+                    'color' => 'warning',
+                    'url' => '/members?status=Inactive',
+                ],
+                [
+                    'key' => 'male_members',
+                    'title' => 'Male Members',
+                    'value' => $members['male'],
+                    'description' => 'Male members recorded in profiles',
+                    'icon' => 'fas fa-mars',
+                    'color' => 'primary',
+                    'url' => '/members',
+                ],
+                [
+                    'key' => 'female_members',
                     'title' => 'Female Members',
                     'value' => $members['female'],
-                    'subtitle' => 'Gender Distribution',
-                    'description' => 'Male: ' . $members['male'],
+                    'description' => 'Female members recorded in profiles',
                     'icon' => 'fas fa-venus',
                     'color' => 'warning',
                     'url' => '/members',
                 ],
                 [
+                    'key' => 'active_loans',
                     'title' => 'Active Loans',
                     'value' => $loans['active'],
-                    'subtitle' => 'Loan Status',
-                    'description' => 'Currently in payment',
+                    'description' => 'Loan accounts currently in payment',
                     'icon' => 'fas fa-money-bill-wave',
                     'color' => 'primary',
                     'url' => '/loans',
                 ],
                 [
+                    'key' => 'fully_paid_loans',
                     'title' => 'Fully Paid Loans',
                     'value' => $loans['fully_paid'],
-                    'subtitle' => 'Loan Status',
-                    'description' => 'Completed loan accounts',
+                    'description' => 'Loan accounts completed in full',
                     'icon' => 'fas fa-circle-check',
                     'color' => 'success',
                     'url' => '/loans',
                 ],
                 [
-                    'title' => 'Under Review',
-                    'value' => $loans['under_review'],
-                    'subtitle' => 'Loan Applications',
-                    'description' => 'Awaiting review/decision',
-                    'icon' => 'fas fa-clipboard-check',
-                    'color' => 'warning',
-                    'url' => '/loans?status=Under%20Review',
-                ],
-                [
+                    'key' => 'overdue_loans',
                     'title' => 'Overdue Loans',
                     'value' => $loans['overdue'],
-                    'subtitle' => 'Loan Alerts',
                     'description' => 'Active loans with overdue periods',
                     'icon' => 'fas fa-triangle-exclamation',
                     'color' => 'danger',
@@ -94,8 +117,10 @@ final class DashboardService
                 ],
             ],
             'alerts' => [
-                'negative_equity' => $this->repository->negativeEquityMembers(),
-                'past_due_loans' => $this->repository->pastDueLoans(),
+                'negative_equity' =>
+                    $this->repository->negativeEquityMembers(),
+                'past_due_loans' =>
+                    $this->repository->pastDueLoans(),
             ],
         ];
     }
