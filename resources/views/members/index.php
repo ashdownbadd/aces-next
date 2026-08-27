@@ -445,207 +445,106 @@ $paginationUrl = static function (
 
             <div class="members__footer">
 
-                <span>
-
+                <span class="members__result-count">
                     Showing
                     <?= number_format($from) ?>
                     –
                     <?= number_format($to) ?>
-
                     of
                     <?= number_format($resultCount) ?>
-
-                    <?php if (
-                        $search !== '' ||
-                        $status !== ''
-                    ): ?>
-
-                        matching members
-
-                    <?php else: ?>
-
-                        members
-
-                    <?php endif; ?>
-
+                    <?= ($search !== '' || $status !== '')
+                        ? 'matching members'
+                        : 'members' ?>
                 </span>
 
-            </div>
+                <?php if ($totalPages > 1): ?>
 
-        <?php endif; ?>
+                    <nav
+                        class="members__pagination"
+                        aria-label="Members pagination">
 
-        <?php if ($totalPages > 1): ?>
-
-            <nav
-                class="members__pagination"
-                aria-label="Members pagination">
-
-                <?php if ($currentPage > 1): ?>
-
-                    <a
-                        href="<?= htmlspecialchars(
-                                    $paginationUrl(
-                                        $currentPage - 1
-                                    )
-                                ) ?>"
-                        class="btn btn--sm">
-
-                        ← Previous
-
-                    </a>
-
-                <?php else: ?>
-
-                    <span class="btn btn--sm btn--disabled">
-
-                        ← Previous
-
-                    </span>
-
-                <?php endif; ?>
-
-                <div class="members__pagination-pages">
-
-                    <?php
-
-                    $startPage = max(
-                        1,
-                        $currentPage - 2,
-                    );
-
-                    $endPage = min(
-                        $totalPages,
-                        $currentPage + 2,
-                    );
-
-                    ?>
-
-                    <?php if (
-                        $startPage > 1
-                    ): ?>
-
-                        <a
-                            href="<?= htmlspecialchars(
-                                        $paginationUrl(1)
-                                    ) ?>"
-                            class="btn btn--sm">
-
-                            1
-
-                        </a>
-
-                        <?php if (
-                            $startPage > 2
-                        ): ?>
-
-                            <span
-                                class="members__pagination-ellipsis">
-
-                                …
-
-                            </span>
-
-                        <?php endif; ?>
-
-                    <?php endif; ?>
-
-                    <?php for (
-                        $page = $startPage;
-                        $page <= $endPage;
-                        $page++
-                    ): ?>
-
-                        <?php if (
-                            $page === $currentPage
-                        ): ?>
-
-                            <span
-                                class="btn btn--sm btn--primary"
-                                aria-current="page">
-
-                                <?= $page ?>
-
-                            </span>
-
-                        <?php else: ?>
-
+                        <?php if ($currentPage > 1): ?>
                             <a
-                                href="<?= htmlspecialchars(
-                                            $paginationUrl(
-                                                $page
-                                            )
-                                        ) ?>"
-                                class="btn btn--sm">
-
-                                <?= $page ?>
-
+                                href="<?= htmlspecialchars($paginationUrl($currentPage - 1)) ?>"
+                                class="members__pagination-button">
+                                Previous
                             </a>
-
-                        <?php endif; ?>
-
-                    <?php endfor; ?>
-
-                    <?php if (
-                        $endPage < $totalPages
-                    ): ?>
-
-                        <?php if (
-                            $endPage <
-                            $totalPages - 1
-                        ): ?>
-
-                            <span
-                                class="members__pagination-ellipsis">
-
-                                …
-
+                        <?php else: ?>
+                            <span class="members__pagination-button is-disabled">
+                                Previous
                             </span>
-
                         <?php endif; ?>
 
-                        <a
-                            href="<?= htmlspecialchars(
-                                        $paginationUrl(
-                                            $totalPages
-                                        )
-                                    ) ?>"
-                            class="btn btn--sm">
+                        <div class="members__pagination-pages">
 
-                            <?= $totalPages ?>
+                            <?php
+                            $startPage = max(1, $currentPage - 2);
+                            $endPage = min($totalPages, $currentPage + 2);
+                            ?>
 
-                        </a>
+                            <?php if ($startPage > 1): ?>
+                                <a
+                                    href="<?= htmlspecialchars($paginationUrl(1)) ?>"
+                                    class="members__page-number">
+                                    1
+                                </a>
 
-                    <?php endif; ?>
+                                <?php if ($startPage > 2): ?>
+                                    <span class="members__pagination-ellipsis">…</span>
+                                <?php endif; ?>
+                            <?php endif; ?>
 
-                </div>
+                            <?php for ($page = $startPage; $page <= $endPage; $page++): ?>
 
-                <?php if (
-                    $currentPage < $totalPages
-                ): ?>
+                                <?php if ($page === $currentPage): ?>
+                                    <span
+                                        class="members__page-number is-current"
+                                        aria-current="page">
+                                        <?= $page ?>
+                                    </span>
+                                <?php else: ?>
+                                    <a
+                                        href="<?= htmlspecialchars($paginationUrl($page)) ?>"
+                                        class="members__page-number">
+                                        <?= $page ?>
+                                    </a>
+                                <?php endif; ?>
 
-                    <a
-                        href="<?= htmlspecialchars(
-                                    $paginationUrl(
-                                        $currentPage + 1
-                                    )
-                                ) ?>"
-                        class="btn btn--sm">
+                            <?php endfor; ?>
 
-                        Next →
+                            <?php if ($endPage < $totalPages): ?>
 
-                    </a>
+                                <?php if ($endPage < $totalPages - 1): ?>
+                                    <span class="members__pagination-ellipsis">…</span>
+                                <?php endif; ?>
 
-                <?php else: ?>
+                                <a
+                                    href="<?= htmlspecialchars($paginationUrl($totalPages)) ?>"
+                                    class="members__page-number">
+                                    <?= $totalPages ?>
+                                </a>
 
-                    <span class="btn btn--sm btn--disabled">
+                            <?php endif; ?>
 
-                        Next →
+                        </div>
 
-                    </span>
+                        <?php if ($currentPage < $totalPages): ?>
+                            <a
+                                href="<?= htmlspecialchars($paginationUrl($currentPage + 1)) ?>"
+                                class="members__pagination-button">
+                                Next
+                            </a>
+                        <?php else: ?>
+                            <span class="members__pagination-button is-disabled">
+                                Next
+                            </span>
+                        <?php endif; ?>
+
+                    </nav>
 
                 <?php endif; ?>
 
-            </nav>
+            </div>
 
         <?php endif; ?>
 

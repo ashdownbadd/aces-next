@@ -13,6 +13,7 @@ use App\Features\Members\DTOs\PersonalData;
 use App\Features\Members\Services\EditService;
 use App\Features\Members\Services\MemberService;
 use App\Features\Members\Services\RegistrationService;
+use App\Features\Loans\Services\LoanService;
 use App\Features\Members\Support\RegistrationWorkflow;
 use App\Foundation\Session;
 use App\Foundation\View;
@@ -27,6 +28,7 @@ final class MembersController
         private readonly RegistrationService $registrationService,
         private readonly Session $session,
         private readonly EditService $editService,
+        private readonly LoanService $loanService,
     ) {}
 
     /**
@@ -194,12 +196,22 @@ final class MembersController
             return Response::redirect('/members');
         }
 
+        $loans = $this->loanService->all(
+            search: '',
+            applicationStatus: '',
+            loanStatus: '',
+            memberId: $memberId,
+            limit: 0,
+            offset: 0,
+        );
+
         return new Response(
             $this->view->render(
                 'members.show',
                 [
                     'title' => 'Member Profile',
                     'member' => $member,
+                    'loans' => $loans,
                 ],
                 'layouts.app',
             ),

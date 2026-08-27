@@ -12,6 +12,7 @@ use App\Features\Members\Services\BeneficiaryService;
 use App\Features\Members\Services\EditService;
 use App\Features\Members\Services\MemberService;
 use App\Features\Members\Services\RegistrationService;
+use App\Features\Loans\Services\LoanService;
 use App\Features\Members\Support\EditSession;
 use App\Features\Members\Support\RegistrationSession;
 use App\Foundation\Container;
@@ -139,6 +140,7 @@ final class MembersServiceProvider extends ServiceProvider
                 $container->get(RegistrationService::class),
                 $container->get(Session::class),
                 $container->get(EditService::class),
+                $container->get(LoanService::class),
             ),
         );
 

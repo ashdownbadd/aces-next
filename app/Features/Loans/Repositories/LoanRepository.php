@@ -100,7 +100,22 @@ final class LoanRepository extends Repository
             $parameters['application_status'] = $applicationStatus;
         }
 
-        if ($loanStatus !== '') {
+        if ($loanStatus === 'Overdue') {
+            $sql .= "
+                AND l.loan_status = 'Active'
+                AND EXISTS (
+                    SELECT 1
+                    FROM loan_amortizations AS overdue_la
+                    WHERE overdue_la.loan_id = l.id
+                      AND overdue_la.status = 'Overdue'
+                      AND (
+                        COALESCE(overdue_la.rem_principal, 0)
+                        + COALESCE(overdue_la.rem_interest, 0)
+                        + COALESCE(overdue_la.rem_penalty, 0)
+                      ) > 0
+                )
+            ";
+        } elseif ($loanStatus !== '') {
             $sql .= ' AND l.loan_status = :loan_status';
             $parameters['loan_status'] = $loanStatus;
         }
@@ -188,7 +203,22 @@ final class LoanRepository extends Repository
             $parameters['application_status'] = $applicationStatus;
         }
 
-        if ($loanStatus !== '') {
+        if ($loanStatus === 'Overdue') {
+            $sql .= "
+                AND l.loan_status = 'Active'
+                AND EXISTS (
+                    SELECT 1
+                    FROM loan_amortizations AS overdue_la
+                    WHERE overdue_la.loan_id = l.id
+                      AND overdue_la.status = 'Overdue'
+                      AND (
+                        COALESCE(overdue_la.rem_principal, 0)
+                        + COALESCE(overdue_la.rem_interest, 0)
+                        + COALESCE(overdue_la.rem_penalty, 0)
+                      ) > 0
+                )
+            ";
+        } elseif ($loanStatus !== '') {
             $sql .= ' AND l.loan_status = :loan_status';
             $parameters['loan_status'] = $loanStatus;
         }

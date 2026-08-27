@@ -5,6 +5,7 @@ declare(strict_types=1);
 $member = $member ?? [];
 
 $beneficiaries = $member['beneficiaries'] ?? [];
+$loans = $loans ?? [];
 
 $successMessage = $successMessage ?? null;
 $errorMessage = $errorMessage ?? null;
@@ -729,5 +730,104 @@ $memberId = (int) ($member['id'] ?? 0);
         </section>
 
     </div>
+
+    <section class="member-profile__card member-profile__card--loans">
+
+        <div class="member-profile__card-head">
+
+            <div>
+                <span class="member-profile__eyebrow">
+                    Cooperative Activity
+                </span>
+
+                <h2>Loans</h2>
+            </div>
+
+            <span class="member-profile__count">
+                <?= count($loans) ?>
+                <?= count($loans) === 1 ? 'Loan' : 'Loans' ?>
+            </span>
+
+        </div>
+
+        <?php if ($loans === []): ?>
+
+            <p class="member-profile__empty">
+                No loans recorded for this member.
+            </p>
+
+        <?php else: ?>
+
+            <div class="member-profile__beneficiary-table">
+
+                <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Loan</th>
+                            <th>Type</th>
+                            <th>Principal</th>
+                            <th>Application</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <?php foreach ($loans as $loan): ?>
+
+                            <tr>
+
+                                <td>
+                                    #<?= (int) ($loan['id'] ?? 0) ?>
+                                </td>
+
+                                <td>
+                                    <?= $formatLabel(
+                                        $loan['loan_type'] ?? null,
+                                    ) ?>
+                                </td>
+
+                                <td>
+                                    <?= $formatMoney(
+                                        $loan['principal_amount'] ?? null,
+                                    ) ?>
+                                </td>
+
+                                <td>
+                                    <?= $formatLabel(
+                                        $loan['application_status']
+                                            ?? null,
+                                    ) ?>
+                                </td>
+
+                                <td>
+                                    <?= $formatLabel(
+                                        $loan['loan_status'] ?? null,
+                                    ) ?>
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="/loans/<?= (int) ($loan['id'] ?? 0) ?>/show"
+                                        class="btn btn--outline btn--sm">
+                                        View Loan
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        <?php endif; ?>
+
+    </section>
 
 </div>

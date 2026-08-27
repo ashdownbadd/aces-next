@@ -28,6 +28,7 @@ $statuses = [
     'Under Review',
     'Approved',
     'Rejected',
+    'Overdue',
 ];
 
 ?>
@@ -149,7 +150,9 @@ $statuses = [
 
                                 <td>
                                     <span class="badge">
-                                        <?= $e($loan['application_status'] ?? '—') ?>
+                                        <?= $status === 'Overdue'
+                                            ? 'Overdue'
+                                            : $e($loan['application_status'] ?? '—') ?>
                                     </span>
                                 </td>
 

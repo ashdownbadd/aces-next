@@ -46,6 +46,7 @@ final class LoanController
             'Under Review',
             'Approved',
             'Rejected',
+            'Overdue',
         ];
 
         if (!in_array($status, $allowedStatuses, true)) {

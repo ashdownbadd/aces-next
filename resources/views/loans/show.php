@@ -37,26 +37,144 @@ $money = static fn (float $value): string => '₱' . number_format(
 $status = (string) ($loan['application_status'] ?? '');
 $loanStatus = (string) ($loan['loan_status'] ?? '');
 
+$hasOverdueInstallment = false;
+
+if ($loanStatus === 'Active') {
+    foreach ($schedule as $scheduleRow) {
+        if (
+            (string) ($scheduleRow['status'] ?? '') === 'Overdue'
+            && (
+                (float) ($scheduleRow['rem_principal'] ?? 0)
+                + (float) ($scheduleRow['rem_interest'] ?? 0)
+                + (float) ($scheduleRow['rem_penalty'] ?? 0)
+            ) > 0.004
+        ) {
+            $hasOverdueInstallment = true;
+            break;
+        }
+    }
+}
+
+$workflowState = match (true) {
+    $status === 'Rejected' => 'Rejected',
+    $loanStatus === 'Fully Paid' => 'Fully Paid',
+    $hasOverdueInstallment => 'Overdue',
+    $loanStatus === 'Active' => 'Active',
+    $status === 'Approved' => 'Approved',
+    $status === 'Under Review' => 'Under Review',
+    $status === 'Pending' => 'Pending',
+    default => $status !== '' ? $status : 'Pending',
+};
+
+$workflowSteps = [
+    [
+        'key' => 'Pending',
+        'label' => 'Application Submitted',
+        'description' => 'Loan application has been created.',
+    ],
+    [
+        'key' => 'Under Review',
+        'label' => 'Under Review',
+        'description' => 'Application is awaiting a decision.',
+    ],
+    [
+        'key' => 'Approved',
+        'label' => 'Approved',
+        'description' => 'Application has been approved.',
+    ],
+    [
+        'key' => 'Active',
+        'label' => 'Active',
+        'description' => 'Loan has been released and is being repaid.',
+    ],
+    [
+        'key' => 'Fully Paid',
+        'label' => 'Fully Paid',
+        'description' => 'All required balances have been settled.',
+    ],
+];
+
+$workflowOrder = [
+    'Pending' => 0,
+    'Under Review' => 1,
+    'Approved' => 2,
+    'Active' => 3,
+    'Overdue' => 3,
+    'Fully Paid' => 4,
+];
+
+$currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
+
 ?>
+
+
 
 <div class="loan-detail">
 
     <div class="loan-detail__breadcrumb">
+
         <a href="/loans">Loan Applications</a>
-        <span>/</span>
-        <span>#<?= (int) ($loan['id'] ?? 0) ?></span>
+
+        <span aria-hidden="true">/</span>
+
+        <a
+            href="/members/<?= (int) ($loan['member_id'] ?? 0) ?>"
+            class="loan-detail__breadcrumb-member">
+
+            <?= $e($memberName) ?>
+
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <span>
+            Loan #<?= (int) ($loan['id'] ?? 0) ?>
+        </span>
+
     </div>
 
     <header class="loan-detail__header">
 
-        <div>
+        <div class="loan-detail__header-main">
+
+            <span class="loan-detail__eyebrow">
+                Loan
+            </span>
+
             <h1 class="loan-detail__title">
-                Loan Application #<?= (int) ($loan['id'] ?? 0) ?>
+                Application #<?= (int) ($loan['id'] ?? 0) ?>
             </h1>
+
+            <div class="loan-detail__member-context">
+
+                <span class="loan-detail__member-context-label">
+                    Member
+                </span>
+
+                <strong>
+                    <?= $e($memberName) ?>
+                </strong>
+
+                <span class="loan-detail__member-context-id">
+                    #<?= $e($memberNumber) ?>
+                </span>
+
+                <?php if ((int) ($loan['member_id'] ?? 0) > 0): ?>
+
+                    <a
+                        href="/members/<?= (int) ($loan['member_id'] ?? 0) ?>"
+                        class="loan-detail__member-link">
+                        View Member
+                    </a>
+
+                <?php endif; ?>
+
+            </div>
 
             <p class="loan-detail__description">
                 Review the application and take the next workflow action.
             </p>
+
         </div>
 
         <div class="loan-detail__status-group">
@@ -70,6 +188,220 @@ $loanStatus = (string) ($loan['loan_status'] ?? '');
         </div>
 
     </header>
+
+    <section class="loan-detail__workflow" aria-label="Loan lifecycle">
+
+        <div class="loan-detail__workflow-head">
+            <div>
+                <span class="loan-detail__workflow-eyebrow">
+                    Loan Lifecycle
+                </span>
+
+                <h2 class="loan-detail__workflow-title">
+                    <?= $e($workflowState) ?>
+                </h2>
+
+                <p class="loan-detail__workflow-description">
+                    The loan's current stage and next available action.
+                </p>
+            </div>
+
+            <div class="loan-detail__workflow-status">
+                <span class="badge">
+                    <?= $e($workflowState) ?>
+                </span>
+            </div>
+        </div>
+
+        <?php if ($workflowState === 'Rejected'): ?>
+
+            <div class="loan-detail__workflow-rejected">
+                <span class="loan-detail__workflow-marker" aria-hidden="true"></span>
+
+                <div>
+                    <strong>Application Rejected</strong>
+                    <p>
+                        This application will not continue through the
+                        approval and release workflow.
+                    </p>
+                </div>
+            </div>
+
+        <?php else: ?>
+
+            <ol class="loan-detail__workflow-steps">
+
+                <?php foreach ($workflowSteps as $index => $workflowStep): ?>
+
+                    <?php
+                    $stepIndex = $workflowOrder[$workflowStep['key']];
+                    $isComplete = $stepIndex < $currentWorkflowIndex;
+                    $isCurrent = $stepIndex === $currentWorkflowIndex;
+                    ?>
+
+                    <li
+                        class="loan-detail__workflow-step<?= $isCurrent ? ' is-current' : '' ?><?= $isComplete ? ' is-complete' : '' ?>">
+
+                        <span class="loan-detail__workflow-dot">
+
+                            <?php if ($isComplete): ?>
+
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="m6 12 4 4 8-8" />
+                                </svg>
+
+                            <?php else: ?>
+
+                                <span></span>
+
+                            <?php endif; ?>
+
+                        </span>
+
+                        <span class="loan-detail__workflow-copy">
+                            <strong>
+                                <?= $e($workflowStep['label']) ?>
+                            </strong>
+
+                            <small>
+                                <?= $e($workflowStep['description']) ?>
+                            </small>
+                        </span>
+
+                    </li>
+
+                <?php endforeach; ?>
+
+            </ol>
+
+            <?php if ($workflowState === 'Pending'): ?>
+
+                <div class="loan-detail__workflow-action">
+
+                    <div>
+                        <strong>Next step</strong>
+                        <span>
+                            Submit this application for review.
+                        </span>
+                    </div>
+
+                    <a
+                        href="/loans/<?= (int) ($loan['id'] ?? 0) ?>/review"
+                        class="btn btn--primary">
+
+                        Review Application
+
+                    </a>
+
+                </div>
+
+            <?php elseif ($workflowState === 'Under Review'): ?>
+
+                <div class="loan-detail__workflow-action">
+
+                    <div>
+                        <strong>Decision required</strong>
+                        <span>
+                            Approve or reject this application after review.
+                        </span>
+                    </div>
+
+                    <a
+                        href="#loan-decision"
+                        class="btn btn--primary">
+
+                        Review Decision
+
+                    </a>
+
+                </div>
+
+            <?php elseif ($workflowState === 'Approved'): ?>
+
+                <div class="loan-detail__workflow-action">
+
+                    <div>
+                        <strong>Ready for release</strong>
+                        <span>
+                            Confirm the release details below to activate the loan.
+                        </span>
+                    </div>
+
+                    <a
+                        href="#loan-release"
+                        class="btn btn--primary">
+
+                        Release Loan
+
+                    </a>
+
+                </div>
+
+            <?php elseif ($workflowState === 'Overdue'): ?>
+
+                <div class="loan-detail__workflow-action loan-detail__workflow-action--attention">
+
+                    <div>
+                        <strong>Payment overdue</strong>
+                        <span>
+                            One or more installments require attention.
+                            Record the member's payment to bring the loan up to date.
+                        </span>
+                    </div>
+
+                    <a
+                        href="#payment-summary"
+                        class="btn btn--primary">
+
+                        Record Payment
+
+                    </a>
+
+                </div>
+
+            <?php elseif ($workflowState === 'Active'): ?>
+
+                <div class="loan-detail__workflow-action">
+
+                    <div>
+                        <strong>Repayment in progress</strong>
+                        <span>
+                            Manage the next installment and payment history below.
+                        </span>
+                    </div>
+
+                    <a
+                        href="#payment-summary"
+                        class="btn btn--primary">
+
+                        Record Payment
+
+                    </a>
+
+                </div>
+
+            <?php else: ?>
+
+                <div class="loan-detail__workflow-action">
+
+                    <div>
+                        <strong>Loan completed</strong>
+                        <span>
+                            No further normal payment action is required.
+                        </span>
+                    </div>
+
+                    <span class="loan-detail__workflow-complete">
+                        Completed
+                    </span>
+
+                </div>
+
+            <?php endif; ?>
+
+        <?php endif; ?>
+
+    </section>
 
     <?php if (in_array($loanStatus, ['Active', 'Fully Paid'], true)): ?>
 
@@ -105,25 +437,23 @@ $loanStatus = (string) ($loan['loan_status'] ?? '');
         </div>
     <?php endif; ?>
 
-    <section class="card loan-detail__section">
+    <section class="card loan-detail__section loan-detail__context-summary">
 
         <div class="loan-detail__section-header">
-            <h2>Member Information</h2>
+
+            <div>
+                <span class="loan-detail__section-eyebrow">
+                    Member Context
+                </span>
+
+                <h2><?= $e($memberName) ?></h2>
+
+                <p>
+                    Member #<?= $e($memberNumber) ?> · This loan belongs to this member.
+                </p>
+            </div>
+
         </div>
-
-        <dl class="loan-detail__summary">
-
-            <div>
-                <dt>Member</dt>
-                <dd><?= $e($memberName) ?></dd>
-            </div>
-
-            <div>
-                <dt>Member ID</dt>
-                <dd><?= $e($memberNumber) ?></dd>
-            </div>
-
-        </dl>
 
     </section>
 
@@ -523,16 +853,25 @@ $loanStatus = (string) ($loan['loan_status'] ?? '');
 
     <?php if ($status === 'Approved' && ($loanStatus === '' || $loanStatus === null)): ?>
 
-        <section class="card loan-detail__section">
+        <section class="card loan-detail__section loan-detail__action-section" id="loan-release">
 
             <div class="loan-detail__section-header">
                 <div>
+                    <span class="loan-detail__section-eyebrow">
+                        Next Action
+                    </span>
+
                     <h2>Release Loan</h2>
+
                     <p>
-                        Confirm the release date. Releasing the loan changes the
-                        financial status to Active and persists the amortization schedule.
+                        Confirm the release date to activate this approved loan
+                        and persist its amortization schedule.
                     </p>
                 </div>
+
+                <span class="loan-detail__action-status">
+                    Approved
+                </span>
             </div>
 
             <form
@@ -540,38 +879,50 @@ $loanStatus = (string) ($loan['loan_status'] ?? '');
                 action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/release"
                 class="loan-detail__release-form">
 
-                <div class="form-group">
-                    <label class="form-label" for="release-date">
-                        Release Date
-                    </label>
+                <div class="loan-detail__action-grid">
 
-                    <input
-                        id="release-date"
-                        name="release_date"
-                        class="input"
-                        type="date"
-                        value="<?= $e(date('Y-m-d')) ?>"
-                        required>
+                    <div class="form-group">
+                        <label class="form-label" for="release-date">
+                            Release Date
+                        </label>
 
-                    <span class="form-help">
-                        The release date is recorded with the loan and used when
-                        the amortization schedule is persisted.
-                    </span>
+                        <input
+                            id="release-date"
+                            name="release_date"
+                            class="input"
+                            type="date"
+                            value="<?= $e(date('Y-m-d')) ?>"
+                            required>
+
+                        <span class="form-help">
+                            This date becomes the loan's financial start date.
+                        </span>
+                    </div>
+
+                    <div class="loan-detail__release-warning">
+                        <strong>Ready for release</strong>
+
+                        <span>
+                            Releasing the loan changes it to Active and creates
+                            the persisted amortization schedule.
+                        </span>
+                    </div>
+
                 </div>
 
-                <div class="loan-detail__release-warning">
-                    <strong>Ready for release</strong>
+                <div class="loan-detail__action-footer">
+
                     <span>
-                        This will change the loan to Active and create the persisted
-                        amortization schedule.
+                        Review the details above before releasing the loan.
                     </span>
-                </div>
 
-                <button
-                    type="submit"
-                    class="btn btn--primary">
-                    Release Loan
-                </button>
+                    <button
+                        type="submit"
+                        class="btn btn--primary">
+                        Release Loan
+                    </button>
+
+                </div>
 
             </form>
 
@@ -581,56 +932,98 @@ $loanStatus = (string) ($loan['loan_status'] ?? '');
 
     <?php if ($status === 'Under Review'): ?>
 
-        <section class="card loan-detail__section">
+        <section class="card loan-detail__section loan-detail__action-section" id="loan-decision">
 
             <div class="loan-detail__section-header">
                 <div>
-                    <h2>Decision</h2>
+                    <span class="loan-detail__section-eyebrow">
+                        Decision Required
+                    </span>
+
+                    <h2>Review Application</h2>
+
                     <p>
-                        One approver must make the final application decision.
+                        Approve this application to continue to release,
+                        or reject it with a required reason.
                     </p>
                 </div>
+
+                <span class="loan-detail__action-status">
+                    Under Review
+                </span>
             </div>
 
-            <div class="loan-detail__decision">
+            <div class="loan-detail__decision-grid">
 
-                <form
-                    method="POST"
-                    action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/approve">
+                <div class="loan-detail__decision-card loan-detail__decision-card--approve">
 
-                    <button type="submit" class="btn btn--primary">
-                        Approve Loan
-                    </button>
+                    <div>
+                        <strong>Approve Application</strong>
 
-                </form>
-
-                <form
-                    method="POST"
-                    action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/reject"
-                    class="loan-detail__reject-form">
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="rejection-reason">
-                            Rejection Reason
-                        </label>
-
-                        <textarea
-                            id="rejection-reason"
-                            name="reason"
-                            class="input"
-                            rows="4"
-                            required></textarea>
-
+                        <p>
+                            Moves the loan to Approved and makes it eligible
+                            for release.
+                        </p>
                     </div>
 
-                    <button type="submit" class="btn btn--danger">
-                        Reject Loan
-                    </button>
+                    <form
+                        method="POST"
+                        action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/approve">
 
-                </form>
+                        <button
+                            type="submit"
+                            class="btn btn--primary">
+                            Approve Loan
+                        </button>
+
+                    </form>
+
+                </div>
+
+                <details class="loan-detail__decision-card loan-detail__decision-card--reject">
+
+                    <summary>
+                        Reject Application
+                    </summary>
+
+                    <p>
+                        Rejection is final for this application and requires
+                        a reason.
+                    </p>
+
+                    <form
+                        method="POST"
+                        action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/reject"
+                        class="loan-detail__reject-form">
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="rejection-reason">
+                                Rejection Reason
+                            </label>
+
+                            <textarea
+                                id="rejection-reason"
+                                name="reason"
+                                class="input"
+                                rows="4"
+                                maxlength="1000"
+                                placeholder="Explain why this application is being rejected."
+                                required></textarea>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn--danger">
+                            Confirm Rejection
+                        </button>
+
+                    </form>
+
+                </details>
 
             </div>
 

@@ -93,9 +93,82 @@ final class LedgerService
                 'source_id' => isset($voucher['source_id'])
                     ? $this->nullableInt($voucher['source_id'])
                     : null,
+                'reversal_of_voucher_id' =>
+                    isset($voucher['reversal_of_voucher_id'])
+                        ? $this->nullableInt($voucher['reversal_of_voucher_id'])
+                        : null,
                 'created_by' => $createdBy,
             ],
             lines: $normalized,
+        );
+    }
+
+    /**
+     * Create a Pending reversal voucher that exactly inverts an existing
+     * voucher's debit/credit lines.
+     */
+    public function createReversalPending(
+        int $originalVoucherId,
+        string $referenceNumber,
+        string $transactionDate,
+        string $particulars,
+        int $createdBy,
+        string $sourceType,
+        int $sourceId,
+    ): int {
+        if ($originalVoucherId <= 0) {
+            throw new InvalidArgumentException(
+                'A valid original voucher is required for reversal.'
+            );
+        }
+
+        $original = $this->repository->find($originalVoucherId);
+
+        if ($original === null) {
+            throw new RuntimeException(
+                'Original journal voucher not found.'
+            );
+        }
+
+        $originalLines = $this->repository->lines($originalVoucherId);
+
+        if ($originalLines === []) {
+            throw new RuntimeException(
+                'Original journal voucher contains no lines.'
+            );
+        }
+
+        $reversalLines = [];
+
+        foreach ($originalLines as $line) {
+            $reversalLines[] = [
+                'account_id' => (int) $line['account_id'],
+                'member_id' => $line['member_id'] !== null
+                    ? (int) $line['member_id']
+                    : null,
+                'loan_id' => $line['loan_id'] !== null
+                    ? (int) $line['loan_id']
+                    : null,
+                'line_description' => sprintf(
+                    'Reversal of Journal Voucher #%d',
+                    $originalVoucherId,
+                ),
+                'debit' => $this->money((float) $line['credit']),
+                'credit' => $this->money((float) $line['debit']),
+            ];
+        }
+
+        return $this->createPending(
+            voucher: [
+                'reference_number' => $referenceNumber,
+                'transaction_date' => $transactionDate,
+                'particulars' => $particulars,
+                'source_type' => $sourceType,
+                'source_id' => $sourceId,
+                'reversal_of_voucher_id' => $originalVoucherId,
+            ],
+            lines: $reversalLines,
+            createdBy: $createdBy,
         );
     }
 
@@ -145,6 +218,42 @@ final class LedgerService
             $voucherId,
             $userId,
             $approvedAt,
+        );
+    }
+
+    public function post(
+        int $voucherId,
+        int $userId,
+        string $postedAt,
+    ): void {
+        if ($voucherId <= 0 || $userId <= 0) {
+            throw new InvalidArgumentException(
+                'Valid voucher and user IDs are required.'
+            );
+        }
+
+        $voucher = $this->repository->find($voucherId);
+
+        if ($voucher === null) {
+            throw new RuntimeException('Journal voucher not found.');
+        }
+
+        if (($voucher['status'] ?? null) !== 'Approved') {
+            throw new RuntimeException(
+                'Only Approved journal vouchers can be posted.'
+            );
+        }
+
+        $lines = $this->repository->lines($voucherId);
+
+        $this->assertBalanced(
+            $this->normalizePersistedLines($lines)
+        );
+
+        $this->repository->post(
+            $voucherId,
+            $userId,
+            $postedAt,
         );
     }
 

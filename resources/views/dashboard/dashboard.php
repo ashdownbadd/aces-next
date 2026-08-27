@@ -13,6 +13,10 @@ if ($hour < 12) {
 }
 
 $cards = $cards ?? [];
+$actionRequired = $action_required ?? [
+    'under_review_loans' => 0,
+    'overdue_loans' => 0,
+];
 $alerts = $alerts ?? [
     'negative_equity' => [],
     'past_due_loans' => [],
@@ -174,6 +178,144 @@ $alerts = $alerts ?? [
             <?php endif; ?>
 
         </div>
+    </section>
+
+    <?php
+    $underReviewLoanCount =
+        (int) ($actionRequired['under_review_loans'] ?? 0);
+
+    $overdueLoanCount =
+        (int) ($actionRequired['overdue_loans'] ?? 0);
+
+    $hasActionRequired =
+        $underReviewLoanCount > 0
+        || $overdueLoanCount > 0;
+    ?>
+
+    <section class="dashboard-actions" aria-labelledby="dashboard-actions-title">
+
+        <div class="dashboard-actions__header">
+
+            <div>
+                <span class="dashboard-actions__eyebrow">
+                    Attention
+                </span>
+
+                <h2
+                    class="dashboard-actions__title"
+                    id="dashboard-actions-title">
+                    Action Required
+                </h2>
+
+                <p class="dashboard-actions__description">
+                    Work items that may need your attention.
+                </p>
+            </div>
+
+            <span class="dashboard-actions__count">
+                <?= $hasActionRequired
+                    ? ($underReviewLoanCount + $overdueLoanCount)
+                    : 0 ?>
+                <?= ($underReviewLoanCount + $overdueLoanCount) === 1
+                    ? 'Item'
+                    : 'Items' ?>
+            </span>
+
+        </div>
+
+        <?php if ($hasActionRequired): ?>
+
+            <div class="dashboard-actions__grid">
+
+                <?php if ($underReviewLoanCount > 0): ?>
+
+                    <a
+                        class="dashboard-actions__item"
+                        href="/loans?status=Under%20Review">
+
+                        <span class="dashboard-actions__icon" aria-hidden="true">
+                            <i class="fas fa-clipboard-check"></i>
+                        </span>
+
+                        <span class="dashboard-actions__content">
+                            <strong>
+                                <?= $underReviewLoanCount ?>
+                                <?= $underReviewLoanCount === 1
+                                    ? 'Loan application'
+                                    : 'Loan applications' ?>
+                                under review
+                            </strong>
+
+                            <small>
+                                Waiting for an approval decision.
+                            </small>
+                        </span>
+
+                        <span
+                            class="dashboard-actions__arrow"
+                            aria-hidden="true">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+
+                    </a>
+
+                <?php endif; ?>
+
+                <?php if ($overdueLoanCount > 0): ?>
+
+                    <a
+                        class="dashboard-actions__item"
+                        href="/loans">
+
+                        <span class="dashboard-actions__icon dashboard-actions__icon--warning" aria-hidden="true">
+                            <i class="fas fa-calendar-xmark"></i>
+                        </span>
+
+                        <span class="dashboard-actions__content">
+                            <strong>
+                                <?= $overdueLoanCount ?>
+                                <?= $overdueLoanCount === 1
+                                    ? 'Loan'
+                                    : 'Loans' ?>
+                                overdue
+                            </strong>
+
+                            <small>
+                                Payment periods require attention.
+                            </small>
+                        </span>
+
+                        <span
+                            class="dashboard-actions__arrow"
+                            aria-hidden="true">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+
+                    </a>
+
+                <?php endif; ?>
+
+            </div>
+
+        <?php else: ?>
+
+            <div class="dashboard-actions__empty">
+
+                <span class="dashboard-actions__empty-icon" aria-hidden="true">
+                    <i class="fas fa-circle-check"></i>
+                </span>
+
+                <div>
+                    <strong>Nothing requires attention right now.</strong>
+                    <span>
+                        Current operational items are up to date.
+                    </span>
+                </div>
+
+            </div>
+
+        <?php endif; ?>
+
     </section>
 
     <?php

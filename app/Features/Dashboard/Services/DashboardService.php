@@ -116,6 +116,10 @@ final class DashboardService
                     'url' => '/loans',
                 ],
             ],
+            'action_required' => [
+                'under_review_loans' => $loans['under_review'],
+                'overdue_loans' => $loans['overdue'],
+            ],
             'alerts' => [
                 'negative_equity' =>
                     $this->repository->negativeEquityMembers(),
