@@ -457,6 +457,47 @@ $paymentFrequencies = [
 
         </section>
 
+        <section class="card loan-create__section loan-create__schedule-section">
+
+            <div class="form-section__header">
+                <h2 class="form-section__title">Amortization Schedule</h2>
+
+                <p class="form-section__description">
+                    The schedule updates automatically as you enter the loan terms.
+                    Review it before continuing.
+                </p>
+            </div>
+
+            <div
+                class="loan-create__schedule-status"
+                data-amortization-preview-status>
+                Enter the required loan details to generate the schedule.
+            </div>
+
+            <div
+                class="loan-create__schedule-wrap"
+                data-amortization-preview
+                hidden>
+
+                <table class="table loan-create__schedule">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col" class="u-text-right">Principal</th>
+                            <th scope="col" class="u-text-right">Interest</th>
+                            <th scope="col" class="u-text-right">Payment</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody data-amortization-preview-body></tbody>
+                </table>
+
+            </div>
+
+        </section>
+
         <section class="card loan-create__section">
 
             <div class="form-section__header">
@@ -614,36 +655,6 @@ $paymentFrequencies = [
                     </span>
 
                 </div>
-
-            </div>
-
-        </section>
-
-        <section class="card loan-create__section">
-
-            <div class="form-section__header">
-                <h2 class="form-section__title">Notes</h2>
-                <p class="form-section__description">
-                    Optional notes for the loan application.
-                </p>
-            </div>
-
-            <div class="form-group">
-
-                <label
-                    class="form-label"
-                    for="loan-notes">
-
-                    Notes
-
-                </label>
-
-                <textarea
-                    id="loan-notes"
-                    name="notes"
-                    class="input"
-                    rows="5"
-                    maxlength="5000"></textarea>
 
             </div>
 

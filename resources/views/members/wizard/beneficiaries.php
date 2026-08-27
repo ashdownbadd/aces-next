@@ -77,7 +77,7 @@ declare(strict_types=1);
                             id="beneficiary_first_name"
                             class="input"
                             type="text"
-                            name="first_name" value="<?= htmlspecialchars($editingBeneficiary["first_name"] ?? "") ?>">
+                            name="first_name" data-type="personName" value="<?= htmlspecialchars($editingBeneficiary["first_name"] ?? "") ?>">
 
                     </div>
 
@@ -95,7 +95,7 @@ declare(strict_types=1);
                             id="beneficiary_middle_name"
                             class="input"
                             type="text"
-                            name="middle_name" value="<?= htmlspecialchars($editingBeneficiary["middle_name"] ?? "") ?>">
+                            name="middle_name" data-type="personName" value="<?= htmlspecialchars($editingBeneficiary["middle_name"] ?? "") ?>">
 
                     </div>
 
@@ -113,7 +113,7 @@ declare(strict_types=1);
                             id="beneficiary_last_name"
                             class="input"
                             type="text"
-                            name="last_name" value="<?= htmlspecialchars($editingBeneficiary["last_name"] ?? "") ?>">
+                            name="last_name" data-type="personName" value="<?= htmlspecialchars($editingBeneficiary["last_name"] ?? "") ?>">
 
                     </div>
 
@@ -131,7 +131,7 @@ declare(strict_types=1);
                             id="beneficiary_suffix"
                             class="input"
                             type="text"
-                            name="suffix" value="<?= htmlspecialchars($editingBeneficiary["suffix"] ?? "") ?>">
+                            name="suffix" data-type="suffix" value="<?= htmlspecialchars($editingBeneficiary["suffix"] ?? "") ?>">
 
                     </div>
 
@@ -170,26 +170,6 @@ declare(strict_types=1);
                             name="birth_date" value="<?= htmlspecialchars($editingBeneficiary["birth_date"] ?? "") ?>">
 
                     </div>
-
-
-                    <div class="form-group form-group--full">
-
-                        <label
-                            class="form-label"
-                            for="remarks">
-
-                            Remarks
-
-                        </label>
-
-                        <textarea
-                            id="remarks"
-                            class="input"
-                            name="remarks"
-                            rows="3"><?= htmlspecialchars($editingBeneficiary["remarks"] ?? "") ?></textarea>
-
-                    </div>
-
                 </div>
 
                 <div class="form-actions">

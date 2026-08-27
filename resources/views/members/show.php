@@ -612,6 +612,26 @@ $memberId = (int) ($member['id'] ?? 0);
                     </strong>
                 </div>
 
+                <div class="member-profile__data">
+                    <span class="member-profile__label">
+                        School Attended
+                    </span>
+
+                    <strong>
+                        <?= $display($member['school_name'] ?? null) ?>
+                    </strong>
+                </div>
+
+                <div class="member-profile__data">
+                    <span class="member-profile__label">
+                        Graduation Year
+                    </span>
+
+                    <strong>
+                        <?= $display($member['graduation_year'] ?? null) ?>
+                    </strong>
+                </div>
+
             </div>
 
         </section>
@@ -658,7 +678,6 @@ $memberId = (int) ($member['id'] ?? 0);
                                 <th>Name</th>
                                 <th>Relationship</th>
                                 <th>Birth Date</th>
-                                <th>Remarks</th>
                             </tr>
                         </thead>
 
@@ -706,12 +725,6 @@ $memberId = (int) ($member['id'] ?? 0);
                                         <?= $formatDate(
                                             $beneficiary['birth_date']
                                                 ?? null,
-                                        ) ?>
-                                    </td>
-
-                                    <td>
-                                        <?= $display(
-                                            $beneficiary['remarks'] ?? null,
                                         ) ?>
                                     </td>
 

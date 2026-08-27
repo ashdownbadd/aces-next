@@ -63,6 +63,10 @@ declare(strict_types=1);
                     class="input"
                     type="tel"
                     name="telephone_number"
+                    data-type="telephone"
+                    data-max-length="11"
+                    inputmode="tel"
+                    maxlength="16"
                     placeholder="(02) 8123-4567"
                     autocomplete="tel-national"
                     value="<?= htmlspecialchars($contact['telephone_number'] ?? '') ?>">

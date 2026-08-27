@@ -15,7 +15,6 @@ final class BeneficiaryData
         public readonly string $suffix,
         public readonly string $relationship,
         public readonly string $birthDate,
-        public readonly string $remarks,
     ) {}
 
     public static function fromRequest(
@@ -51,11 +50,6 @@ final class BeneficiaryData
                 'birth_date',
                 '',
             ),
-
-            remarks: (string) $request->input(
-                'remarks',
-                '',
-            ),
         );
     }
 
@@ -89,10 +83,6 @@ final class BeneficiaryData
             birthDate: (string) (
                 $data['birth_date'] ?? ''
             ),
-
-            remarks: (string) (
-                $data['remarks'] ?? ''
-            ),
         );
     }
 
@@ -108,7 +98,6 @@ final class BeneficiaryData
             'suffix' => $this->suffix,
             'relationship' => $this->relationship,
             'birth_date' => $this->birthDate,
-            'remarks' => $this->remarks,
         ];
     }
 }

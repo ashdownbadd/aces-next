@@ -509,12 +509,16 @@ final class MemberRepository extends Repository
                 INSERT INTO member_educations
                 (
                     member_id,
-                    highest_educational_attainment
+                    highest_educational_attainment,
+                    school_name,
+                    graduation_year
                 )
                 VALUES
                 (
                     :member_id,
-                    :highest_educational_attainment
+                    :highest_educational_attainment,
+                    :school_name,
+                    :graduation_year
                 )
                 "
             );
@@ -527,6 +531,16 @@ final class MemberRepository extends Repository
                         ->education
                         ->highestEducationalAttainment
                 ),
+                'school_name' =>
+                $this->nullable(
+                    $registration
+                        ->education
+                        ->schoolName
+                ),
+                'graduation_year' =>
+                $registration
+                    ->education
+                    ->graduationYear,
             ]);
 
             /*
@@ -546,8 +560,7 @@ final class MemberRepository extends Repository
                         last_name,
                         suffix,
                         relationship,
-                        birth_date,
-                        remarks
+                        birth_date
                     )
                     VALUES
                     (
@@ -557,8 +570,7 @@ final class MemberRepository extends Repository
                         :last_name,
                         :suffix,
                         :relationship,
-                        :birth_date,
-                        :remarks
+                        :birth_date
                     )
                     "
                 );
@@ -583,10 +595,6 @@ final class MemberRepository extends Repository
                         'birth_date' =>
                         $this->nullable(
                             $beneficiary->birthDate
-                        ),
-                        'remarks' =>
-                        $this->nullable(
-                            $beneficiary->remarks
                         ),
                     ]);
                 }
@@ -880,7 +888,9 @@ final class MemberRepository extends Repository
             UPDATE member_educations
             SET
                 highest_educational_attainment =
-                    :highest_educational_attainment
+                    :highest_educational_attainment,
+                school_name = :school_name,
+                graduation_year = :graduation_year
             WHERE member_id = :member_id
             "
             );
@@ -892,6 +902,18 @@ final class MemberRepository extends Repository
                         ->education
                         ->highestEducationalAttainment
                 ),
+
+                'school_name' =>
+                $this->nullable(
+                    $registration
+                        ->education
+                        ->schoolName
+                ),
+
+                'graduation_year' =>
+                $registration
+                    ->education
+                    ->graduationYear,
 
                 'member_id' => $memberId,
             ]);
@@ -928,8 +950,7 @@ final class MemberRepository extends Repository
                     last_name,
                     suffix,
                     relationship,
-                    birth_date,
-                    remarks
+                    birth_date
                 )
                 VALUES
                 (
@@ -939,8 +960,7 @@ final class MemberRepository extends Repository
                     :last_name,
                     :suffix,
                     :relationship,
-                    :birth_date,
-                    :remarks
+                    :birth_date
                 )
                 "
                 );
@@ -973,10 +993,7 @@ final class MemberRepository extends Repository
                             $beneficiary->birthDate
                         ),
 
-                        'remarks' =>
-                        $this->nullable(
-                            $beneficiary->remarks
-                        ),
+
                     ]);
                 }
             }
@@ -1034,7 +1051,9 @@ final class MemberRepository extends Repository
             ml.employer,
             ml.monthly_income,
 
-            me.highest_educational_attainment
+            me.highest_educational_attainment,
+            me.school_name,
+            me.graduation_year
 
         FROM members AS m
 
@@ -1078,8 +1097,7 @@ final class MemberRepository extends Repository
             last_name,
             suffix,
             relationship,
-            birth_date,
-            remarks
+            birth_date
         FROM member_beneficiaries
         WHERE member_id = :member_id
         ORDER BY id ASC

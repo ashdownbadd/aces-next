@@ -375,24 +375,6 @@ $money = static fn (float $value): string => '₱' . number_format(
 
     <?php endif; ?>
 
-    <?php if ($notes !== ''): ?>
-
-        <section class="card loan-review__section">
-
-            <div class="loan-review__section-header">
-                <div>
-                    <h2 class="loan-review__section-title">Notes</h2>
-                </div>
-            </div>
-
-            <p class="loan-review__notes">
-                <?= nl2br($e($notes)) ?>
-            </p>
-
-        </section>
-
-    <?php endif; ?>
-
     <div class="loan-review__actions">
 
         <a

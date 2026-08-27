@@ -242,6 +242,16 @@ final class EditService
                 (string) (
                     $member['highest_educational_attainment'] ?? ''
                 ),
+
+                'school_name' =>
+                (string) (
+                    $member['school_name'] ?? ''
+                ),
+
+                'graduation_year' =>
+                (string) (
+                    $member['graduation_year'] ?? ''
+                ),
             ],
         );
 

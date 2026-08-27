@@ -3,44 +3,89 @@
 
     const DEBOUNCE_MS = 300;
 
-    const submitSearch = (input) => {
+    const submitSearch = async (input) => {
         const form = input.closest('form');
+        const targetSelector = input.dataset.liveSearchTarget;
 
-        if (!form) {
+        if (!form || !targetSelector) {
             return;
         }
 
-        /*
-         * Search must be performed by the server because the page is paginated.
-         * The server filters the complete dataset before applying LIMIT/OFFSET.
-         * Resetting the page is essential: the previous page may be outside the
-         * result set for the new query.
-         */
-        const pageField = form.querySelector(
-            'input[name="page"]'
-        );
+        const url = new URL(form.action || window.location.href, window.location.origin);
+        const formData = new FormData(form);
 
-        if (pageField) {
-            pageField.remove();
+        url.search = '';
+
+        for (const [key, value] of formData.entries()) {
+            if (typeof value === 'string' && value !== '') {
+                url.searchParams.set(key, value);
+            }
         }
 
-        if (typeof form.requestSubmit === 'function') {
-            form.requestSubmit();
-            return;
+        // Search changes must always begin on page 1.
+        url.searchParams.delete('page');
+
+        try {
+            const response = await fetch(url.toString(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Search request failed: ${response.status}`);
+            }
+
+            const html = await response.text();
+            const documentFragment = new DOMParser().parseFromString(
+                html,
+                'text/html'
+            );
+
+            const nextTarget = documentFragment.querySelector(
+                targetSelector
+            );
+            const currentTarget = document.querySelector(
+                targetSelector
+            );
+
+            if (nextTarget && currentTarget) {
+                currentTarget.replaceChildren(
+                    ...Array.from(nextTarget.childNodes).map(
+                        (node) => node.cloneNode(true)
+                    )
+                );
+            } else if (!nextTarget && currentTarget) {
+                currentTarget.replaceChildren();
+            }
+
+            // Keep the result range/pagination synchronized without touching
+            // the input itself, so typing and Ctrl+A behave normally.
+            [
+                '.members__footer',
+                '.members__pagination',
+                '.loan-list__footer',
+                '.loan-list__pagination',
+                '.ledger-page__footer',
+                '.activity-logs__footer',
+            ].forEach((selector) => {
+                const current = document.querySelector(selector);
+                const incoming = documentFragment.querySelector(selector);
+
+                if (current && incoming) {
+                    current.replaceWith(incoming.cloneNode(true));
+                } else if (current && !incoming) {
+                    current.remove();
+                }
+            });
+        } catch (error) {
+            console.error('Live search failed:', error);
         }
-
-        form.submit();
-    };
-
-    const clearSearch = (input) => {
-        input.value = '';
-
-        submitSearch(input);
     };
 
     document.addEventListener('DOMContentLoaded', () => {
         document
-            .querySelectorAll('[data-live-search]')
+            .querySelectorAll('input[data-live-search]')
             .forEach((input) => {
                 let timer = null;
 
@@ -55,7 +100,8 @@
                 input.addEventListener('keydown', (event) => {
                     if (event.key === 'Escape') {
                         window.clearTimeout(timer);
-                        clearSearch(input);
+                        input.value = '';
+                        submitSearch(input);
                     }
                 });
             });

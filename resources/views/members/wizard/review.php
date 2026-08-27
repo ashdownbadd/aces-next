@@ -618,19 +618,43 @@ $humanize = static function (?string $value): string {
                         <div class="summary__row">
 
                             <div class="summary__label">
-
                                 Highest Educational Attainment
-
                             </div>
 
                             <div class="summary__value">
-
                                 <?= htmlspecialchars(
                                     $humanize(
                                         $education['highest_educational_attainment'] ?? null
                                     )
                                 ) ?>
+                            </div>
 
+                        </div>
+
+                        <div class="summary__row">
+
+                            <div class="summary__label">
+                                School Attended
+                            </div>
+
+                            <div class="summary__value">
+                                <?= htmlspecialchars(
+                                    $education['school_name'] ?? '—'
+                                ) ?>
+                            </div>
+
+                        </div>
+
+                        <div class="summary__row">
+
+                            <div class="summary__label">
+                                Graduation Year
+                            </div>
+
+                            <div class="summary__value">
+                                <?= htmlspecialchars(
+                                    $education['graduation_year'] ?? '—'
+                                ) ?>
                             </div>
 
                         </div>
@@ -777,6 +801,57 @@ $humanize = static function (?string $value): string {
         type="hidden"
         name="step"
         value="review">
+
+
+<div
+    class="registration-progress"
+    data-registration-progress
+    hidden
+    aria-live="polite"
+    aria-busy="true">
+
+    <div class="registration-progress__spinner" aria-hidden="true"></div>
+
+    <div>
+        <strong>Registering member</strong>
+        <span>Please wait while the member record is saved.</span>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector(
+        'form[action="/members/register"]'
+    );
+
+    const progress = document.querySelector(
+        "[data-registration-progress]"
+    );
+
+    if (!form || !progress) {
+        return;
+    }
+
+    const submit = form.querySelector(
+        'button[type="submit"]'
+    );
+
+    form.addEventListener("submit", () => {
+        submit?.setAttribute("disabled", "disabled");
+
+        if (submit) {
+            submit.dataset.originalLabel =
+                submit.textContent.trim();
+
+            submit.textContent =
+                "Registering...";
+        }
+
+        progress.hidden = false;
+    });
+});
+</script>
 
 </form>
 

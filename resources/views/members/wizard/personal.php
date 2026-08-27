@@ -105,7 +105,7 @@ declare(strict_types=1);
                     class="input"
                     type="text"
                     name="suffix"
-                    data-type="uppercase"
+                    data-type="suffix"
                     maxlength="10"
                     placeholder="Jr., Sr., III"
                     value="<?= htmlspecialchars($personal['suffix'] ?? '') ?>">

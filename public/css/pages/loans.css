@@ -1334,3 +1334,35 @@
     justify-content: flex-end;
   }
 }
+
+
+.loan-create__schedule-section {
+  gap: var(--space-5);
+}
+
+.loan-create__schedule-status {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.loan-create__schedule-wrap {
+  overflow-x: auto;
+  margin-inline: calc(-1 * var(--space-2));
+  padding-inline: var(--space-2);
+}
+
+.loan-create__schedule {
+  min-width: 760px;
+}
+
+.loan-create__schedule th,
+.loan-create__schedule td {
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .loan-create__schedule-wrap {
+    margin-inline: -10px;
+    padding-inline: 10px;
+  }
+}
