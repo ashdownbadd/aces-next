@@ -53,6 +53,70 @@ $paymentFrequencies = [
         </div>
     </header>
 
+    <ol
+        class="loan-create__flow"
+        aria-label="Loan application progress">
+
+        <li class="loan-create__flow-step is-current" aria-current="step">
+
+            <span class="loan-create__flow-marker" aria-hidden="true">
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 4.5h14v15H5z" />
+                    <path d="M8 8h8M8 11.5h6M8 15h4" />
+                </svg>
+
+            </span>
+
+            <span class="loan-create__flow-label">
+                <strong>Details</strong>
+                <small>Enter application information</small>
+            </span>
+
+        </li>
+
+        <li class="loan-create__flow-connector" aria-hidden="true"></li>
+
+        <li class="loan-create__flow-step">
+
+            <span class="loan-create__flow-marker" aria-hidden="true">
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M7 3.5h10v17H7z" />
+                    <path d="M10 7.5h4M10 11h4M10 14.5h4" />
+                </svg>
+
+            </span>
+
+            <span class="loan-create__flow-label">
+                <strong>Review</strong>
+                <small>Check calculations and schedule</small>
+            </span>
+
+        </li>
+
+        <li class="loan-create__flow-connector" aria-hidden="true"></li>
+
+        <li class="loan-create__flow-step">
+
+            <span class="loan-create__flow-marker" aria-hidden="true">
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 12h14" />
+                    <path d="m13 6 6 6-6 6" />
+                </svg>
+
+            </span>
+
+            <span class="loan-create__flow-label">
+                <strong>Submit</strong>
+                <small>Send for formal review</small>
+            </span>
+
+        </li>
+
+    </ol>
+
     <form
         id="loan-create-form"
         class="form"
@@ -602,11 +666,16 @@ $paymentFrequencies = [
                 class="btn btn--primary"
                 data-review-loan>
 
-                Review Application →
+                Review Application
 
             </button>
 
         </div>
+
+        <p class="loan-create__action-hint">
+            Review will validate the required fields and show the computed
+            deductions and amortization schedule before submission.
+        </p>
 
         <div
             class="alert alert--error loan-create__validation"

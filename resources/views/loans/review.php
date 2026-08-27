@@ -90,9 +90,60 @@ $money = static fn (float $value): string => '₱' . number_format(
 
     <?php if ($submitted): ?>
 
-        <div class="alert alert--success">
-            Loan application submitted successfully. It is now Under Review.
-        </div>
+        <section class="loan-review__handoff">
+
+            <div class="loan-review__handoff-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="m5 12 4 4L19 6" />
+                </svg>
+            </div>
+
+            <div class="loan-review__handoff-content">
+
+                <span class="loan-review__eyebrow">
+                    Application Submitted
+                </span>
+
+                <h2>Now Under Review</h2>
+
+                <p>
+                    This application has been submitted successfully and is
+                    now waiting for an administrator's approval decision.
+                </p>
+
+                <div class="loan-review__handoff-meta">
+
+                    <div>
+                        <span>Status</span>
+                        <strong>Under Review</strong>
+                    </div>
+
+                    <div>
+                        <span>Next Step</span>
+                        <strong>Administrator decision</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="loan-review__handoff-actions">
+
+                <a
+                    href="/loans?status=Under%20Review"
+                    class="btn btn--primary">
+                    Open Approval Queue
+                </a>
+
+                <a
+                    href="/loans/<?= (int) ($loan['id'] ?? 0) ?>/show"
+                    class="btn btn--secondary">
+                    View Application
+                </a>
+
+            </div>
+
+        </section>
 
     <?php endif; ?>
 

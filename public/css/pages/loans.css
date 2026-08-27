@@ -1197,3 +1197,140 @@
 .loan-detail__member-link:hover {
   text-decoration: underline;
 }
+
+/* ==========================================================================
+   Under Review queue
+   ========================================================================== */
+
+.loan-list__filter-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.loan-list__clear-filter {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+}
+
+.loan-list__clear-filter:hover {
+  color: var(--color-primary);
+}
+
+.loan-list__summary {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.loan-list__summary strong {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.loan-list__summary-hint {
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+}
+
+.loan-list__status-detail {
+  margin-top: 3px;
+  color: var(--color-text-soft);
+  font-size: 0.62rem;
+  line-height: 1.35;
+}
+
+.loan-list__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 56px;
+}
+
+.loan-list__result-range {
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+}
+
+.loan-list__pagination {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.loan-list__pagination-pages {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.loan-list__pagination-button,
+.loan-list__page-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+
+  border: 1px solid transparent;
+  border-radius: 7px;
+
+  background: transparent;
+  color: var(--color-text-muted);
+
+  font-size: 0.66rem;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.loan-list__pagination-button {
+  min-width: 70px;
+  border-color: var(--color-border);
+}
+
+.loan-list__pagination-button:hover,
+.loan-list__page-number:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.loan-list__pagination-button.is-disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.loan-list__page-number.is-current {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.loan-list__pagination-ellipsis {
+  width: 18px;
+  height: 30px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--color-text-soft);
+}
+
+@media (max-width: 760px) {
+  .loan-list__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .loan-list__pagination {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

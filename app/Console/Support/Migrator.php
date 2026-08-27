@@ -29,10 +29,23 @@ final class Migrator
         'CreateMemberLivelihoodsTable',
         'CreateMemberBeneficiariesTable',
 
+        'RemoveArchivedStatusFromMembersTable',
+        'RemoveSharePercentageFromMemberBeneficiariesTable',
+
+        'CreateAccountsTable',
+
         'CreateLoansTable',
         'CreateLoanAmortizationsTable',
         'CreateLoanPaymentsTable',
         'CreateLoanPaymentAllocationsTable',
+        'AddPaymentReversalFields',
+
+        'CreateJournalVouchersTable',
+        'AddPostedStatusToJournalVouchersTable',
+        'AddReversalLinkToJournalVouchersTable',
+        'CreateJournalLinesTable',
+
+        'CreateActivityLogsTable',
     ];
 
     public function __construct(

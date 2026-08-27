@@ -31,6 +31,20 @@ $statuses = [
     'Overdue',
 ];
 
+$statusDescriptions = [
+    'Pending' => 'Applications not yet submitted for review.',
+    'Under Review' => 'Applications waiting for an approval decision.',
+    'Approved' => 'Applications approved and ready for release.',
+    'Rejected' => 'Applications that were rejected.',
+    'Overdue' => 'Active loans with overdue payment periods.',
+];
+
+$activeStatusDescription =
+    $statusDescriptions[$status]
+    ?? 'Review and manage cooperative loans.';
+
+$isApprovalQueue = $status === 'Under Review';
+
 ?>
 
 <div class="loan-list">
@@ -39,7 +53,7 @@ $statuses = [
         <div>
             <h1 class="loan-list__title">Loan Applications</h1>
             <p class="loan-list__description">
-                Review and manage submitted loan applications.
+                <?= $e($activeStatusDescription) ?>
             </p>
         </div>
 
@@ -78,14 +92,39 @@ $statuses = [
                 </select>
             </div>
 
-            <button type="submit" class="btn btn--secondary">
-                Filter
-            </button>
+            <div class="loan-list__filter-actions">
+
+                <button type="submit" class="btn btn--secondary">
+                    Apply Filters
+                </button>
+
+                <?php if ($search !== '' || $status !== 'Under Review'): ?>
+
+                    <a
+                        href="/loans"
+                        class="loan-list__clear-filter">
+                        Clear
+                    </a>
+
+                <?php endif; ?>
+
+            </div>
 
         </form>
 
         <div class="loan-list__summary">
-            <?= $e($total) ?> application(s)
+
+            <strong>
+                <?= number_format($total) ?>
+                <?= $status === 'Overdue'
+                    ? 'overdue loans'
+                    : 'applications' ?>
+            </strong>
+
+            <span class="loan-list__summary-hint">
+                <?= $e($activeStatusDescription) ?>
+            </span>
+
         </div>
 
     </section>
@@ -149,19 +188,49 @@ $statuses = [
                                 <td><?= $e($loan['created_at'] ?? '—') ?></td>
 
                                 <td>
+
                                     <span class="badge">
                                         <?= $status === 'Overdue'
                                             ? 'Overdue'
                                             : $e($loan['application_status'] ?? '—') ?>
                                     </span>
+
+                                    <?php if ($status === 'Overdue'): ?>
+
+                                        <div class="loan-list__status-detail">
+                                            Active loan with overdue payment period
+                                        </div>
+
+                                    <?php endif; ?>
+
                                 </td>
 
                                 <td class="loan-list__action-column">
+
+                                    <?php
+                                    $loanId = (int) ($loan['id'] ?? 0);
+                                    $applicationStatus =
+                                        (string) ($loan['application_status'] ?? '');
+                                    $loanLifecycleStatus =
+                                        (string) ($loan['loan_status'] ?? '');
+
+                                    $actionLabel = match (true) {
+                                        $status === 'Overdue' => 'View Loan',
+                                        $applicationStatus === 'Under Review' => 'Review',
+                                        $applicationStatus === 'Pending' => 'Review',
+                                        $applicationStatus === 'Approved'
+                                            && $loanLifecycleStatus === '' => 'Release',
+                                        $loanLifecycleStatus === 'Active' => 'Manage',
+                                        default => 'View Loan',
+                                    };
+                                    ?>
+
                                     <a
                                         class="btn btn--secondary btn--sm"
-                                        href="/loans/<?= (int) ($loan['id'] ?? 0) ?>/show">
-                                        View
+                                        href="/loans/<?= $loanId ?>/show">
+                                        <?= $e($actionLabel) ?>
                                     </a>
+
                                 </td>
                             </tr>
 
@@ -174,32 +243,141 @@ $statuses = [
 
     </section>
 
-    <?php if ($lastPage > 1): ?>
+    <div class="loan-list__footer">
 
-        <nav class="loan-list__pagination" aria-label="Loan pagination">
+        <?php
+        $from = $total > 0
+            ? (($page - 1) * 25) + 1
+            : 0;
 
-            <?php if ($page > 1): ?>
-                <a
-                    class="btn btn--secondary btn--sm"
-                    href="?status=<?= urlencode($status) ?>&search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">
-                    ← Previous
-                </a>
+        $to = $total > 0
+            ? min($page * 25, $total)
+            : 0;
+        ?>
+
+        <div class="loan-list__result-range">
+
+            <?php if ($total > 0): ?>
+
+                Showing
+                <?= number_format($from) ?>
+                –
+                <?= number_format($to) ?>
+                of
+                <?= number_format($total) ?>
+                <?= $status === 'Overdue'
+                    ? 'overdue loans'
+                    : 'loan applications' ?>
+
+            <?php else: ?>
+
+                No matching applications
+
             <?php endif; ?>
 
-            <span>
-                Page <?= $e($page) ?> of <?= $e($lastPage) ?>
-            </span>
+        </div>
 
-            <?php if ($page < $lastPage): ?>
-                <a
-                    class="btn btn--secondary btn--sm"
-                    href="?status=<?= urlencode($status) ?>&search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">
-                    Next →
-                </a>
-            <?php endif; ?>
+        <?php if ($lastPage > 1): ?>
 
-        </nav>
+            <nav
+                class="loan-list__pagination"
+                aria-label="Loan pagination">
 
-    <?php endif; ?>
+                <?php if ($page > 1): ?>
+
+                    <a
+                        class="loan-list__pagination-button"
+                        href="?status=<?= urlencode($status) ?>&search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">
+                        Previous
+                    </a>
+
+                <?php else: ?>
+
+                    <span class="loan-list__pagination-button is-disabled">
+                        Previous
+                    </span>
+
+                <?php endif; ?>
+
+                <div class="loan-list__pagination-pages">
+
+                    <?php
+                    $startPage = max(1, $page - 2);
+                    $endPage = min($lastPage, $page + 2);
+                    ?>
+
+                    <?php if ($startPage > 1): ?>
+
+                        <a
+                            class="loan-list__page-number"
+                            href="?status=<?= urlencode($status) ?>&search=<?= urlencode($search) ?>&page=1">
+                            1
+                        </a>
+
+                        <?php if ($startPage > 2): ?>
+                            <span class="loan-list__pagination-ellipsis">…</span>
+                        <?php endif; ?>
+
+                    <?php endif; ?>
+
+                    <?php for ($p = $startPage; $p <= $endPage; $p++): ?>
+
+                        <?php if ($p === $page): ?>
+
+                            <span
+                                class="loan-list__page-number is-current"
+                                aria-current="page">
+                                <?= $p ?>
+                            </span>
+
+                        <?php else: ?>
+
+                            <a
+                                class="loan-list__page-number"
+                                href="?status=<?= urlencode($status) ?>&search=<?= urlencode($search) ?>&page=<?= $p ?>">
+                                <?= $p ?>
+                            </a>
+
+                        <?php endif; ?>
+
+                    <?php endfor; ?>
+
+                    <?php if ($endPage < $lastPage): ?>
+
+                        <?php if ($endPage < $lastPage - 1): ?>
+                            <span class="loan-list__pagination-ellipsis">…</span>
+                        <?php endif; ?>
+
+                        <a
+                            class="loan-list__page-number"
+                            href="?status=<?= urlencode($status) ?>&search=<?= urlencode($search) ?>&page=<?= $lastPage ?>">
+                            <?= $lastPage ?>
+                        </a>
+
+                    <?php endif; ?>
+
+                </div>
+
+                <?php if ($page < $lastPage): ?>
+
+                    <a
+                        class="loan-list__pagination-button"
+                        href="?status=<?= urlencode($status) ?>&search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">
+                        Next
+                    </a>
+
+                <?php else: ?>
+
+                    <span class="loan-list__pagination-button is-disabled">
+                        Next
+                    </span>
+
+                <?php endif; ?>
+
+            </nav>
+
+        <?php endif; ?>
+
+    </div>
 
 </div>
