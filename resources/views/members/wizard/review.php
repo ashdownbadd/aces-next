@@ -634,7 +634,45 @@ $humanize = static function (?string $value): string {
 
                             </div>
 
+
+
+                        <div class="summary__row">
+
+                            <div class="summary__label">
+
+                                School Attended
+
+                            </div>
+
+                            <div class="summary__value">
+
+                                <?= htmlspecialchars(
+                                    $education['school_name']
+                                        ?? '—'
+                                ) ?>
+
+                            </div>
+
                         </div>
+
+                        <div class="summary__row">
+
+                            <div class="summary__label">
+
+                                Graduation Year
+
+                            </div>
+
+                            <div class="summary__value">
+
+                                <?= htmlspecialchars(
+                                    $education['graduation_year']
+                                        ?? '—'
+                                ) ?>
+
+                            </div>
+
+                        </div>                        </div>
 
                     </div>
 
@@ -783,24 +821,55 @@ $humanize = static function (?string $value): string {
 
 
 <div
-    class="registration-progress"
+    class="registration-loading"
     data-registration-progress
     hidden
-    aria-live="polite"
-    aria-busy="true">
+    aria-hidden="true">
 
-    <span
-        class="registration-progress__spinner"
-        aria-hidden="true"></span>
+    <div
+        class="registration-loading__backdrop"
+        aria-hidden="true"></div>
 
-    <div>
-        <strong data-registration-progress-title>
-            Processing member
-        </strong>
+    <div
+        class="registration-loading__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="registration-loading-title"
+        aria-describedby="registration-loading-message">
 
-        <span>
-            Please wait while the member record is being saved.
-        </span>
+        <div class="registration-loading__main">
+
+            <div
+                class="registration-loading__spinner"
+                data-registration-spinner
+                aria-hidden="true"></div>
+
+            <div class="registration-loading__content">
+
+                <strong
+                    id="registration-loading-title"
+                    data-registration-progress-title>
+                    Processing registration...
+                </strong>
+
+                <span
+                    id="registration-loading-message"
+                    data-registration-progress-message>
+                    Please wait while the member record is being saved.
+                </span>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="registration-loading__close"
+            data-registration-close
+            disabled>
+            Close
+        </button>
+
     </div>
 
 </div>
@@ -819,40 +888,257 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    form.addEventListener("submit", () => {
-        const button = form.querySelector(
-            'button[type="submit"]'
+    const button = form.querySelector(
+        'button[type="submit"]'
+    );
+
+    const spinner = progress.querySelector(
+        "[data-registration-spinner]"
+    );
+
+    const title = progress.querySelector(
+        "[data-registration-progress-title]"
+    );
+
+    const message = progress.querySelector(
+        "[data-registration-progress-message]"
+    );
+
+    const closeButton = progress.querySelector(
+        "[data-registration-close]"
+    );
+
+    let responseUrl = null;
+    let processing = false;
+
+    const sleep = (milliseconds) =>
+        new Promise(
+            (resolve) =>
+                window.setTimeout(
+                    resolve,
+                    milliseconds
+                )
         );
 
-        const title = progress.querySelector(
-            "[data-registration-progress-title]"
-        );
-
-        const isUpdate =
-            button?.textContent.trim()
-            === "Update Member";
-
-        if (button) {
-            button.disabled = true;
-            button.textContent =
-                isUpdate
-                    ? "Updating..."
-                    : "Registering...";
-        }
-
+    const setModalState = ({
+        titleText,
+        messageText,
+        loading,
+        canClose,
+    }) => {
         if (title) {
-            title.textContent =
-                isUpdate
-                    ? "Updating member"
-                    : "Registering member";
+            title.textContent = titleText;
         }
 
-        progress.hidden = false;
-    });
-});
-</script>
+        if (message) {
+            message.textContent = messageText;
+        }
 
-</form>
+        if (spinner) {
+            spinner.hidden = !loading;
+        }
+
+        if (closeButton) {
+            closeButton.disabled = !canClose;
+            closeButton.setAttribute(
+                "aria-disabled",
+                canClose ? "false" : "true"
+            );
+        }
+
+        progress.classList.toggle(
+            "is-complete",
+            !loading
+        );
+    };
+
+    form.addEventListener(
+        "submit",
+        async (event) => {
+            event.preventDefault();
+
+            if (processing) {
+                return;
+            }
+
+            processing = true;
+
+            const isUpdate =
+                button?.dataset.action === "update"
+                || button?.textContent.trim()
+                    === "Update Member";
+
+            if (button) {
+                button.disabled = true;
+                button.dataset.action =
+                    isUpdate
+                        ? "update"
+                        : "register";
+
+                button.textContent =
+                    isUpdate
+                        ? "Updating..."
+                        : "Registering...";
+            }
+
+            progress.classList.remove(
+                "is-error",
+                "is-complete"
+            );
+
+            setModalState({
+                titleText:
+                    isUpdate
+                        ? "Processing update..."
+                        : "Processing registration...",
+                messageText:
+                    "Please wait while the member record is being saved.",
+                loading: true,
+                canClose: false,
+            });
+
+            progress.hidden = false;
+            progress.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.classList.add(
+                "registration-is-processing"
+            );
+
+            // Keep the loading state perceptible even when the local
+            // development server responds almost instantly. The request
+            // itself still determines the duration; 650 ms is only a
+            // minimum visibility floor, not the loading duration.
+            const startedAt = performance.now();
+
+            try {
+                const response = await fetch(
+                    form.action,
+                    {
+                        method:
+                            form.method || "POST",
+                        body: new FormData(form),
+                        credentials: "same-origin",
+                        redirect: "follow",
+                        headers: {
+                            "X-Requested-With":
+                                "XMLHttpRequest",
+                        },
+                    }
+                );
+
+                const elapsed =
+                    performance.now()
+                    - startedAt;
+
+                const minimumVisibility =
+                    650;
+
+                if (
+                    elapsed
+                    < minimumVisibility
+                ) {
+                    await sleep(
+                        minimumVisibility
+                        - elapsed
+                    );
+                }
+
+                responseUrl =
+                    response.url;
+
+                if (!response.ok) {
+                    throw new Error(
+                        `The server returned HTTP ${response.status}.`
+                    );
+                }
+
+                processing = false;
+
+                setModalState({
+                    titleText:
+                        isUpdate
+                            ? "Update complete"
+                            : "Registration complete",
+                    messageText:
+                        isUpdate
+                            ? "The member record was updated successfully."
+                            : "The member record was saved successfully.",
+                    loading: false,
+                    canClose: true,
+                });
+
+            } catch (error) {
+                console.error(
+                    "Member submission failed.",
+                    error
+                );
+
+                setModalState({
+                    titleText:
+                        "Something went wrong",
+                    messageText:
+                        "The member record could not be saved. Please close this message and try again.",
+                    loading: false,
+                    canClose: true,
+                });
+
+                progress.classList.add(
+                    "is-error"
+                );
+
+                if (button) {
+                    button.disabled = false;
+                    button.textContent =
+                        isUpdate
+                            ? "Update Member"
+                            : "Register Member";
+                }
+
+                processing = false;
+            }
+        }
+    );
+
+    closeButton?.addEventListener(
+        "click",
+        (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (closeButton.disabled) {
+                return;
+            }
+
+            // Always hide/unlock first so the click has an immediate,
+            // visible effect.
+            progress.hidden = true;
+            progress.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            document.body.classList.remove(
+                "registration-is-processing"
+            );
+
+            // A successful POST may have redirected to the member list.
+            // Follow that destination after the modal has been closed.
+            if (
+                responseUrl
+                && responseUrl
+                    !== window.location.href
+            ) {
+                window.location.assign(
+                    responseUrl
+                );
+            }
+        }
+    );
+});
+</script></form>
 
 <?php
 
