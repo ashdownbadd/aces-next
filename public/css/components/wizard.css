@@ -420,3 +420,7 @@
     transform: rotate(360deg);
   }
 }
+
+.registration-progress[hidden] {
+  display: none !important;
+}

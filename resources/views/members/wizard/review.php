@@ -780,6 +780,8 @@ $humanize = static function (?string $value): string {
         value="review">
 
 
+
+
 <div
     class="registration-progress"
     data-registration-progress
@@ -792,8 +794,13 @@ $humanize = static function (?string $value): string {
         aria-hidden="true"></span>
 
     <div>
-        <strong>Registering member</strong>
-        <span>Please wait while the member record is being saved.</span>
+        <strong data-registration-progress-title>
+            Processing member
+        </strong>
+
+        <span>
+            Please wait while the member record is being saved.
+        </span>
     </div>
 
 </div>
@@ -817,19 +824,30 @@ document.addEventListener("DOMContentLoaded", () => {
             'button[type="submit"]'
         );
 
-        button?.setAttribute(
-            "disabled",
-            "disabled"
+        const title = progress.querySelector(
+            "[data-registration-progress-title]"
         );
 
+        const isUpdate =
+            button?.textContent.trim()
+            === "Update Member";
+
         if (button) {
+            button.disabled = true;
             button.textContent =
-                "Registering...";
+                isUpdate
+                    ? "Updating..."
+                    : "Registering...";
+        }
+
+        if (title) {
+            title.textContent =
+                isUpdate
+                    ? "Updating member"
+                    : "Registering member";
         }
 
         progress.hidden = false;
-
-        window.AcesWizard?.clearDraft();
     });
 });
 </script>

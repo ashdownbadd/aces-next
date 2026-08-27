@@ -57,44 +57,32 @@ const InputTypes = {
   },
 
   suffix(input) {
-    const sanitize = (value) =>
-      value
+    input.addEventListener("input", () => {
+      let value = input.value
         .replace(/[^A-Za-z0-9.\-\s]/g, "")
         .replace(/\s+/g, " ")
         .trimStart();
 
-    // Keep the user's exact input while typing.
-    // Canonical formatting happens only after leaving the field.
-    input.addEventListener("input", () => {
-      input.value = sanitize(input.value);
-    });
-
-    input.addEventListener("blur", () => {
-      const value = sanitize(input.value);
-      const normalized = value.toLowerCase();
-
-      if (
-        normalized === "jr"
-        || normalized === "jr."
-      ) {
-        input.value = "Jr.";
+      if (!value) {
+        input.value = "";
         return;
       }
 
-      if (
-        normalized === "sr"
-        || normalized === "sr."
-      ) {
-        input.value = "Sr.";
-        return;
-      }
+      // Capitalize only the first character immediately while typing.
+      // Do not insert a period automatically.
+      value =
+        value.charAt(0).toUpperCase()
+        + value.slice(1);
 
+      // Roman numeral suffixes remain fully uppercase.
       const roman =
         /^(?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX)$/i;
 
       if (roman.test(value)) {
-        input.value = normalized.toUpperCase();
+        value = value.toUpperCase();
       }
+
+      input.value = value;
     });
   },
 
