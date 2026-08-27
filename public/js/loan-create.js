@@ -10,6 +10,336 @@
     return;
   }
 
+  const memberPicker =
+    form.querySelector("[data-member-picker]");
+
+  const memberSearchInput =
+    form.querySelector("[data-member-search]");
+
+  const memberIdInput =
+    form.querySelector("[data-member-id]");
+
+  const memberResults =
+    form.querySelector("[data-member-results]");
+
+  const memberSelected =
+    form.querySelector("[data-member-selected]");
+
+  let memberSearchTimer = null;
+  let memberSearchController = null;
+  let activeMemberIndex = -1;
+
+  const escapeHtml = (value) =>
+    value.replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[character]));
+
+  const clearMemberResults = () => {
+    if (!memberResults) {
+      return;
+    }
+
+    memberResults.replaceChildren();
+    memberResults.hidden = true;
+    memberSearchInput?.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+    activeMemberIndex = -1;
+  };
+
+  const selectMember = (member) => {
+    if (!memberSearchInput || !memberIdInput) {
+      return;
+    }
+
+    memberIdInput.value = String(member.id);
+    memberSearchInput.value =
+      `${member.member_number} — ${member.name}`;
+
+    if (memberSelected) {
+      memberSelected.textContent =
+        `Selected member: ${member.member_number} — ${member.name}`;
+      memberSelected.hidden = false;
+    }
+
+    clearMemberResults();
+  };
+
+  const renderMemberResults = (members) => {
+    if (!memberResults) {
+      return;
+    }
+
+    memberResults.replaceChildren();
+    activeMemberIndex = -1;
+
+    if (members.length === 0) {
+      const empty =
+        document.createElement("div");
+
+      empty.className =
+        "loan-member-picker__empty";
+
+      empty.textContent =
+        "No active members found.";
+
+      memberResults.appendChild(empty);
+      memberResults.hidden = false;
+
+      memberSearchInput?.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      return;
+    }
+
+    members.forEach((member, index) => {
+      const button =
+        document.createElement("button");
+
+      button.type = "button";
+      button.className =
+        "loan-member-picker__option";
+      button.dataset.memberIndex =
+        String(index);
+
+      button.setAttribute(
+        "role",
+        "option"
+      );
+
+      button.innerHTML = `
+        <span class="loan-member-picker__option-number">
+          ${escapeHtml(String(member.member_number))}
+        </span>
+        <span class="loan-member-picker__option-name">
+          ${escapeHtml(String(member.name))}
+        </span>
+      `;
+
+      button.addEventListener(
+        "mousedown",
+        (event) => {
+          event.preventDefault();
+        }
+      );
+
+      button.addEventListener(
+        "click",
+        () => selectMember(member)
+      );
+
+      memberResults.appendChild(button);
+    });
+
+    memberResults.hidden = false;
+
+    memberSearchInput?.setAttribute(
+      "aria-expanded",
+      "true"
+    );
+  };
+
+  const fetchMembers = async () => {
+    if (!memberSearchInput || !memberResults) {
+      return;
+    }
+
+    const query =
+      memberSearchInput.value.trim();
+
+    if (query.length < 2) {
+      clearMemberResults();
+      return;
+    }
+
+    memberSearchController?.abort();
+    memberSearchController =
+      new AbortController();
+
+    try {
+      const url =
+        `/loans/members/search?q=${
+          encodeURIComponent(query)
+        }`;
+
+      const response = await fetch(
+        url,
+        {
+          headers: {
+            "Accept": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          signal:
+            memberSearchController.signal,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Member search failed: ${response.status}`
+        );
+      }
+
+      const data =
+        await response.json();
+
+      if (
+        memberSearchController.signal.aborted
+        || memberSearchInput.value.trim()
+          !== query
+      ) {
+        return;
+      }
+
+      renderMemberResults(
+        Array.isArray(data.members)
+          ? data.members
+          : []
+      );
+    } catch (error) {
+      if (error.name === "AbortError") {
+        return;
+      }
+
+      console.error(
+        "Unable to search members.",
+        error
+      );
+    }
+  };
+
+  const setActiveMemberOption =
+    (index) => {
+      const options =
+        Array.from(
+          memberResults?.querySelectorAll(
+            ".loan-member-picker__option"
+          ) || []
+        );
+
+      if (options.length === 0) {
+        activeMemberIndex = -1;
+        return;
+      }
+
+      activeMemberIndex =
+        Math.max(
+          0,
+          Math.min(
+            index,
+            options.length - 1
+          )
+        );
+
+      options.forEach(
+        (option, optionIndex) => {
+          const active =
+            optionIndex === activeMemberIndex;
+
+          option.classList.toggle(
+            "is-active",
+            active
+          );
+
+          option.setAttribute(
+            "aria-selected",
+            active ? "true" : "false"
+          );
+        }
+      );
+
+      options[activeMemberIndex]
+        ?.scrollIntoView({
+          block: "nearest",
+        });
+    };
+
+  memberSearchInput?.addEventListener(
+    "input",
+    () => {
+      memberIdInput.value = "";
+
+      if (memberSelected) {
+        memberSelected.hidden = true;
+      }
+
+      window.clearTimeout(
+        memberSearchTimer
+      );
+
+      memberSearchTimer =
+        window.setTimeout(
+          fetchMembers,
+          250
+        );
+    }
+  );
+
+  memberSearchInput?.addEventListener(
+    "keydown",
+    (event) => {
+      if (
+        event.key === "ArrowDown"
+      ) {
+        event.preventDefault();
+        setActiveMemberOption(
+          activeMemberIndex + 1
+        );
+        return;
+      }
+
+      if (
+        event.key === "ArrowUp"
+      ) {
+        event.preventDefault();
+        setActiveMemberOption(
+          activeMemberIndex - 1
+        );
+        return;
+      }
+
+      if (
+        event.key === "Enter"
+        && activeMemberIndex >= 0
+      ) {
+        event.preventDefault();
+
+        const option =
+          memberResults?.querySelector(
+            `[data-member-index="${activeMemberIndex}"]`
+          );
+
+        option?.click();
+        return;
+      }
+
+      if (event.key === "Escape") {
+        clearMemberResults();
+      }
+    }
+  );
+
+  document.addEventListener(
+    "click",
+    (event) => {
+      if (
+        memberPicker
+        && !memberPicker.contains(
+          event.target
+        )
+      ) {
+        clearMemberResults();
+      }
+    }
+  );
+
   const loanType =
     form.querySelector("#loan-type");
 
@@ -474,6 +804,17 @@
       * 100
     ) / 100;
 
+  const displayDate = (date) => {
+    return date.toLocaleDateString(
+      "en-PH",
+      {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      }
+    );
+  };
+
   const generatePreview = () => {
     if (
       !previewBody
@@ -613,10 +954,7 @@
 
         rows.push({
           period,
-          dueDate:
-            dueDate
-              .toISOString()
-              .slice(0, 10),
+          dueDate,
           principal:
             roundMoney(principalPart),
           interest:
@@ -699,10 +1037,7 @@
 
         rows.push({
           period,
-          dueDate:
-            dueDate
-              .toISOString()
-              .slice(0, 10),
+          dueDate,
           principal:
             roundMoney(principalPart),
           interest:
@@ -765,7 +1100,7 @@
 
         [
           row.period,
-          row.dueDate,
+          displayDate(row.dueDate),
           money(row.principal),
           money(row.interest),
           money(row.payment),

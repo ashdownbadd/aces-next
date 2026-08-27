@@ -139,51 +139,57 @@ $paymentFrequencies = [
 
                     <label
                         class="form-label"
-                        for="loan-member">
+                        for="loan-member-search">
 
                         Member
                         <span class="form-required">*</span>
 
                     </label>
 
-                    <select
-                        id="loan-member"
-                        name="member_id"
-                        class="input"
-                        required>
+                    <div
+                        class="loan-member-picker"
+                        data-member-picker>
 
-                        <option value="">Select member</option>
+                        <input
+                            id="loan-member-search"
+                            class="input"
+                            type="search"
+                            placeholder="Search member name or member number..."
+                            autocomplete="off"
+                            inputmode="search"
+                            role="combobox"
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-controls="loan-member-results"
+                            data-member-search>
 
-                        <?php foreach ($members as $member): ?>
+                        <input
+                            type="hidden"
+                            id="loan-member"
+                            name="member_id"
+                            required
+                            data-member-id>
 
-                            <?php
-                            $memberId = (int) ($member['id'] ?? 0);
-                            $memberNumber = (string) ($member['member_number'] ?? '');
-                            $memberName = (string) ($member['full_name'] ?? $member['name'] ?? $member['member_name'] ?? '');
-                            ?>
+                        <div
+                            id="loan-member-results"
+                            class="loan-member-picker__results"
+                            role="listbox"
+                            hidden
+                            data-member-results></div>
 
-                            <?php if ($memberId > 0): ?>
-
-                                <option value="<?= $memberId ?>">
-                                    <?= htmlspecialchars(
-                                        trim($memberNumber . ' — ' . $memberName),
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
-                                </option>
-
-                            <?php endif; ?>
-
-                        <?php endforeach; ?>
-
-                    </select>
+                    </div>
 
                     <span class="form-help">
-                        The selected member becomes the borrower for this application.
+                        Search by member number or name. Only active members can be selected.
                     </span>
 
+                    <p
+                        class="loan-member-picker__selected"
+                        data-member-selected
+                        hidden
+                        aria-live="polite"></p>
+
                 </div>
-            </div>
 
         </section>
 

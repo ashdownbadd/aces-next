@@ -169,6 +169,14 @@ $router->get(
 );
 
 $router->get(
+    '/loans/members/search',
+    [LoanController::class, 'memberSearch'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->get(
     '/loans/create',
     [LoanController::class, 'create'],
     [

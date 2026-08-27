@@ -88,21 +88,76 @@ final class LoanController
         );
     }
 
-    public function create(Request $request): Response
+    /**
+     * Search active members for the loan application picker.
+     */
+    public function memberSearch(Request $request): Response
     {
-        $members = $this->memberService->all(
-            '',
-            'Active',
-            1000,
-            0,
+        $query = trim(
+            (string) $request->query(
+                'q',
+                '',
+            ),
         );
 
+        if ($query === '' || mb_strlen($query) < 2) {
+            return new Response(
+                json_encode(
+                    ['members' => []],
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+                ),
+                200,
+                [
+                    'Content-Type' => 'application/json; charset=utf-8',
+                    'Cache-Control' => 'no-store',
+                ],
+            );
+        }
+
+        $members = $this->memberService->all(
+            search: $query,
+            status: 'Active',
+            limit: 20,
+            offset: 0,
+        );
+
+        $result = array_map(
+            static function (array $member): array {
+                return [
+                    'id' => (int) ($member['id'] ?? 0),
+                    'member_number' =>
+                        (string) ($member['member_number'] ?? ''),
+                    'name' =>
+                        (string) ($member['full_name'] ?? ''),
+                ];
+            },
+            $members,
+        );
+
+        return new Response(
+            json_encode(
+                ['members' => $result],
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+            ),
+            200,
+            [
+                'Content-Type' =>
+                    'application/json; charset=utf-8',
+                'Cache-Control' =>
+                    'no-store',
+            ],
+        );
+    }
+
+    public function create(Request $request): Response
+    {
+        // Members are loaded on demand by the searchable picker.
         return new Response(
             $this->view->render(
                 'loans.create',
                 [
                     'title' => 'Create Loan',
-                    'members' => $members,
+                    'members' => [],
                 ],
                 'layouts.app',
             ),

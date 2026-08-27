@@ -1358,3 +1358,92 @@
 .loan-create__schedule td {
   white-space: nowrap;
 }
+
+
+/* ==========================================================================
+   Loan member search picker
+   ========================================================================== */
+
+.loan-member-picker {
+  position: relative;
+}
+
+.loan-member-picker__results {
+  position: absolute;
+  z-index: 40;
+
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+
+  max-height: 320px;
+  overflow-y: auto;
+
+  padding: 5px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+}
+
+.loan-member-picker__option {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: transparent;
+  color: var(--color-text);
+
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.loan-member-picker__option:hover,
+.loan-member-picker__option.is-active {
+  background: var(--color-surface-muted);
+}
+
+.loan-member-picker__option-number {
+  color: var(--color-primary);
+
+  font-family: var(--font-family-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.loan-member-picker__option-name {
+  min-width: 0;
+  overflow: hidden;
+
+  color: var(--color-text);
+
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loan-member-picker__empty {
+  padding: 12px;
+
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.loan-member-picker__selected {
+  margin: var(--space-2) 0 0;
+
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+}
