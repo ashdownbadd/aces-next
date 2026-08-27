@@ -17,57 +17,61 @@ final class EducationData
     public static function fromRequest(
         Request $request,
     ): self {
-        $graduationYear = $request->input(
+        $year = $request->input(
             'graduation_year',
             null,
         );
 
         return new self(
-            highestEducationalAttainment: (string) $request->input(
-                'highest_educational_attainment',
-                '',
-            ),
-            schoolName: (string) $request->input(
-                'school_name',
-                '',
-            ),
-            graduationYear: $graduationYear !== null
-                && $graduationYear !== ''
-                ? (int) $graduationYear
-                : null,
+            highestEducationalAttainment:
+                (string) $request->input(
+                    'highest_educational_attainment',
+                    '',
+                ),
+            schoolName:
+                (string) $request->input(
+                    'school_name',
+                    '',
+                ),
+            graduationYear:
+                $year !== null && $year !== ''
+                    ? (int) $year
+                    : null,
         );
     }
 
-    /**
-     * @param array<string, mixed> $data
-     */
     public static function fromArray(
         array $data,
     ): self {
+        $year =
+            $data['graduation_year'] ?? null;
+
         return new self(
-            highestEducationalAttainment: (string) (
-                $data['highest_educational_attainment'] ?? ''
-            ),
-            schoolName: (string) (
-                $data['school_name'] ?? ''
-            ),
-            graduationYear: isset($data['graduation_year'])
-                && $data['graduation_year'] !== ''
-                ? (int) $data['graduation_year']
-                : null,
+            highestEducationalAttainment:
+                (string) (
+                    $data['highest_educational_attainment']
+                    ?? ''
+                ),
+            schoolName:
+                (string) (
+                    $data['school_name'] ?? ''
+                ),
+            graduationYear:
+                $year !== null && $year !== ''
+                    ? (int) $year
+                    : null,
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function toArray(): array
     {
         return [
             'highest_educational_attainment' =>
                 $this->highestEducationalAttainment,
-            'school_name' => $this->schoolName,
-            'graduation_year' => $this->graduationYear,
+            'school_name' =>
+                $this->schoolName,
+            'graduation_year' =>
+                $this->graduationYear,
         ];
     }
 }

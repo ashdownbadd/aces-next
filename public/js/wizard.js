@@ -1,8 +1,4 @@
-/**
- * ==========================================================
- * ACES Wizard Input Engine
- * ==========================================================
- */
+console.log("wizard.js loaded");
 
 const Helpers = {
   onInput(input, callback) {
@@ -25,7 +21,10 @@ const Helpers = {
       .toLowerCase()
       .split(" ")
       .map((word) => {
-        if (particles.includes(word)) return word;
+        if (particles.includes(word)) {
+          return word;
+        }
+
         return word.charAt(0).toUpperCase() + word.slice(1);
       })
       .join(" ");
@@ -37,22 +36,6 @@ const Helpers = {
 
   limit(value, max) {
     return value.substring(0, max);
-  },
-
-  formatMoney(value) {
-    value = value.replace(/,/g, "");
-
-    if (!value) return "";
-
-    let [whole, decimal] = value.split(".");
-    whole = whole.replace(/\D/g, "");
-    decimal = decimal ? decimal.replace(/\D/g, "").substring(0, 2) : "";
-
-    if (!whole) whole = "0";
-
-    whole = Number(whole).toLocaleString("en-US");
-
-    return value.includes(".") ? `${whole}.${decimal}` : whole;
   },
 };
 
@@ -74,55 +57,66 @@ const InputTypes = {
   },
 
   suffix(input) {
-    Helpers.onInput(input, (value) => {
-      value = Helpers.trim(value)
+    const sanitize = (value) =>
+      value
         .replace(/[^A-Za-z0-9.\-\s]/g, "")
-        .replace(/\s+/g, " ");
-
-      const normalized = value.toLowerCase();
-
-      if (["jr", "jr."].includes(normalized)) return "Jr.";
-      if (["sr", "sr."].includes(normalized)) return "Sr.";
-
-      // Roman numeral suffixes are conventionally uppercase.
-      if (/^(?:i{1,3}|iv|vi|v|ix|xi{0,3})$/i.test(normalized)) {
-        return normalized.toUpperCase();
-      }
-
-      return value;
-    });
-  },
-
-  houseNumber(input) {
-    Helpers.onInput(input, (value) => {
-      value = value
-        .replace(/[^A-Za-z0-9.,#\-\/\s]/g, "")
         .replace(/\s+/g, " ")
         .trimStart();
 
-      return value
-        .split(" ")
-        .map((word) => {
-          const lower = word.toLowerCase();
-          if (lower === "block" || lower === "lot") {
-            return lower.charAt(0).toUpperCase() + lower.slice(1);
-          }
-          return word;
-        })
-        .join(" ");
+    // Keep the user's exact input while typing.
+    // Canonical formatting happens only after leaving the field.
+    input.addEventListener("input", () => {
+      input.value = sanitize(input.value);
+    });
+
+    input.addEventListener("blur", () => {
+      const value = sanitize(input.value);
+      const normalized = value.toLowerCase();
+
+      if (
+        normalized === "jr"
+        || normalized === "jr."
+      ) {
+        input.value = "Jr.";
+        return;
+      }
+
+      if (
+        normalized === "sr"
+        || normalized === "sr."
+      ) {
+        input.value = "Sr.";
+        return;
+      }
+
+      const roman =
+        /^(?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX)$/i;
+
+      if (roman.test(value)) {
+        input.value = normalized.toUpperCase();
+      }
     });
   },
 
   phone(input) {
-    const max = Number(input.dataset.maxLength ?? 11);
+    const max =
+      Number(input.dataset.maxLength ?? 11);
 
-    Helpers.onInput(input, (value) => {
-      return Helpers.limit(Helpers.digits(value), max);
-    });
+    Helpers.onInput(input, (value) =>
+      Helpers.limit(
+        Helpers.digits(value),
+        max
+      )
+    );
 
     input.addEventListener("blur", () => {
-      if (input.value && !/^09\d{9}$/.test(input.value)) {
-        input.setCustomValidity("Enter a valid Philippine mobile number.");
+      if (
+        input.value
+        && !/^09\d{9}$/.test(input.value)
+      ) {
+        input.setCustomValidity(
+          "Enter a valid Philippine mobile number."
+        );
       } else {
         input.setCustomValidity("");
       }
@@ -130,25 +124,36 @@ const InputTypes = {
   },
 
   telephone(input) {
-    const max = Number(input.dataset.maxLength ?? 11);
+    const max =
+      Number(input.dataset.maxLength ?? 10);
 
     const format = (value) => {
-      const digits = Helpers.limit(Helpers.digits(value), max);
+      const clean = Helpers.limit(
+        Helpers.digits(value),
+        max
+      );
 
-      if (digits.length <= 7) {
-        if (digits.length <= 3) return digits;
-        return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+      if (!clean) {
+        return "";
       }
 
-      if (digits.startsWith("02") && digits.length <= 10) {
-        return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+      if (clean.startsWith("02")) {
+        if (clean.length <= 2) {
+          return `(${clean}`;
+        }
+
+        return clean.length <= 6
+          ? `(${clean.slice(0, 2)}) ${clean.slice(2)}`
+          : `(${clean.slice(0, 2)}) ${clean.slice(2, 6)}-${clean.slice(6)}`;
       }
 
-      if (digits.length >= 10) {
-        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}${digits.slice(10)}`;
+      if (clean.length <= 3) {
+        return `(${clean}`;
       }
 
-      return digits;
+      return clean.length <= 7
+        ? `(${clean.slice(0, 3)}) ${clean.slice(3)}`
+        : `(${clean.slice(0, 3)}) ${clean.slice(3, 7)}-${clean.slice(7)}`;
     };
 
     input.addEventListener("input", () => {
@@ -157,158 +162,312 @@ const InputTypes = {
     });
 
     input.addEventListener("blur", () => {
-      const digits = Helpers.digits(input.value);
+      const clean =
+        Helpers.digits(input.value);
 
-      if (digits && (digits.length < 7 || digits.length > max)) {
-        input.setCustomValidity("Enter a valid telephone number.");
-      } else {
+      if (!clean) {
         input.setCustomValidity("");
-      }
-    });
-  },
-
-  email(input) {
-    Helpers.onInput(input, (value) => {
-      return value.replace(/\s+/g, "").toLowerCase();
-    });
-  },
-
-  zip(input) {
-    const max = Number(input.dataset.maxLength ?? 4);
-
-    Helpers.onInput(input, (value) => {
-      return Helpers.limit(Helpers.digits(value), max);
-    });
-  },
-
-  money(input) {
-    input.addEventListener("input", () => {
-      let value = input.value.replace(/[^\d.]/g, "");
-      const parts = value.split(".");
-
-      let whole = parts.shift() ?? "";
-      let decimal = parts.join("").substring(0, 2);
-
-      whole = whole.replace(/^0+(?=\d)/, "");
-      whole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-      input.value = decimal !== "" ? `${whole}.${decimal}` : whole;
-    });
-  },
-
-  percentage(input) {
-    Helpers.onInput(input, (value) => {
-      value = value.replace(/[^\d.]/g, "");
-      const parts = value.split(".");
-
-      if (parts.length > 2) {
-        value = parts.shift() + "." + parts.join("");
+        return;
       }
 
-      let number = parseFloat(value);
-
-      if (isNaN(number)) return "";
-
-      number = Math.min(100, Math.max(0, number));
-      return number.toString();
-    });
-  },
-
-  birthdate(input) {
-    input.max = new Date().toISOString().split("T")[0];
-  },
-};
-
-const WizardAutoSave = {
-  key: "aces:member-registration:draft",
-
-  isNewRegistration() {
-    return new URLSearchParams(window.location.search).get("new") === "1";
-  },
-
-  active() {
-    return !new URLSearchParams(window.location.search).has("edit");
-  },
-
-  form() {
-    return Array.from(
-      document.querySelectorAll(".wizard__body form")
-    ).find((candidate) => {
-      if (candidate.action.includes("/members/beneficiaries")) return false;
-
-      return candidate.querySelector(
-        "input[name], select[name], textarea[name]"
+      input.setCustomValidity(
+        clean.length >= 7
+        && clean.length <= max
+          ? ""
+          : "Enter a valid telephone number."
       );
     });
   },
 
+  email(input) {
+    Helpers.onInput(input, (value) =>
+      value
+        .replace(/\s+/g, "")
+        .toLowerCase()
+    );
+  },
+
+  zip(input) {
+    const max =
+      Number(input.dataset.maxLength ?? 4);
+
+    Helpers.onInput(input, (value) =>
+      Helpers.limit(
+        Helpers.digits(value),
+        max
+      )
+    );
+  },
+
+  money(input) {
+    input.addEventListener("input", () => {
+      let value =
+        input.value.replace(/[^\d.]/g, "");
+
+      const parts = value.split(".");
+      let whole = parts.shift() ?? "";
+      const decimal = parts
+        .join("")
+        .substring(0, 2);
+
+      whole = whole.replace(
+        /^0+(?=\d)/,
+        ""
+      );
+
+      whole = whole.replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        ","
+      );
+
+      input.value = decimal
+        ? `${whole}.${decimal}`
+        : whole;
+    });
+  },
+
+  birthdate(input) {
+    input.max =
+      new Date().toISOString().split("T")[0];
+  },
+};
+
+const ConditionalFields = {
+  setDisabled(group, disabled) {
+    if (!group) {
+      return;
+    }
+
+    group
+      .querySelectorAll(
+        "input, select, textarea"
+      )
+      .forEach((field) => {
+        field.disabled = disabled;
+
+        if (disabled) {
+          field.required = false;
+        }
+      });
+
+    group.classList.toggle(
+      "is-disabled",
+      disabled
+    );
+  },
+
+  livelihood() {
+    const status =
+      document.querySelector(
+        "#employment_status"
+      );
+
+    if (!status) {
+      return;
+    }
+
+    const occupation =
+      document
+        .querySelector("#occupation")
+        ?.closest(".form-group");
+
+    const employer =
+      document
+        .querySelector("#employer")
+        ?.closest(".form-group");
+
+    const income =
+      document
+        .querySelector("#monthly_income")
+        ?.closest(".form-group");
+
+    const nonWorking =
+      status.value === "student"
+      || status.value === "unemployed";
+
+    const retired =
+      status.value === "retired";
+
+    this.setDisabled(
+      occupation,
+      nonWorking
+    );
+
+    this.setDisabled(
+      employer,
+      nonWorking || retired
+    );
+
+    this.setDisabled(
+      income,
+      nonWorking || retired
+    );
+  },
+
+  education() {
+    const attainment =
+      document.querySelector(
+        "#highest_educational_attainment"
+      );
+
+    if (!attainment) {
+      return;
+    }
+
+    const school =
+      document
+        .querySelector("#school_name")
+        ?.closest(".form-group");
+
+    const year =
+      document
+        .querySelector("#graduation_year")
+        ?.closest(".form-group");
+
+    const noFormal =
+      attainment.value === "no_formal_education";
+
+    this.setDisabled(
+      school,
+      noFormal
+    );
+
+    this.setDisabled(
+      year,
+      noFormal
+    );
+  },
+};
+
+const WizardAutoSave = {
+  key:
+    "aces:member-registration:draft:v1",
+
+  isEdit() {
+    return new URLSearchParams(
+      window.location.search
+    ).has("edit");
+  },
+
+  isExplicitNew() {
+    return new URLSearchParams(
+      window.location.search
+    ).get("new") === "1";
+  },
+
+  form() {
+    return document.querySelector(
+      ".wizard__body form"
+    );
+  },
+
   read() {
     try {
-      const raw = localStorage.getItem(this.key);
-      return raw ? JSON.parse(raw) : {};
+      const raw =
+        localStorage.getItem(this.key);
+
+      return raw
+        ? JSON.parse(raw)
+        : {};
     } catch {
       return {};
     }
   },
 
   write(form) {
-    const data = {};
+    const draft = {
+      fields: {},
+      savedAt: Date.now(),
+    };
 
     form.querySelectorAll(
       "input[name], select[name], textarea[name]"
     ).forEach((field) => {
-      if (field.type === "file") return;
+      if (field.type === "file") {
+        return;
+      }
 
-      data[field.name] = field.type === "checkbox"
-        ? field.checked
-        : field.value;
+      draft.fields[field.name] =
+        field.type === "checkbox"
+          ? field.checked
+          : field.value;
     });
 
     try {
-      localStorage.setItem(this.key, JSON.stringify(data));
+      localStorage.setItem(
+        this.key,
+        JSON.stringify(draft)
+      );
     } catch {
-      // Storage availability varies by browser/privacy mode.
+      // Storage may be blocked by browser privacy settings.
     }
   },
 
   restore(form) {
-    const data = this.read();
+    const draft = this.read();
 
-    Object.entries(data).forEach(([name, value]) => {
-      const field = form.elements.namedItem(name);
+    if (!draft.fields) {
+      return;
+    }
 
-      if (!field) return;
+    Object.entries(draft.fields).forEach(
+      ([name, value]) => {
+        const field =
+          form.elements.namedItem(name);
 
-      if (field instanceof RadioNodeList) {
-        return;
+        if (
+          !field
+          || field instanceof RadioNodeList
+        ) {
+          return;
+        }
+
+        if (
+          field.type === "checkbox"
+        ) {
+          field.checked = Boolean(value);
+          return;
+        }
+
+        if (
+          typeof value === "string"
+          && (
+            field.value === ""
+            || field.dataset.restoreDraft === "always"
+          )
+        ) {
+          field.value = value;
+        }
       }
+    );
 
-      if (field.type === "checkbox") {
-        field.checked = Boolean(value);
-      } else if (
-        (field.value === "" || field.dataset.autosaveRestore === "always")
-        && typeof value === "string"
-      ) {
-        field.value = value;
-      }
-    });
-
-    form.querySelectorAll("[data-type]").forEach((field) => {
-      field.dispatchEvent(new Event("input", { bubbles: true }));
-    });
+    form
+      .querySelectorAll("[data-type]")
+      .forEach((field) => {
+        field.dispatchEvent(
+          new Event(
+            "input",
+            { bubbles: true }
+          )
+        );
+      });
   },
 
   initialize() {
-    if (!this.active()) return;
+    if (this.isEdit()) {
+      return;
+    }
 
-    if (this.isNewRegistration()) {
-      localStorage.removeItem(this.key);
+    if (this.isExplicitNew()) {
+      this.clear();
       return;
     }
 
     const form = this.form();
 
-    if (!form) return;
+    if (!form) {
+      return;
+    }
 
     this.restore(form);
 
@@ -316,22 +475,68 @@ const WizardAutoSave = {
 
     form.addEventListener("input", save);
     form.addEventListener("change", save);
-    window.addEventListener("beforeunload", save);
+    window.addEventListener(
+      "beforeunload",
+      save
+    );
+  },
+
+  clear() {
+    try {
+      localStorage.removeItem(this.key);
+    } catch {}
   },
 };
 
 const Wizard = {
   initialize() {
-    document.querySelectorAll("[data-type]").forEach((input) => {
-      const type = input.dataset.type;
+    document
+      .querySelectorAll("[data-type]")
+      .forEach((input) => {
+        const type =
+          input.dataset.type;
 
-      if (typeof InputTypes[type] === "function") {
-        InputTypes[type](input);
-      }
-    });
+        if (
+          typeof InputTypes[type]
+          === "function"
+        ) {
+          InputTypes[type](input);
+        }
+      });
+
+    const employmentStatus =
+      document.querySelector(
+        "#employment_status"
+      );
+
+    const attainment =
+      document.querySelector(
+        "#highest_educational_attainment"
+      );
+
+    employmentStatus?.addEventListener(
+      "change",
+      () => ConditionalFields.livelihood()
+    );
+
+    attainment?.addEventListener(
+      "change",
+      () => ConditionalFields.education()
+    );
+
+    ConditionalFields.livelihood();
+    ConditionalFields.education();
 
     WizardAutoSave.initialize();
   },
 };
 
-document.addEventListener("DOMContentLoaded", () => Wizard.initialize());
+document.addEventListener(
+  "DOMContentLoaded",
+  () => Wizard.initialize()
+);
+
+window.AcesWizard = {
+  clearDraft: () =>
+    WizardAutoSave.clear(),
+};

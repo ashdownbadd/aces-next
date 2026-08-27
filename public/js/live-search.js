@@ -1,109 +1,158 @@
 (() => {
-    'use strict';
+    "use strict";
 
-    const DEBOUNCE_MS = 300;
+    const DEBOUNCE_MS = 350;
 
-    const submitSearch = async (input) => {
-        const form = input.closest('form');
-        const targetSelector = input.dataset.liveSearchTarget;
+    let timer = null;
+    let controller = null;
 
-        if (!form || !targetSelector) {
+    const replaceFromResponse = (selector, documentFragment) => {
+        const current = document.querySelector(selector);
+        const incoming = documentFragment.querySelector(selector);
+
+        if (!current) {
             return;
         }
 
-        const url = new URL(form.action || window.location.href, window.location.origin);
-        const formData = new FormData(form);
+        if (!incoming) {
+            current.innerHTML = "";
+            return;
+        }
 
-        url.search = '';
+        current.replaceChildren(
+            ...Array.from(incoming.childNodes).map(
+                (node) => node.cloneNode(true)
+            )
+        );
+    };
 
-        for (const [key, value] of formData.entries()) {
-            if (typeof value === 'string' && value !== '') {
+    const search = async (input) => {
+        const form = input.closest("form");
+
+        if (!form) {
+            return;
+        }
+
+        const url = new URL(
+            form.action || window.location.href,
+            window.location.origin
+        );
+
+        url.search = "";
+
+        for (const [key, value] of new FormData(form).entries()) {
+            if (typeof value === "string" && value !== "") {
                 url.searchParams.set(key, value);
             }
         }
 
-        // Search changes must always begin on page 1.
-        url.searchParams.delete('page');
+        url.searchParams.delete("page");
+
+        controller?.abort();
+        controller = new AbortController();
 
         try {
             const response = await fetch(url.toString(), {
+                method: "GET",
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
+                    "X-Requested-With": "XMLHttpRequest",
                 },
+                signal: controller.signal,
             });
 
             if (!response.ok) {
-                throw new Error(`Search request failed: ${response.status}`);
+                throw new Error(
+                    `Search request failed: ${response.status}`
+                );
             }
 
             const html = await response.text();
-            const documentFragment = new DOMParser().parseFromString(
-                html,
-                'text/html'
-            );
 
-            const nextTarget = documentFragment.querySelector(
-                targetSelector
-            );
-            const currentTarget = document.querySelector(
-                targetSelector
-            );
-
-            if (nextTarget && currentTarget) {
-                currentTarget.replaceChildren(
-                    ...Array.from(nextTarget.childNodes).map(
-                        (node) => node.cloneNode(true)
-                    )
-                );
-            } else if (!nextTarget && currentTarget) {
-                currentTarget.replaceChildren();
+            if (controller.signal.aborted) {
+                return;
             }
 
-            // Keep the result range/pagination synchronized without touching
-            // the input itself, so typing and Ctrl+A behave normally.
-            [
-                '.members__footer',
-                '.members__pagination',
-                '.loan-list__footer',
-                '.loan-list__pagination',
-                '.ledger-page__footer',
-                '.activity-logs__footer',
-            ].forEach((selector) => {
-                const current = document.querySelector(selector);
-                const incoming = documentFragment.querySelector(selector);
+            const incoming =
+                new DOMParser().parseFromString(
+                    html,
+                    "text/html"
+                );
 
-                if (current && incoming) {
-                    current.replaceWith(incoming.cloneNode(true));
-                } else if (current && !incoming) {
-                    current.remove();
-                }
+            const target =
+                input.dataset.liveSearchTarget;
+
+            if (target) {
+                replaceFromResponse(
+                    target,
+                    incoming
+                );
+            }
+
+            [
+                ".members__footer",
+                ".loan-list__footer",
+                ".ledger-page__footer",
+                ".activity-logs__footer",
+            ].forEach((selector) => {
+                replaceFromResponse(
+                    selector,
+                    incoming
+                );
             });
+
+            window.history.replaceState(
+                {},
+                "",
+                url.toString()
+            );
         } catch (error) {
-            console.error('Live search failed:', error);
+            if (error.name !== "AbortError") {
+                console.error(
+                    "Live search failed.",
+                    error
+                );
+            }
         }
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-        document
-            .querySelectorAll('input[data-live-search]')
-            .forEach((input) => {
-                let timer = null;
+    const queue = (input) => {
+        window.clearTimeout(timer);
 
-                input.addEventListener('input', () => {
-                    window.clearTimeout(timer);
+        timer = window.setTimeout(
+            () => search(input),
+            DEBOUNCE_MS
+        );
+    };
 
-                    timer = window.setTimeout(() => {
-                        submitSearch(input);
-                    }, DEBOUNCE_MS);
-                });
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+            document
+                .querySelectorAll(
+                    'input[data-live-search]'
+                )
+                .forEach((input) => {
+                    input.addEventListener(
+                        "input",
+                        () => queue(input)
+                    );
 
-                input.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape') {
-                        window.clearTimeout(timer);
-                        input.value = '';
-                        submitSearch(input);
-                    }
-                });
-            });
-    });
+                    input.addEventListener(
+                        "keydown",
+                        (event) => {
+                            if (
+                                event.key !== "Escape"
+                            ) {
+                                return;
+                            }
+
+                            window.clearTimeout(timer);
+                            input.value = "";
+                            queue(input);
+                        }
+                    );
+                }
+            );
+        }
+    );
 })();

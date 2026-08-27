@@ -463,15 +463,14 @@ $paymentFrequencies = [
                 <h2 class="form-section__title">Amortization Schedule</h2>
 
                 <p class="form-section__description">
-                    The schedule updates automatically as you enter the loan terms.
-                    Review it before continuing.
+                    The schedule updates automatically as the loan details are completed.
                 </p>
             </div>
 
             <div
                 class="loan-create__schedule-status"
                 data-amortization-preview-status>
-                Enter the required loan details to generate the schedule.
+                Enter the required loan details to preview the schedule.
             </div>
 
             <div
@@ -480,18 +479,20 @@ $paymentFrequencies = [
                 hidden>
 
                 <table class="table loan-create__schedule">
+
                     <thead>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Due Date</th>
-                            <th scope="col" class="u-text-right">Principal</th>
-                            <th scope="col" class="u-text-right">Interest</th>
-                            <th scope="col" class="u-text-right">Payment</th>
+                            <th scope="col">Principal</th>
+                            <th scope="col">Interest</th>
+                            <th scope="col">Payment</th>
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
 
                     <tbody data-amortization-preview-body></tbody>
+
                 </table>
 
             </div>

@@ -126,11 +126,16 @@ declare(strict_types=1);
 
             </div>
 
-            <div class="form-group">
+            <div
+                class="form-group"
+                data-education-school>
+
                 <label
                     class="form-label"
                     for="school_name">
+
                     School Attended
+
                 </label>
 
                 <input
@@ -141,14 +146,22 @@ declare(strict_types=1);
                     data-type="title"
                     maxlength="150"
                     autocomplete="organization"
-                    value="<?= htmlspecialchars($education['school_name'] ?? '') ?>">
+                    value="<?= htmlspecialchars(
+                        $education['school_name'] ?? ''
+                    ) ?>">
+
             </div>
 
-            <div class="form-group">
+            <div
+                class="form-group"
+                data-education-graduation-year>
+
                 <label
                     class="form-label"
                     for="graduation_year">
+
                     Graduation Year
+
                 </label>
 
                 <input
@@ -160,7 +173,10 @@ declare(strict_types=1);
                     max="<?= date('Y') ?>"
                     step="1"
                     inputmode="numeric"
-                    value="<?= htmlspecialchars($education['graduation_year'] ?? '') ?>">
+                    value="<?= htmlspecialchars(
+                        $education['graduation_year'] ?? ''
+                    ) ?>">
+
             </div>
 
         </div>

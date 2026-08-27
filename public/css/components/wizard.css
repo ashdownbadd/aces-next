@@ -359,13 +359,20 @@
 }
 
 
-/* Required field indicator */
-.form-group:has(:required) > .form-label:not(:has(.form-required))::after {
+.form-label:has(+ :required)::after,
+.form-label:has(+ .loan-create__input-suffix :required)::after {
   content: " *";
   color: var(--color-danger);
   font-weight: 700;
 }
 
+.form-group.is-disabled {
+  opacity: 0.62;
+}
+
+.form-group.is-disabled .input {
+  cursor: not-allowed;
+}
 
 .registration-progress {
   display: flex;

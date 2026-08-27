@@ -560,7 +560,8 @@ final class MemberRepository extends Repository
                         last_name,
                         suffix,
                         relationship,
-                        birth_date
+                        birth_date,
+                        remarks
                     )
                     VALUES
                     (
@@ -570,7 +571,8 @@ final class MemberRepository extends Repository
                         :last_name,
                         :suffix,
                         :relationship,
-                        :birth_date
+                        :birth_date,
+                        :remarks
                     )
                     "
                 );
@@ -595,6 +597,10 @@ final class MemberRepository extends Repository
                         'birth_date' =>
                         $this->nullable(
                             $beneficiary->birthDate
+                        ),
+                        'remarks' =>
+                        $this->nullable(
+                            $beneficiary->remarks
                         ),
                     ]);
                 }
@@ -950,7 +956,8 @@ final class MemberRepository extends Repository
                     last_name,
                     suffix,
                     relationship,
-                    birth_date
+                    birth_date,
+                    remarks
                 )
                 VALUES
                 (
@@ -960,7 +967,8 @@ final class MemberRepository extends Repository
                     :last_name,
                     :suffix,
                     :relationship,
-                    :birth_date
+                    :birth_date,
+                    :remarks
                 )
                 "
                 );
@@ -993,7 +1001,10 @@ final class MemberRepository extends Repository
                             $beneficiary->birthDate
                         ),
 
-
+                        'remarks' =>
+                        $this->nullable(
+                            $beneficiary->remarks
+                        ),
                     ]);
                 }
             }
@@ -1097,7 +1108,8 @@ final class MemberRepository extends Repository
             last_name,
             suffix,
             relationship,
-            birth_date
+            birth_date,
+            remarks
         FROM member_beneficiaries
         WHERE member_id = :member_id
         ORDER BY id ASC

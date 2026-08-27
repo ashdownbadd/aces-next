@@ -37,7 +37,7 @@ declare(strict_types=1);
                     class="input"
                     type="text"
                     name="house_number"
-                    data-type="houseNumber"
+                    data-type="title"
                     autocomplete="address-line1"
                     maxlength="100"
                     value="<?= htmlspecialchars($address['house_number'] ?? '') ?>">
@@ -130,7 +130,6 @@ declare(strict_types=1);
                     data-type="title"
                     maxlength="100"
                     autocomplete="address-level1"
-                    required
                     value="<?= htmlspecialchars($address['province'] ?? '') ?>">
 
             </div>

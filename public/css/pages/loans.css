@@ -1347,22 +1347,14 @@
 
 .loan-create__schedule-wrap {
   overflow-x: auto;
-  margin-inline: calc(-1 * var(--space-2));
-  padding-inline: var(--space-2);
+  margin-inline: -2px;
 }
 
 .loan-create__schedule {
-  min-width: 760px;
+  min-width: 720px;
 }
 
 .loan-create__schedule th,
 .loan-create__schedule td {
   white-space: nowrap;
-}
-
-@media (max-width: 760px) {
-  .loan-create__schedule-wrap {
-    margin-inline: -10px;
-    padding-inline: 10px;
-  }
 }

@@ -80,7 +80,8 @@ $humanize = static function (?string $value): string {
 
 <form
     method="POST"
-    action="/members/register">
+    action="/members/register"
+    data-registration-form>
 
     <div class="form-section">
 
@@ -618,43 +619,19 @@ $humanize = static function (?string $value): string {
                         <div class="summary__row">
 
                             <div class="summary__label">
+
                                 Highest Educational Attainment
+
                             </div>
 
                             <div class="summary__value">
+
                                 <?= htmlspecialchars(
                                     $humanize(
                                         $education['highest_educational_attainment'] ?? null
                                     )
                                 ) ?>
-                            </div>
 
-                        </div>
-
-                        <div class="summary__row">
-
-                            <div class="summary__label">
-                                School Attended
-                            </div>
-
-                            <div class="summary__value">
-                                <?= htmlspecialchars(
-                                    $education['school_name'] ?? '—'
-                                ) ?>
-                            </div>
-
-                        </div>
-
-                        <div class="summary__row">
-
-                            <div class="summary__label">
-                                Graduation Year
-                            </div>
-
-                            <div class="summary__value">
-                                <?= htmlspecialchars(
-                                    $education['graduation_year'] ?? '—'
-                                ) ?>
                             </div>
 
                         </div>
@@ -810,11 +787,13 @@ $humanize = static function (?string $value): string {
     aria-live="polite"
     aria-busy="true">
 
-    <div class="registration-progress__spinner" aria-hidden="true"></div>
+    <span
+        class="registration-progress__spinner"
+        aria-hidden="true"></span>
 
     <div>
         <strong>Registering member</strong>
-        <span>Please wait while the member record is saved.</span>
+        <span>Please wait while the member record is being saved.</span>
     </div>
 
 </div>
@@ -822,7 +801,7 @@ $humanize = static function (?string $value): string {
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(
-        'form[action="/members/register"]'
+        "[data-registration-form]"
     );
 
     const progress = document.querySelector(
@@ -833,22 +812,24 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const submit = form.querySelector(
-        'button[type="submit"]'
-    );
-
     form.addEventListener("submit", () => {
-        submit?.setAttribute("disabled", "disabled");
+        const button = form.querySelector(
+            'button[type="submit"]'
+        );
 
-        if (submit) {
-            submit.dataset.originalLabel =
-                submit.textContent.trim();
+        button?.setAttribute(
+            "disabled",
+            "disabled"
+        );
 
-            submit.textContent =
+        if (button) {
+            button.textContent =
                 "Registering...";
         }
 
         progress.hidden = false;
+
+        window.AcesWizard?.clearDraft();
     });
 });
 </script>
