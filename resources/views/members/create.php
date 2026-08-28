@@ -93,33 +93,12 @@ foreach ($steps as $index => $wizardStep) {
 
                 <?php else: ?>
 
-                    <div
-                        class="wizard__step<?= $isActive ? ' wizard__step--active' : '' ?><?= $isComplete ? ' wizard__step--complete' : '' ?><?= $isNext ? ' wizard__step--next' : '' ?>">
-
-                        <a
-                            href="<?= htmlspecialchars($stepUrl) ?>"
-                            class="wizard__indicator-link"
-                            aria-label="Go to <?= htmlspecialchars($wizardStep['label']) ?>"
-                            <?= $isActive ? 'aria-current="step"' : '' ?>
-                            <?= $isNext ? 'data-wizard-next' : '' ?>>
-
-                            <span class="wizard__indicator">
-
-                                <?php if ($isComplete): ?>
-
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="m6 12 4 4 8-8" />
-                                    </svg>
-
-                                <?php else: ?>
-
-                                    <span class="wizard__indicator-dot"></span>
-
-                                <?php endif; ?>
-
-                            </span>
-
-                        </a>
+                    <a
+                        href="<?= htmlspecialchars($stepUrl) ?>"
+                        class="wizard__step<?= $isActive ? ' wizard__step--active' : '' ?><?= $isComplete ? ' wizard__step--complete' : '' ?><?= $isNext ? ' wizard__step--next' : '' ?>"
+                        aria-label="Go to <?= htmlspecialchars($wizardStep['label']) ?>"
+                        <?= $isActive ? 'aria-current="step"' : '' ?>
+                        <?= $isNext ? 'data-wizard-next' : '' ?>>
 
                         <span class="wizard__step-content">
 
@@ -135,7 +114,7 @@ foreach ($steps as $index => $wizardStep) {
 
                         </span>
 
-                    </div>
+                    </a>
 
                 <?php endif; ?>
 

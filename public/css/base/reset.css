@@ -75,3 +75,25 @@ input[type="number"] {
 ::selection {
   background: var(--color-primary-soft);
 }
+
+/* ==========================================================================
+   Global hidden scrollbar
+   Keep the document fully scrollable while preventing scrollbar-driven
+   horizontal layout shifts when wizard/page height changes.
+   ========================================================================== */
+
+html,
+body {
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* Legacy Edge / IE */
+}
+
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;              /* Chrome / Safari / Chromium Edge */
+}
