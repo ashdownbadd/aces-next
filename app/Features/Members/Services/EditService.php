@@ -56,6 +56,11 @@ final class EditService
                 (string) (
                     $member['membership_type'] ?? 'regular'
                 ),
+
+                'status' =>
+                (string) (
+                    $member['status'] ?? 'Pending'
+                ),
             ],
         );
 
@@ -241,16 +246,6 @@ final class EditService
                 'highest_educational_attainment' =>
                 (string) (
                     $member['highest_educational_attainment'] ?? ''
-                ),
-
-                'school_name' =>
-                (string) (
-                    $member['school_name'] ?? ''
-                ),
-
-                'graduation_year' =>
-                (string) (
-                    $member['graduation_year'] ?? ''
                 ),
             ],
         );

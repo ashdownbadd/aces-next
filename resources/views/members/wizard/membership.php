@@ -76,7 +76,11 @@ declare(strict_types=1);
                     id="member_status"
                     class="input form-input--readonly"
                     type="text"
-                    value="Pending"
+                    value="<?= htmlspecialchars(
+                        $membership['status'] ?? 'Pending',
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
                     readonly>
 
             </div>

@@ -3,6 +3,7 @@
 
   const MODAL_ID = "aces-critical-action-modal";
   const SUCCESS_CLOSE_LABEL = "Continue";
+  const MIN_LOADING_MS = 3000;
 
   const EXCLUDED_ACTIONS = [
     /^\/login(?:$|\/|\?)/i,
@@ -222,23 +223,49 @@
     }
   };
 
-  const hasRenderedError = async (response) => {
-    if (!response.url || response.headers.get("content-type")?.includes("text/html") !== true) {
-      return false;
+  const getRenderedErrorMessage = async (response) => {
+    if (
+      !response.url
+      || !response.headers
+        .get("content-type")
+        ?.includes("text/html")
+    ) {
+      return "";
     }
 
-    const clone = response.clone();
-    const text = await clone.text();
-    const documentFragment = new DOMParser().parseFromString(
-      text,
-      "text/html"
-    );
+    // A successful workflow redirect is authoritative. Do not mistake an
+    // unrelated/stale alert rendered on the destination page for a failed
+    // request.
+    try {
+      const finalUrl = new URL(response.url);
 
-    return Boolean(
+      if (
+        finalUrl.searchParams.has("success")
+        && finalUrl.searchParams.get("success") !== ""
+      ) {
+        return "";
+      }
+    } catch (_) {
+      // Fall through to HTML inspection if the URL cannot be parsed.
+    }
+
+    const text = await response.clone().text();
+
+    const documentFragment =
+      new DOMParser().parseFromString(
+        text,
+        "text/html"
+      );
+
+    const errorNode =
       documentFragment.querySelector(
-        ".alert--error, [role=" + '"' + "alert" + '"' + "]"
-      )
-    );
+        ".alert--error, [role=\"alert\"]"
+      );
+
+    return errorNode?.textContent
+      ?.replace(/\s+/g, " ")
+      .trim()
+      || "";
   };
 
   const processForm = async (form) => {
@@ -258,6 +285,8 @@
     });
 
     try {
+      const requestStartedAt = performance.now();
+
       const response = await fetch(
         form.action || window.location.href,
         {
@@ -271,14 +300,29 @@
         }
       );
 
+      const elapsed =
+        performance.now() - requestStartedAt;
+
+      if (elapsed < MIN_LOADING_MS) {
+        await new Promise((resolve) => {
+          window.setTimeout(
+            resolve,
+            MIN_LOADING_MS - elapsed
+          );
+        });
+      }
+
       activeResponseUrl = response.url || window.location.href;
 
-      const renderedError = await hasRenderedError(response);
+      const renderedError =
+        await getRenderedErrorMessage(response);
 
       if (!response.ok || renderedError) {
-        throw new Error(
-          `The operation failed (${response.status}).`
-        );
+        const details =
+          renderedError
+          || `The server returned HTTP ${response.status}.`;
+
+        throw new Error(details);
       }
 
       setState({
@@ -297,7 +341,9 @@
       setState({
         title: "Something went wrong",
         message:
-          "The operation could not be completed. Close this message and try again.",
+          error instanceof Error && error.message
+            ? error.message
+            : "The operation could not be completed. Close this message and try again.",
         loading: false,
         canClose: true,
         error: true,
