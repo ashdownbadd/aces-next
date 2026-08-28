@@ -1063,32 +1063,63 @@
 }
 
 /* ==========================================================================
-   Wizard tabs — final label alignment
+   Final wizard tab presentation
    ========================================================================== */
 
-/* Center the complete tab content, including the clickable tabs. */
+/* Flat folder tabs: no radius on any tab edge. */
+.wizard__step,
+.wizard__step--active,
+.wizard__step--complete,
+.wizard__step--next,
+.wizard__step--locked {
+  border-radius: 0 !important;
+}
+
+/* Equal-width tabs with centered labels. */
+.wizard__steps {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 4px;
+
+  width: 100%;
+  padding: 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .wizard__step {
+  flex: 1 1 0;
+  min-width: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
 
+  min-height: 58px;
+  padding: 12px 16px;
+
+  box-sizing: border-box;
   text-align: center;
+
   white-space: normal;
 }
 
 .wizard__step-content {
+  width: 100%;
+  min-width: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 100%;
-  min-width: 0;
-
   text-align: center;
 }
 
-/* Never truncate folder-tab labels. */
 .wizard__label {
+  display: block;
+
   width: auto;
   max-width: none;
 
@@ -1101,25 +1132,58 @@
   text-align: center;
 }
 
-/* The active tab already communicates its state; no extra subtitle. */
-.wizard__step--active .wizard__current {
-  display: none;
-}
-
-/* Keep locked-step helper text centered. */
-.wizard__locked {
-  text-align: center;
-}
-
-/* Keep the active tab aligned with the panel below it. */
+/* Active state is conveyed by the tab surface and bold label only. */
 .wizard__step--active {
   justify-content: center;
-  text-align: center;
+
+  min-height: 66px;
+  margin-bottom: -1px;
+
+  border-bottom: 0 !important;
+  border-radius: 0 !important;
+
+  background: var(--color-surface);
 }
 
 .wizard__step--active .wizard__step-content {
   align-items: center;
   justify-content: center;
-
   text-align: center;
+}
+
+.wizard__step--active .wizard__label {
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+/* There are no active/next subtitles anymore. */
+.wizard__current {
+  display: none !important;
+}
+
+/* Keep the top edge of the folder body flat so the active tab merges into it. */
+.wizard-layout > .card {
+  border-top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+@media (max-width: 900px) {
+  .wizard__step {
+    flex: 0 0 144px;
+    min-width: 144px;
+  }
+}
+
+@media (max-width: 640px) {
+  .wizard__step {
+    flex-basis: 136px;
+    min-width: 136px;
+    min-height: 54px;
+    padding-inline: 10px;
+  }
+
+  .wizard__step--active {
+    min-height: 60px;
+  }
 }

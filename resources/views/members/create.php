@@ -107,9 +107,7 @@ foreach ($steps as $index => $wizardStep) {
                             </span>
 
                             <?php if ($isActive): ?>
-                                <span class="wizard__current">Current step</span>
                             <?php elseif ($isNext): ?>
-                                <span class="wizard__current">Next step</span>
                             <?php endif; ?>
 
                         </span>
