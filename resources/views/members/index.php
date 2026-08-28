@@ -91,34 +91,6 @@ $paginationUrl = static function (
 
     </div>
 
-    <?php if ($successMessage !== null): ?>
-
-        <section
-            class="members__confirmation"
-            role="status"
-            aria-live="polite">
-
-            <span
-                class="members__confirmation-icon"
-                aria-hidden="true">
-
-                <svg viewBox="0 0 24 24">
-                    <path d="m5 12 4 4L19 6" />
-                </svg>
-
-            </span>
-
-            <div>
-                <strong>Member registration complete</strong>
-
-                <span>
-                    The member record was saved successfully.
-                </span>
-            </div>
-
-        </section>
-
-    <?php endif; ?>
 
     <div class="card">
 
