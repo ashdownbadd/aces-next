@@ -5,8 +5,6 @@
 
     <meta charset="UTF-8">
 
-    <meta name="google" content="notranslate">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0">
@@ -40,6 +38,7 @@
     <script src="/js/wizard.js"></script>
     <script src="/js/live-search.js"></script>
     <script src="/js/app.js"></script>
+    <script src="/js/critical-action.js"></script>
 
 </body>
 
