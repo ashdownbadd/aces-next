@@ -45,14 +45,14 @@ $alerts = $alerts ?? [
     </section>
 
     <?php if (!empty($_SESSION['success_message'])): ?>
-        <div class="alert alert--success">
+        <div class="alert alert--success" role="status" aria-live="polite">
             <?= htmlspecialchars((string) $_SESSION['success_message']) ?>
         </div>
         <?php unset($_SESSION['success_message']); ?>
     <?php endif; ?>
 
     <?php if (!empty($_SESSION['error_message'])): ?>
-        <div class="alert alert--danger">
+        <div class="alert alert--danger" role="alert">
             <?= htmlspecialchars((string) $_SESSION['error_message']) ?>
         </div>
         <?php unset($_SESSION['error_message']); ?>

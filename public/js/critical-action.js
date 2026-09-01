@@ -108,9 +108,7 @@
           <div
             class="critical-action-modal__spinner"
             data-critical-spinner
-            role="status"
-            aria-label="Processing"
-            aria-hidden="false"></div>
+            aria-hidden="true"></div>
 
           <div class="critical-action-modal__content">
             <strong id="critical-action-modal-title">
@@ -123,13 +121,23 @@
           </div>
         </div>
 
-        <button
-          type="button"
-          class="critical-action-modal__close"
-          data-critical-close
-          disabled>
-          ${SUCCESS_CLOSE_LABEL}
-        </button>
+        <div class="critical-action-modal__actions">
+          <button
+            type="button"
+            class="critical-action-modal__retry"
+            data-critical-retry
+            hidden>
+            Try Again
+          </button>
+
+          <button
+            type="button"
+            class="critical-action-modal__close"
+            data-critical-close
+            disabled>
+            ${SUCCESS_CLOSE_LABEL}
+          </button>
+        </div>
       </section>
     `;
 
@@ -146,6 +154,20 @@
         }
 
         closeModal(true);
+      }
+    );
+
+    modal.querySelector("[data-critical-retry]")?.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (processing || !activeForm) {
+          return;
+        }
+
+        processForm(activeForm);
       }
     );
 
@@ -169,6 +191,7 @@
     const modal = ensureModal();
     const spinner = modal.querySelector("[data-critical-spinner]");
     const close = modal.querySelector("[data-critical-close]");
+    const retry = modal.querySelector("[data-critical-retry]");
     const titleNode = modal.querySelector("#critical-action-modal-title");
     const messageNode = modal.querySelector("#critical-action-modal-message");
 
@@ -176,6 +199,7 @@
     messageNode.textContent = message;
     spinner.hidden = !loading;
     close.disabled = !canClose;
+    retry.hidden = loading || !error;
     modal.classList.toggle("is-complete", !loading && !error);
     modal.classList.toggle("is-error", Boolean(error));
   };
@@ -345,7 +369,7 @@
         message:
           error instanceof Error && error.message
             ? error.message
-            : "The operation could not be completed. Close this message and try again.",
+            : "The operation could not be completed. Check your connection and try again.",
         loading: false,
         canClose: true,
         error: true,

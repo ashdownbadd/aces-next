@@ -207,14 +207,30 @@ small,
 }
 
 /* ==========================================================================
-   Phase 3 — semantic status utilities
+   Phase 3C — shared empty/error-state contract
    ========================================================================== */
 
-.text-success { color: var(--color-success); }
-.text-warning { color: var(--color-warning); }
-.text-danger { color: var(--color-danger); }
-.text-info { color: var(--color-info); }
+.state-empty,
+.members__empty,
+.activity-logs__empty,
+.ledger-page__empty,
+.loan-list__empty {
+  color: var(--color-text);
+  text-align: center;
+}
 
-[aria-busy="true"] {
-  cursor: progress;
+.state-empty p,
+.members__empty p,
+.activity-logs__empty p,
+.ledger-page__empty p,
+.loan-list__empty p {
+  color: var(--color-text-muted);
+}
+
+.state-empty :is(h2, h3),
+.members__empty :is(h2, h3),
+.activity-logs__empty :is(h2, h3),
+.ledger-page__empty :is(h2, h3),
+.loan-list__empty :is(h2, h3) {
+  margin: 0;
 }

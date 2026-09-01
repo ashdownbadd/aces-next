@@ -393,7 +393,8 @@ $money = static fn (float $value): string => '₱' . number_format(
 
                 <button
                     type="submit"
-                    class="btn btn--primary">
+                    class="btn btn--primary"
+                    data-submit-loan-review>
 
                     Submit Application →
 

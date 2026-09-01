@@ -20,11 +20,11 @@ $statusClass = match ($status) {
     </div>
 
     <?php if (!empty($success)): ?>
-        <div class="alert alert--success"><?= $e($success) ?></div>
+        <div class="alert alert--success" role="status" aria-live="polite"><?= $e($success) ?></div>
     <?php endif; ?>
 
     <?php if (!empty($error)): ?>
-        <div class="alert alert--error"><?= $e($error) ?></div>
+        <div class="alert alert--error" role="alert"><?= $e($error) ?></div>
     <?php endif; ?>
 
     <header class="ledger-detail__header">
@@ -174,7 +174,6 @@ $statusClass = match ($status) {
                 action="/ledger/<?= (int) $voucher['id'] ?>/reject"
                 class="ledger-detail__reject-form">
                 <input
-                    id="ledger-rejection-reason"
                     class="input"
                     type="text"
                     name="reason"
