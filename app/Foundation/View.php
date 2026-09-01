@@ -30,10 +30,10 @@ final class View
         $content = $this->renderFile($view, $data);
 
         if ($layout === null) {
-            return $content;
+            return $this->injectCsrfFields($content);
         }
 
-        return $this->renderFile(
+        $layoutContent = $this->renderFile(
             $layout,
             array_merge(
                 $data,
@@ -42,6 +42,8 @@ final class View
                 ]
             )
         );
+
+        return $this->injectCsrfFields($layoutContent);
     }
 
     /**
@@ -53,6 +55,61 @@ final class View
             $view,
             $this->sharedData,
         );
+    }
+
+    /**
+     * Add a CSRF token to every server-rendered POST form.
+     *
+     * This keeps the protection centralized so new POST forms cannot
+     * accidentally ship without a token.
+     */
+    private function injectCsrfFields(string $html): string
+    {
+        $token = $_SESSION['_csrf_token'] ?? null;
+
+        if (
+            ! is_string($token)
+            || $token === ''
+        ) {
+            $token = bin2hex(random_bytes(32));
+
+            $_SESSION['_csrf_token'] = $token;
+        }
+
+        return preg_replace_callback(
+            '/<form\b([^>]*)>/i',
+            static function (array $matches) use ($token): string {
+                $attributes = $matches[1];
+
+                if (
+                    ! preg_match(
+                        '/\bmethod\s*=\s*["\']post["\']/i',
+                        $attributes,
+                    )
+                ) {
+                    return $matches[0];
+                }
+
+                if (
+                    preg_match(
+                        '/name\s*=\s*["\']_csrf["\']/i',
+                        $attributes,
+                    )
+                ) {
+                    return $matches[0];
+                }
+
+                return $matches[0]
+                    . "\n<input type=\"hidden\" name=\"_csrf\" value=\""
+                    . htmlspecialchars(
+                        $token,
+                        ENT_QUOTES,
+                        'UTF-8',
+                    )
+                    . "\">";
+            },
+            $html,
+        ) ?? $html;
     }
 
     /**

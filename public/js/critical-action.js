@@ -31,79 +31,6 @@
   let activeForm = null;
   let activeResponseUrl = null;
   let processing = false;
-  let previousFocusedElement = null;
-
-  const getFocusableElements = (container) => {
-    if (!container) {
-      return [];
-    }
-
-    return Array.from(
-      container.querySelectorAll(
-        'a[href], button:not([disabled]), input:not([disabled]), ' +
-        'select:not([disabled]), textarea:not([disabled]), ' +
-        '[tabindex]:not([tabindex="-1"])'
-      )
-    ).filter((element) => {
-      return !element.hidden
-        && element.getAttribute("aria-hidden") !== "true"
-        && element.getClientRects().length > 0;
-    });
-  };
-
-  const trapModalFocus = (event) => {
-    const modal = document.getElementById(MODAL_ID);
-
-    if (
-      !modal
-      || modal.hidden
-      || !modal.classList.contains("is-open")
-    ) {
-      return;
-    }
-
-    const dialog = modal.querySelector(
-      ".critical-action-modal__dialog"
-    );
-
-    if (!dialog) {
-      return;
-    }
-
-    if (event.key === "Escape") {
-      if (!processing) {
-        event.preventDefault();
-        closeModal(true);
-      }
-      return;
-    }
-
-    if (event.key !== "Tab") {
-      return;
-    }
-
-    const focusable = getFocusableElements(dialog);
-
-    if (focusable.length === 0) {
-      event.preventDefault();
-      dialog.focus({ preventScroll: true });
-      return;
-    }
-
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus({ preventScroll: true });
-      return;
-    }
-
-    if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus({ preventScroll: true });
-    }
-  };
 
   const getActionPath = (form) => {
     const action = form.getAttribute("action") || window.location.href;
@@ -283,7 +210,6 @@
       ".critical-action-modal__dialog"
     );
 
-    previousFocusedElement = document.activeElement;
     activeForm = form;
     activeResponseUrl = null;
 
@@ -296,7 +222,6 @@
     });
 
     modal.hidden = false;
-    modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
     setPageLocked(true);
     dialog?.focus({ preventScroll: true });
@@ -307,24 +232,12 @@
     const destination = activeResponseUrl;
 
     modal.hidden = true;
-    modal.classList.remove("is-open");
     modal.setAttribute("aria-hidden", "true");
     modal.classList.remove("is-complete", "is-error");
     setPageLocked(false);
 
-    const focusTarget = previousFocusedElement;
-    previousFocusedElement = null;
-
     activeForm = null;
     processing = false;
-
-    if (
-      !followResponse
-      && focusTarget instanceof HTMLElement
-      && document.contains(focusTarget)
-    ) {
-      focusTarget.focus({ preventScroll: true });
-    }
 
     if (followResponse && destination) {
       if (destination === window.location.href) {
@@ -500,10 +413,3 @@
     true
   );
 })();
-
-
-  document.addEventListener(
-    "keydown",
-    trapModalFocus,
-    true
-  );

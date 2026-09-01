@@ -188,30 +188,3 @@
     flex: 1;
   }
 }
-
-
-.critical-action-modal.is-open {
-  display: grid;
-}
-
-.critical-action-modal__dialog:focus {
-  outline: none;
-}
-
-.critical-action-modal__close:focus-visible,
-.critical-action-modal__retry:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  box-shadow: none;
-}
-
-
-@media (max-width: 640px) {
-  .critical-action-modal {
-    padding: var(--space-3);
-  }
-
-  .critical-action-modal__dialog {
-    width: min(100%, 430px);
-  }
-}

@@ -41,6 +41,7 @@
     <script src="/js/live-search.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/critical-action.js"></script>
+    <script src="/js/unsaved-changes.js"></script>
 
 </body>
 

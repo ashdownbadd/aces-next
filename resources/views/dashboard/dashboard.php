@@ -245,10 +245,6 @@ $alerts = $alerts ?? [
 
             <div class="dashboard-actions__empty">
 
-                <span class="dashboard-actions__empty-icon" aria-hidden="true">
-                    <i class="fas fa-circle-check"></i>
-                </span>
-
                 <div>
                     <strong>Nothing requires attention right now.</strong>
                     <span>
