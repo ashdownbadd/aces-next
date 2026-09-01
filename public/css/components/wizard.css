@@ -3,70 +3,62 @@
    ========================================================================== */
 
 .wizard-layout {
+
   width: min(100%, 1080px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding-bottom: 12px;
-}
+}.member-registration__breadcrumb {
 
-.member-registration__breadcrumb {
   display: flex;
   align-items: center;
   gap: 6px;
   color: var(--color-text-soft);
   font-family: var(--font-family-mono);
-  font-size: 0.58rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
+}.member-registration__breadcrumb a {
 
-.member-registration__breadcrumb a {
   color: var(--color-text-muted);
-}
+}.member-registration__breadcrumb a:hover {
 
-.member-registration__breadcrumb a:hover {
   color: var(--color-primary);
-}
+}.member-registration__header {
 
-.member-registration__header {
   display: flex;
   flex-direction: column;
   gap: 4px;
   margin-top: 4px;
-}
+}.member-registration__eyebrow {
 
-.member-registration__eyebrow {
   color: var(--color-primary);
   font-family: var(--font-family-mono);
-  font-size: 0.58rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-}
+}.member-registration__header h1 {
 
-.member-registration__header h1 {
   margin: 0;
   color: var(--color-text);
   font-family: var(--font-family-heading);
-  font-size: clamp(2rem, 3.2vw, 2.65rem);
+  font-size: var(--font-size-3xl);
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -0.04em;
-}
+}.member-registration__header p {
 
-.member-registration__header p {
   margin: 4px 0 0;
   color: var(--color-text-muted);
-  font-size: 0.80rem;
-}
+  font-size: var(--font-size-sm);
+}.wizard {
 
-.wizard {
   margin: 4px 0 2px;
-}
+}.wizard__steps {
 
-.wizard__steps {
   display: flex;
   align-items: flex-start;
 
@@ -76,13 +68,11 @@
   padding: 2px 0 10px;
 
   scrollbar-width: none;
-}
+}.wizard__steps::-webkit-scrollbar {
 
-.wizard__steps::-webkit-scrollbar {
   display: none;
-}
+}.wizard__step {
 
-.wizard__step {
   position: relative;
 
   flex: 1 1 0;
@@ -97,10 +87,9 @@
 
   color: var(--color-text-soft);
   text-align: center;
-}
-
-/* Only this anchor is clickable. The label/current-step area is not. */
+}/* Only this anchor is clickable. The label/current-step area is not. */
 .wizard__indicator-link {
+
   position: relative;
   z-index: 2;
 
@@ -113,22 +102,19 @@
 
   color: inherit;
   text-decoration: none;
-}
-
-.wizard__indicator-link:hover,
+}.wizard__indicator-link:hover,
 .wizard__indicator-link:focus-visible {
+
   color: inherit;
   background: transparent;
   border: 0;
   outline: none;
-}
+}.wizard__indicator-link:focus-visible .wizard__indicator {
 
-.wizard__indicator-link:focus-visible .wizard__indicator {
   box-shadow: 0 0 0 3px var(--color-primary-soft);
-}
-
-/* Connector is between circles, never around the whole step. */
+}/* Connector is between circles, never around the whole step. */
 .wizard__step::after {
+
   content: "";
 
   position: absolute;
@@ -141,13 +127,11 @@
   height: 1px;
 
   background: var(--color-border);
-}
+}.wizard__step:last-child::after {
 
-.wizard__step:last-child::after {
   display: none;
-}
+}.wizard__indicator {
 
-.wizard__indicator {
   position: relative;
   z-index: 2;
 
@@ -165,9 +149,8 @@
 
   background: var(--color-surface);
   color: var(--color-text-soft);
-}
+}.wizard__indicator-dot {
 
-.wizard__indicator-dot {
   width: 6px;
   height: 6px;
 
@@ -184,14 +167,12 @@
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
+}.wizard__indicator-link:hover .wizard__indicator {
 
-.wizard__indicator-link:hover .wizard__indicator {
   border-color: var(--color-primary);
   color: var(--color-primary);
-}
+}.wizard__step-content {
 
-.wizard__step-content {
   position: relative;
   z-index: 2;
 
@@ -200,60 +181,50 @@
   align-items: center;
 
   min-width: 0;
-}
+}.wizard__label {
 
-.wizard__label {
   margin-top: 2px;
   color: var(--color-text-soft);
-  font-size: 0.65rem;
+  font-size: var(--font-size-xs);
   font-weight: 650;
   white-space: nowrap;
-}
+}.wizard__current {
 
-.wizard__current {
   margin-top: 2px;
   color: var(--color-primary);
   font-family: var(--font-family-mono);
-  font-size: 0.50rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
+}.wizard__step--complete .wizard__indicator {
 
-.wizard__step--complete .wizard__indicator {
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--color-surface);
-}
+}.wizard__step--complete .wizard__label {
 
-.wizard__step--complete .wizard__label {
   color: var(--color-text-muted);
-}
+}.wizard__step--active {
 
-.wizard__step--active {
   color: var(--color-text);
-}
+}.wizard__step--active .wizard__indicator {
 
-.wizard__step--active .wizard__indicator {
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--color-surface);
-}
+}.wizard__step--active .wizard__label {
 
-.wizard__step--active .wizard__label {
   color: var(--color-text);
-}
+}.wizard__step--next .wizard__indicator {
 
-.wizard__step--next .wizard__indicator {
   border-color: var(--color-primary);
   color: var(--color-primary);
-}
+}.wizard__step--locked {
 
-.wizard__step--locked {
   cursor: not-allowed;
   opacity: 0.50;
-}
+}.wizard__step--locked .wizard__indicator {
 
-.wizard__step--locked .wizard__indicator {
   border-color: var(--color-border);
   color: var(--color-text-soft);
 }
@@ -261,63 +232,53 @@
 .wizard__step--locked .wizard__indicator svg {
   width: 12px;
   height: 12px;
-}
+}.wizard__locked {
 
-.wizard__locked {
   margin-top: 2px;
   color: var(--color-text-soft);
   font-family: var(--font-family-mono);
-  font-size: 0.47rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.04em;
-}
-
-
-.wizard > .card,
+}.wizard > .card,
 .wizard-layout > .card {
+
   width: 100%;
-}
+}.wizard-layout > .card {
 
-.wizard-layout > .card {
   overflow: hidden;
   padding: 0;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 18px;
-}
+}.wizard__body {
 
-.wizard__body {
   padding: 24px 28px 0;
-}
+}.form-section {
 
-.form-section {
   display: flex;
   flex-direction: column;
   gap: 22px;
-}
+}.form-section__header {
 
-.form-section__header {
   display: flex;
   flex-direction: column;
   gap: 5px;
   padding-bottom: 2px;
-}
+}.form-section__title {
 
-.form-section__title {
   margin: 0;
   color: var(--color-text);
   font-family: var(--font-family-heading);
-  font-size: 1.15rem;
+  font-size: var(--font-size-lg);
   font-weight: 800;
   letter-spacing: -0.025em;
-}
+}.form-section__description {
 
-.form-section__description {
   margin: 0;
   color: var(--color-text-muted);
-  font-size: 0.74rem;
-}
+  font-size: var(--font-size-xs);
+}.form-actions {
 
-.form-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -326,49 +287,43 @@
   padding: 14px 28px;
   background: var(--color-surface-raised);
   border-top: 1px solid var(--color-border);
-}
+}.form-actions .btn {
 
-.form-actions .btn {
   min-width: 104px;
 }
 
-@media (max-width: 900px) {
-  .wizard__step {
+@media (max-width: 900px) {.wizard__step {
+
     flex: 0 0 120px;
     min-width: 120px;
   }
 }
 
-@media (max-width: 640px) {
-  .wizard-layout {
+@media (max-width: 640px) {.wizard-layout {
+
     gap: 16px;
-  }
+  }.wizard__body {
 
-  .wizard__body {
     padding: 20px 16px 0;
-  }
+  }.form-actions {
 
-  .form-actions {
     margin-inline: -16px;
     padding-inline: 16px;
-  }
+  }.form-section {
 
-  .form-section {
     gap: 18px;
   }
-}
-
-/* ==========================================================================
+}/* ==========================================================================
    Folder-tab navigation — visual treatment
    ========================================================================== */
 
 .wizard {
+
   position: relative;
   z-index: 5;
   margin: 10px 0 -1px;
-}
+}.wizard__steps {
 
-.wizard__steps {
   display: flex;
   align-items: flex-end;
   gap: 4px;
@@ -381,13 +336,11 @@
 
   box-sizing: border-box;
   scrollbar-width: none;
-}
+}.wizard__steps::-webkit-scrollbar {
 
-.wizard__steps::-webkit-scrollbar {
   display: none;
-}
+}.wizard__step {
 
-.wizard__step {
   position: relative;
   z-index: 1;
 
@@ -412,13 +365,11 @@
   color: var(--color-text-muted);
 
   text-align: left;
-}
+}.wizard__step::after {
 
-.wizard__step::after {
   display: none;
-}
+}.wizard__indicator-link {
 
-.wizard__indicator-link {
   position: relative;
   z-index: 3;
 
@@ -436,26 +387,23 @@
   color: inherit;
   text-decoration: none;
   background: transparent;
-}
-
-.wizard__indicator-link:hover,
+}.wizard__indicator-link:hover,
 .wizard__indicator-link:focus-visible {
+
   color: inherit;
   background: transparent;
   border: 0;
   outline: none;
-}
+}.wizard__indicator {
 
-.wizard__indicator {
   width: 30px;
   height: 30px;
 
   border-color: var(--color-border-strong);
   background: var(--color-surface);
   color: var(--color-text-soft);
-}
+}.wizard__indicator-dot {
 
-.wizard__indicator-dot {
   width: 7px;
   height: 7px;
 }
@@ -463,9 +411,8 @@
 .wizard__indicator svg {
   width: 14px;
   height: 14px;
-}
+}.wizard__step-content {
 
-.wizard__step-content {
   position: relative;
   z-index: 3;
 
@@ -475,73 +422,62 @@
   justify-content: center;
 
   min-width: 0;
-}
+}.wizard__label {
 
-.wizard__label {
   margin: 0;
 
   overflow: hidden;
 
   color: var(--color-text-muted);
-  font-size: 0.70rem;
+  font-size: var(--font-size-xs);
   font-weight: 650;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.wizard__current,
+}.wizard__current,
 .wizard__locked {
+
   margin-top: 3px;
 
   font-family: var(--font-family-mono);
-  font-size: 0.48rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.05em;
   line-height: 1.25;
   text-transform: uppercase;
-}
+}.wizard__current {
 
-.wizard__current {
   color: var(--color-primary);
-}
+}.wizard__locked {
 
-.wizard__locked {
   color: var(--color-text-soft);
-}
+}.wizard__step--complete {
 
-.wizard__step--complete {
   background: var(--color-primary-soft);
   border-color: rgba(217, 142, 22, 0.25);
-}
+}.wizard__step--complete .wizard__indicator {
 
-.wizard__step--complete .wizard__indicator {
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--color-surface);
-}
+}.wizard__step--complete .wizard__label {
 
-.wizard__step--complete .wizard__label {
   color: var(--color-text);
-}
+}.wizard__step--next {
 
-.wizard__step--next {
   background: color-mix(
     in srgb,
     var(--color-primary-soft) 32%,
     var(--color-surface-raised)
   );
-}
+}.wizard__step--next .wizard__indicator {
 
-.wizard__step--next .wizard__indicator {
   border-color: var(--color-primary);
   color: var(--color-primary);
-}
+}.wizard__step--next .wizard__label {
 
-.wizard__step--next .wizard__label {
   color: var(--color-text);
-}
+}.wizard__step--active {
 
-.wizard__step--active {
   z-index: 4;
 
   min-height: 72px;
@@ -555,41 +491,34 @@
 
   box-shadow:
     0 -3px 16px rgba(0, 0, 0, 0.05);
-}
+}.wizard__step--active .wizard__indicator {
 
-.wizard__step--active .wizard__indicator {
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--color-surface);
-}
+}.wizard__step--active .wizard__label {
 
-.wizard__step--active .wizard__label {
   color: var(--color-text);
   font-weight: 800;
-}
+}.wizard__step--locked {
 
-.wizard__step--locked {
   background: var(--color-background);
   border-color: var(--color-border);
   opacity: 0.58;
   cursor: not-allowed;
-}
+}.wizard__step--locked .wizard__indicator {
 
-.wizard__step--locked .wizard__indicator {
   border-color: var(--color-border);
   background: var(--color-background);
-}
+}.wizard__step--locked .wizard__label {
 
-.wizard__step--locked .wizard__label {
   color: var(--color-text-soft);
-}
+}.wizard__step--locked .wizard__step-content {
 
-.wizard__step--locked .wizard__step-content {
   opacity: 0.8;
-}
-
-/* Folder-tab edge: a small tab notch on the right side of each tab. */
+}/* Folder-tab edge: a small tab notch on the right side of each tab. */
 .wizard__step:not(:last-child)::before {
+
   content: "";
 
   position: absolute;
@@ -611,47 +540,42 @@
 
   opacity: 0.55;
   pointer-events: none;
-}
+}.wizard-layout > .card {
 
-.wizard-layout > .card {
   position: relative;
   z-index: 1;
 
   margin-top: -1px;
 }
 
-@media (max-width: 900px) {
-  .wizard__step {
+@media (max-width: 900px) {.wizard__step {
+
     flex: 0 0 150px;
   }
 }
 
-@media (max-width: 640px) {
-  .wizard__steps {
-    padding-inline: 4px;
-  }
+@media (max-width: 640px) {.wizard__steps {
 
-  .wizard__step {
+    padding-inline: 4px;
+  }.wizard__step {
+
     flex-basis: 144px;
     min-width: 144px;
     min-height: 60px;
     padding-inline: 12px;
-  }
+  }.wizard__step--active {
 
-  .wizard__step--active {
     min-height: 66px;
   }
-}
-
-/* ==========================================================================
+}/* ==========================================================================
    Active folder tab cleanup
    ========================================================================== */
 
 .wizard {
-  margin-bottom: -20px;
-}
 
-.wizard__step--active {
+  margin-bottom: -20px;
+}.wizard__step--active {
+
   z-index: 10;
 
   grid-template-columns: minmax(0, 1fr);
@@ -670,29 +594,24 @@
   background: var(--color-surface);
 
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
-}
-
-/* Membership's active indicator is deliberately removed; the folder tab
+}/* Membership's active indicator is deliberately removed; the folder tab
    itself is the active visual cue. */
 .wizard__step--active .wizard__indicator-link {
-  display: none;
-}
 
-.wizard__step--active .wizard__step-content {
+  display: none;
+}.wizard__step--active .wizard__step-content {
+
   align-items: flex-start;
   grid-column: 1;
-}
+}.wizard__step--active .wizard__label {
 
-.wizard__step--active .wizard__label {
   color: var(--color-text);
   font-weight: 800;
-}
+}.wizard__step--active::before {
 
-.wizard__step--active::before {
   opacity: 0.35;
-}
+}.wizard-layout > .card {
 
-.wizard-layout > .card {
   position: relative;
   z-index: 1;
 
@@ -701,32 +620,29 @@
   border-top-left-radius: 0;
 }
 
-@media (max-width: 640px) {
-  .wizard {
-    margin-bottom: -16px;
-  }
+@media (max-width: 640px) {.wizard {
 
-  .wizard__step--active {
+    margin-bottom: -16px;
+  }.wizard__step--active {
+
     min-height: 66px;
     padding-left: 14px;
     padding-right: 14px;
   }
-}
-
-/* ==========================================================================
+}/* ==========================================================================
    Global wizard folder tabs — reference-inspired final treatment
    The supplied reference uses a simple flex tab list, a distinct active tab,
    and a content panel with no top border so the active tab visually joins it.
    ========================================================================== */
 
 .wizard {
+
   position: relative;
   z-index: 20;
 
   margin: 10px 0 -1px;
-}
+}.wizard__steps {
 
-.wizard__steps {
   display: flex;
   align-items: flex-end;
   gap: 4px;
@@ -738,13 +654,11 @@
   padding: 0 0 0 2px;
 
   scrollbar-width: none;
-}
+}.wizard__steps::-webkit-scrollbar {
 
-.wizard__steps::-webkit-scrollbar {
   display: none;
-}
+}.wizard__step {
 
-.wizard__step {
   position: relative;
   z-index: 1;
 
@@ -772,18 +686,15 @@
   transition:
     background-color 140ms ease,
     color 140ms ease;
-}
+}.wizard__step:not(:last-child)::before {
 
-.wizard__step:not(:last-child)::before {
   display: none;
-}
+}.wizard__step::after {
 
-.wizard__step::after {
   display: none;
-}
-
-/* Only the existing circle/icon link remains interactive. */
+}/* Only the existing circle/icon link remains interactive. */
 .wizard__indicator-link {
+
   display: grid;
   place-items: center;
 
@@ -796,15 +707,13 @@
   border-radius: 50%;
 
   background: transparent;
-}
-
-.wizard__indicator-link:hover,
+}.wizard__indicator-link:hover,
 .wizard__indicator-link:focus-visible {
+
   border: 0;
   background: transparent;
-}
+}.wizard__indicator {
 
-.wizard__indicator {
   width: 28px;
   height: 28px;
 }
@@ -812,57 +721,49 @@
 .wizard__indicator svg {
   width: 13px;
   height: 13px;
-}
+}.wizard__step-content {
 
-.wizard__step-content {
   min-width: 0;
 
   align-items: flex-start;
-}
+}.wizard__label {
 
-.wizard__label {
   margin: 0;
 
   overflow: hidden;
 
-  font-size: 0.68rem;
+  font-size: var(--font-size-xs);
   line-height: 1.2;
   font-weight: 650;
 
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.wizard__current,
+}.wizard__current,
 .wizard__locked {
+
   margin-top: 3px;
 
   font-family: var(--font-family-mono);
-  font-size: 0.46rem;
+  font-size: var(--font-size-xs);
   line-height: 1.2;
   letter-spacing: 0.05em;
 
   text-transform: uppercase;
-}
+}.wizard__step--complete {
 
-.wizard__step--complete {
   background: var(--color-surface-raised);
-}
+}.wizard__step--complete .wizard__label {
 
-.wizard__step--complete .wizard__label {
   color: var(--color-text-muted);
-}
+}.wizard__step--next {
 
-.wizard__step--next {
   background: var(--color-surface-raised);
-}
+}.wizard__step--next .wizard__label {
 
-.wizard__step--next .wizard__label {
   color: var(--color-text-muted);
-}
-
-/* Active tab becomes the visual "folder tab" and joins the panel below. */
+}/* Active tab becomes the visual "folder tab" and joins the panel below. */
 .wizard__step--active {
+
   z-index: 30;
 
   min-height: 66px;
@@ -880,44 +781,37 @@
   color: var(--color-text);
 
   box-shadow: none;
-}
-
-/* The reference uses a text-only active tab. Keep the previous ACES rule:
+}/* The reference uses a text-only active tab. Keep the previous ACES rule:
    only the active icon disappears; inactive step icons remain available. */
 .wizard__step--active .wizard__indicator-link {
-  display: none;
-}
 
-.wizard__step--active .wizard__step-content {
+  display: none;
+}.wizard__step--active .wizard__step-content {
+
   grid-column: 1 / -1;
   align-items: flex-start;
-}
+}.wizard__step--active .wizard__label {
 
-.wizard__step--active .wizard__label {
   color: var(--color-text);
-  font-size: 0.72rem;
+  font-size: var(--font-size-xs);
   font-weight: 800;
-}
+}.wizard__step--active .wizard__current {
 
-.wizard__step--active .wizard__current {
   color: var(--color-primary);
-}
-
-/* Locked tabs look like unopened folders. */
+}/* Locked tabs look like unopened folders. */
 .wizard__step--locked {
+
   background: var(--color-background);
   border-radius: 10px 10px 0 0;
 
   opacity: 0.55;
-}
+}.wizard__step--locked .wizard__indicator {
 
-.wizard__step--locked .wizard__indicator {
   border-color: var(--color-border);
   background: var(--color-background);
-}
-
-/* The content panel is the folder body. */
+}/* The content panel is the folder body. */
 .wizard-layout > .card {
+
   position: relative;
   z-index: 10;
 
@@ -926,93 +820,79 @@
   border-top: 0;
   border-radius: 0 18px 18px 18px;
   box-shadow: none;
-}
+}.wizard__body {
 
-.wizard__body {
   position: relative;
   z-index: 1;
-}
-
-/* Ensure the active tab and panel touch without a visible seam. */
+}/* Ensure the active tab and panel touch without a visible seam. */
 .wizard__step--active + .wizard__step {
+
   border-left: 0;
 }
 
-@media (max-width: 900px) {
-  .wizard__step {
+@media (max-width: 900px) {.wizard__step {
+
     flex: 0 0 142px;
     min-width: 142px;
   }
 }
 
-@media (max-width: 640px) {
-  .wizard__steps {
-    padding-left: 0;
-  }
+@media (max-width: 640px) {.wizard__steps {
 
-  .wizard__step {
+    padding-left: 0;
+  }.wizard__step {
+
     flex-basis: 136px;
     min-width: 136px;
     min-height: 54px;
     padding: 9px 11px;
-  }
+  }.wizard__step--active {
 
-  .wizard__step--active {
     min-height: 60px;
     padding: 11px 13px;
   }
-}
-
-/* ==========================================================================
+}/* ==========================================================================
    Final folder-tab navigation cleanup
    ========================================================================== */
 
 .wizard__step {
-  text-decoration: none;
-}
 
-.wizard__step > a {
+  text-decoration: none;
+}.wizard__step > a {
+
   color: inherit;
   text-decoration: none;
-}
+}.wizard__step--active {
 
-.wizard__step--active {
   border-bottom: 0;
   margin-bottom: -1px;
-}
+}.wizard-layout > .card {
 
-.wizard-layout > .card {
   border-top: 0;
   margin-top: 0;
-}
+}.wizard__step--locked {
 
-.wizard__step--locked {
   text-decoration: none;
-}
-
-/* ==========================================================================
+}/* ==========================================================================
    Folder tabs — eliminate the flex gap and physically join active tab/card
    ========================================================================== */
 
 .wizard-layout > .wizard {
+
   /*
    * .wizard-layout is a column flex container with a 20px gap. A negative
    * bottom margin cancels that gap so the tab row touches the content card.
    * The extra 1px makes the active tab overlap the card border cleanly.
    */
   margin-bottom: -21px;
-}
+}.wizard-layout > .card {
 
-.wizard-layout > .card {
   margin-top: 0;
-}
-
-/* The panel begins immediately under the tab row. */
+}/* The panel begins immediately under the tab row. */
 .wizard__step--active {
-  margin-bottom: -1px;
-}
 
-/* ==========================================================================
+  margin-bottom: -1px;
+}/* ==========================================================================
    Folder tabs — exact edge alignment + flat bottoms
    ========================================================================== */
 
@@ -1022,20 +902,18 @@
  * card's left edge.
  */
 .wizard-layout > .wizard {
+
   width: 100%;
   margin-left: 0;
   margin-right: 0;
-}
+}.wizard__steps {
 
-.wizard__steps {
   width: 100%;
   padding-left: 0;
   padding-right: 0;
   gap: 4px;
   box-sizing: border-box;
-}
-
-/*
+}/*
  * Folder tabs have rounded top corners only. Their bottom edges must remain
  * completely flat because they sit against/overlap the content panel.
  */
@@ -1044,25 +922,22 @@
 .wizard__step--complete,
 .wizard__step--next,
 .wizard__step--locked {
-  border-radius: 10px 10px 0 0;
-}
 
-/*
+  border-radius: 10px 10px 0 0;
+}/*
  * The active tab shares the content panel's top-left boundary. The card
  * remains directly underneath it with no additional horizontal inset.
  */
 .wizard__step--active {
+
   margin-left: 0;
   margin-bottom: -1px;
-}
+}.wizard-layout > .card {
 
-.wizard-layout > .card {
   margin-left: 0;
   margin-right: 0;
   border-top: 0;
-}
-
-/* ==========================================================================
+}/* ==========================================================================
    Final wizard tab presentation
    ========================================================================== */
 
@@ -1072,11 +947,11 @@
 .wizard__step--complete,
 .wizard__step--next,
 .wizard__step--locked {
-  border-radius: 0 !important;
-}
 
-/* Equal-width tabs with centered labels. */
+  border-radius: 0 !important;
+}/* Equal-width tabs with centered labels. */
 .wizard__steps {
+
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -1087,9 +962,8 @@
 
   overflow-x: auto;
   overflow-y: hidden;
-}
+}.wizard__step {
 
-.wizard__step {
   flex: 1 1 0;
   min-width: 0;
 
@@ -1104,9 +978,8 @@
   text-align: center;
 
   white-space: normal;
-}
+}.wizard__step-content {
 
-.wizard__step-content {
   width: 100%;
   min-width: 0;
 
@@ -1115,9 +988,8 @@
   justify-content: center;
 
   text-align: center;
-}
+}.wizard__label {
 
-.wizard__label {
   display: block;
 
   width: auto;
@@ -1130,10 +1002,9 @@
   white-space: nowrap;
 
   text-align: center;
-}
-
-/* Active state is conveyed by the tab surface and bold label only. */
+}/* Active state is conveyed by the tab surface and bold label only. */
 .wizard__step--active {
+
   justify-content: center;
 
   min-height: 66px;
@@ -1143,47 +1014,42 @@
   border-radius: 0 !important;
 
   background: var(--color-surface);
-}
+}.wizard__step--active .wizard__step-content {
 
-.wizard__step--active .wizard__step-content {
   align-items: center;
   justify-content: center;
   text-align: center;
-}
+}.wizard__step--active .wizard__label {
 
-.wizard__step--active .wizard__label {
   color: var(--color-text);
   font-weight: 800;
-}
-
-/* There are no active/next subtitles anymore. */
+}/* There are no active/next subtitles anymore. */
 .wizard__current {
-  display: none !important;
-}
 
-/* Keep the top edge of the folder body flat so the active tab merges into it. */
+  display: none !important;
+}/* Keep the top edge of the folder body flat so the active tab merges into it. */
 .wizard-layout > .card {
+
   border-top: 0 !important;
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
 }
 
-@media (max-width: 900px) {
-  .wizard__step {
+@media (max-width: 900px) {.wizard__step {
+
     flex: 0 0 144px;
     min-width: 144px;
   }
 }
 
-@media (max-width: 640px) {
-  .wizard__step {
+@media (max-width: 640px) {.wizard__step {
+
     flex-basis: 136px;
     min-width: 136px;
     min-height: 54px;
     padding-inline: 10px;
-  }
+  }.wizard__step--active {
 
-  .wizard__step--active {
     min-height: 60px;
   }
 }

@@ -32,7 +32,7 @@ $alerts = $alerts ?? [
 
         <h1 class="dashboard-hero__title">
             <?= $greeting ?>,
-            <strong>
+            <strong class="dashboard-hero__user">
                 <?= htmlspecialchars(
                     $_SESSION['username'] ?? 'Administrator'
                 ) ?>
@@ -58,98 +58,43 @@ $alerts = $alerts ?? [
         <?php unset($_SESSION['error_message']); ?>
     <?php endif; ?>
 
-    <section class="section">
-        <div class="section__header">
-            <div>
-                <h2 class="section__title">System Overview</h2>
-
-            </div>
-        </div>
-
+    <section class="section dashboard-overview">
         <div class="section__body">
 
             <div
                 class="dashboard__stats"
                 data-dashboard-stats>
 
-                <?php foreach ($cards as $index => $card): ?>
+                <?php foreach ($cards as $index => $dashboardCard): ?>
 
                     <?php
-                    $title =
-                        (string) ($card['title'] ?? '');
+                    $title = (string) ($dashboardCard['title'] ?? '');
+                    $value = (string) ($dashboardCard['value'] ?? 0);
+                    $description = (string) ($dashboardCard['description'] ?? '');
+                    $icon = ''; // Overview cards intentionally have no left-side circle.
+                    $color = (string) ($dashboardCard['color'] ?? 'primary');
+                    $url = (string) ($dashboardCard['url'] ?? '');
+                    $hidden = $index >= 4;
 
-                    $value =
-                        (string) ($card['value'] ?? 0);
+                    $class = 'dashboard-stat-card'
+                        . ($hidden ? ' dashboard__stat--additional' : '');
 
-                    $description =
-                        (string) ($card['description'] ?? '');
+                    $variant = in_array(
+                        $color,
+                        ['primary', 'success', 'warning', 'danger'],
+                        true
+                    ) ? $color : 'primary';
 
-                    $icon =
-                        (string) (
-                            $card['icon']
-                            ?? 'fas fa-chart-bar'
-                        );
-
-                    $color =
-                        (string) (
-                            $card['color']
-                            ?? 'primary'
-                        );
-
-                    $url =
-                        (string) (
-                            $card['url']
-                            ?? ''
-                        );
-
-                    $isAdditional =
-                        $index >= 4;
+                    $href = $url !== '' ? $url : '';
+                    $actionUrl = $url !== '' ? $url : '';
+                    $actionLabel = $url !== '' ? 'Open ' . $title : '';
+                    $body = null;
+                    $meta = null;
+                    $status = null;
+                    $subtitle = null;
                     ?>
 
-                    <?php if ($url !== ''): ?>
-
-                        <a
-                            class="stat-card stat-card--<?= htmlspecialchars($color) ?><?= $isAdditional ? ' dashboard__stat--additional' : '' ?>"
-                            href="<?= htmlspecialchars($url) ?>"
-                            <?= $isAdditional ? 'hidden' : '' ?>>
-
-                    <?php else: ?>
-
-                        <div
-                            class="stat-card stat-card--<?= htmlspecialchars($color) ?><?= $isAdditional ? ' dashboard__stat--additional' : '' ?>"
-                            <?= $isAdditional ? 'hidden' : '' ?>>
-
-                    <?php endif; ?>
-
-                        <div class="stat-card__body">
-
-                            <div class="stat-card__content">
-
-                                <span class="stat-card__title">
-                                    <?= htmlspecialchars($title) ?>
-                                </span>
-
-                                <h2 class="stat-card__value">
-                                    <?= htmlspecialchars($value) ?>
-                                </h2>
-
-                                <span class="stat-card__subtitle">
-                                    <?= htmlspecialchars($description) ?>
-                                </span>
-
-                            </div>
-
-                            <div class="stat-card__icon" aria-hidden="true">
-                                <i class="<?= htmlspecialchars($icon) ?>"></i>
-                            </div>
-
-                        </div>
-
-                    <?php if ($url !== ''): ?>
-                        </a>
-                    <?php else: ?>
-                        </div>
-                    <?php endif; ?>
+                    <?php require __DIR__ . '/../components/card.php'; ?>
 
                 <?php endforeach; ?>
 
@@ -176,7 +121,6 @@ $alerts = $alerts ?? [
                     </button>
                 </div>
             <?php endif; ?>
-
         </div>
     </section>
 
@@ -430,7 +374,13 @@ $alerts = $alerts ?? [
             toggle.getAttribute('aria-expanded') === 'true';
 
         hiddenCards.forEach((card) => {
-            card.hidden = expanded;
+            if (expanded) {
+                card.setAttribute('hidden', '');
+                card.setAttribute('aria-hidden', 'true');
+            } else {
+                card.removeAttribute('hidden');
+                card.removeAttribute('aria-hidden');
+            }
         });
 
         toggle.setAttribute(

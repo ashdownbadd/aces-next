@@ -12,6 +12,7 @@
 @import url("./components/wizard.css");
 @import url("./components/button.css");
 @import url("./components/card.css");
+@import url("./components/card-component.css");
 @import url("./components/stat-card.css");
 @import url("./components/form.css");
 @import url("./components/input.css");
@@ -37,64 +38,56 @@
 .btn:active,
 .card:hover,
 .stat-card:hover {
-  transform: none !important;
-}
 
-/* ==========================================================================
+  transform: none !important;
+}/* ==========================================================================
    ACES global icon + typography standards
    ========================================================================== */
 
 /* Typography hierarchy */
 body {
-  font-size: var(--font-size-md);
-}
 
-h1 {
+  font-size: var(--font-size-md);
+}h1 {
+
   font-size: var(--font-size-3xl);
   font-weight: 700;
-}
+}h2 {
 
-h2 {
   font-size: var(--font-size-2xl);
   font-weight: 700;
-}
+}h3 {
 
-h3 {
   font-size: var(--font-size-xl);
   font-weight: 700;
-}
+}h4 {
 
-h4 {
   font-size: var(--font-size-lg);
   font-weight: 600;
-}
-
-small,
+}small,
 .text-caption {
-  font-size: var(--font-size-xs);
-}
 
-/* Form and compact application UI */
+  font-size: var(--font-size-xs);
+}/* Form and compact application UI */
 label,
 .form-label {
+
   font-size: var(--font-size-sm);
   font-weight: 600;
-}
-
-button,
+}button,
 .btn,
 input,
 select,
 textarea {
-  font-size: var(--font-size-sm);
-}
 
-/* Navigation, tables, and compact controls */
+  font-size: var(--font-size-sm);
+}/* Navigation, tables, and compact controls */
 .nav-link,
 .table th,
 .table td,
 .pagination,
 .badge {
+
   font-size: var(--font-size-sm);
 }
 
@@ -112,36 +105,103 @@ textarea {
 .icon--xl {
   flex: 0 0 auto;
   display: inline-block;
-}
-
-/* Icon + label spacing */
+}/* Icon + label spacing */
 .btn,
 .nav-link,
 .table-action,
 .icon-text {
-  gap: var(--icon-gap-md);
-}
 
-.btn .icon--sm,
+  gap: var(--icon-gap-md);
+}.btn .icon--sm,
 .btn .icon--md,
 .nav-link .icon--sm,
 .nav-link .icon--md {
-  vertical-align: middle;
-}
 
-/* Primary visual hierarchy */
+  vertical-align: middle;
+}/* Primary visual hierarchy */
 .text-primary,
 .is-active,
 .active {
+
   opacity: 1;
-}
-
-.text-secondary,
+}.text-secondary,
 .is-secondary {
+
   opacity: 0.7;
+}.text-tertiary,
+.is-tertiary {
+
+  opacity: 0.6;
 }
 
-.text-tertiary,
-.is-tertiary {
-  opacity: 0.6;
+/* ==========================================================================
+   ACES Global Typography Contract
+   ========================================================================== */
+
+body {
+  font-size: var(--font-size-md);
+}
+
+h1,
+.page-title {
+  font-size: var(--font-size-3xl) !important;
+  line-height: 1.2;
+}
+
+h2,
+.section__title,
+.page-header__title {
+  font-size: var(--font-size-2xl) !important;
+  line-height: 1.25;
+}
+
+h3 {
+  font-size: var(--font-size-xl) !important;
+  line-height: 1.3;
+}
+
+h4 {
+  font-size: var(--font-size-lg) !important;
+  line-height: 1.35;
+}
+
+h5,
+h6 {
+  font-size: var(--font-size-md) !important;
+  line-height: 1.4;
+}
+
+p,
+li,
+dd,
+dt {
+  font-size: var(--font-size-md);
+}
+
+label,
+button,
+.btn,
+input,
+select,
+textarea,
+.nav-link,
+.table th,
+.table td,
+.badge,
+.pagination {
+  font-size: var(--font-size-sm);
+}
+
+small,
+.form-help,
+.form-hint,
+.text-caption {
+  font-size: var(--font-size-xs);
+}
+
+/* Dashboard section hierarchy: both operational sections use the same
+ * second-level heading scale. */
+.dashboard-actions__title,
+.dashboard-health .section__title {
+  font-size: var(--font-size-2xl) !important;
 }

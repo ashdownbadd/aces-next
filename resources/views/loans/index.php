@@ -49,14 +49,7 @@ $isApprovalQueue = $status === 'Under Review';
 
 <div class="loan-list">
 
-    <header class="loan-list__header">
-        <div>
-            <h1 class="loan-list__title">Loan Applications</h1>
-            <p class="loan-list__description">
-                <?= $e($activeStatusDescription) ?>
-            </p>
-        </div>
-
+    <header class="loan-list__header loan-list__header--actions">
         <a class="btn btn--primary" href="/loans/create">
             + Create Loan
         </a>

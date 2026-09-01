@@ -1,4 +1,11 @@
-.auth {
+/*
+ * ==========================================================================
+ * ACES Login — legacy visual style, current implementation
+ * ==========================================================================
+ */
+
+/* Centered legacy login composition */
+.c-login {
   min-height: 100vh;
 
   display: flex;
@@ -6,124 +13,271 @@
   justify-content: center;
 
   padding: 24px;
+  box-sizing: border-box;
 
   background: var(--color-background);
 }
 
-.auth__card {
+.c-login__panel {
   width: 100%;
   max-width: 380px;
+
   padding: 20px;
-
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
+  box-sizing: border-box;
 }
 
-.auth__header {
-  margin-bottom: 34px;
-}
-
-.auth__title {
-  position: relative;
-
+/* Eyebrow + guide lines */
+.c-login__eyebrow {
   display: flex;
   align-items: center;
+
+  gap: 10px;
+  margin-bottom: 34px;
+
+  color: var(--color-primary);
+
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.c-login__line {
+  flex: 1;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      to right,
+      transparent,
+      rgba(245, 167, 42, 0.35)
+    );
+}
+
+.c-login__line--right {
+  background:
+    linear-gradient(
+      to left,
+      transparent,
+      rgba(245, 167, 42, 0.35)
+    );
+}
+
+/* ACES wordmark */
+.c-login__logo {
+  display: flex;
   justify-content: center;
 
-  margin: 0 0 6px;
+  margin-bottom: 6px;
 
   color: var(--color-text);
 
-  font-family: var(--font-family-heading);
-  font-size: 3rem;
+  font-family: "Syne", sans-serif;
+  font-size: var(--font-size-display);
   font-weight: 800;
   letter-spacing: -0.05em;
   line-height: 1;
 }
 
-.auth__title::before {
-  content: "";
+.c-login__sub {
+  display: flex;
+  justify-content: center;
 
-  position: absolute;
-  top: -36px;
-  left: 0;
-  right: 0;
+  margin-bottom: 38px;
 
-  height: 1px;
-
-  background: var(--color-border);
-}
-
-.auth__subtitle {
-  margin: 0;
-  text-align: center;
   color: var(--color-text-muted);
-  font-size: 0.86rem;
+
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
 }
 
-.auth__header::before {
-  content: "COOPERATIVE MANAGEMENT";
+/* Error */
+.c-login__error {
+  margin-bottom: 14px;
+  padding: 10px 14px;
 
-  display: block;
+  color: var(--color-danger);
+  background: rgba(255, 94, 94, 0.09);
 
-  margin-bottom: 30px;
+  border: 1px solid rgba(255, 94, 94, 0.20);
+  border-radius: 8px;
 
-  color: var(--color-primary);
-
-  font-family: var(--font-mono);
-  font-size: 0.60rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-align: center;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
 }
 
-.input-group {
+/* Form */
+.c-login__field {
   margin-bottom: 13px;
 }
 
-.input-label {
+.c-login__label {
   display: block;
+
   margin-bottom: 7px;
 
   color: var(--color-text-soft);
 
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
   font-weight: 500;
   letter-spacing: 0.13em;
+  line-height: 1.2;
   text-transform: uppercase;
 }
 
-.auth .input {
+.c-login__input {
+  width: 100%;
   height: 50px;
-  padding: 0 16px;
 
-  border-radius: 10px;
+  padding: 0 16px;
+  box-sizing: border-box;
+
   background: var(--color-surface);
-  border-color: var(--color-border-strong);
+  color: var(--color-text);
+
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+
+  font: inherit;
+  font-size: var(--font-size-md);
+
+  outline: none;
+
+  transition:
+    border-color 160ms ease,
+    outline-color 160ms ease;
 }
 
-.auth .btn--primary {
-  height: 50px;
-  margin-top: 3px;
+/* Single clean focus highlight: the base 1px border changes color.
+ * No outline or second shadow/ring is added. */
+.c-login__input:focus,
+.c-login__input:focus-visible {
+  border: 1px solid var(--color-primary);
 
+  outline: none !important;
+  box-shadow: none !important;
+
+  transition: border-color 160ms ease;
+}
+
+/* Button */
+.c-login__button {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 3px;
+  padding: 0 16px;
+
+  color: #1a0f00;
+  background: var(--color-primary);
+
+  border: 0;
   border-radius: 10px;
 
   font-family: var(--font-family-heading);
-  font-size: 0.9rem;
+  font-size: var(--font-size-md);
   font-weight: 800;
   letter-spacing: 0.02em;
+
+  cursor: pointer;
+
+  transition: filter 160ms ease;
+}
+
+.c-login__button:hover {
+  filter: brightness(1.08);
+}
+
+.c-login__button:active {
+  filter: brightness(0.98);
+}
+
+/* ==========================================================================
+   Staggered entrance animation
+   ========================================================================== */
+
+@keyframes c-login-fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.c-login__eyebrow,
+.c-login__logo,
+.c-login__sub,
+.c-login__field,
+.c-login__button,
+.c-login__error {
+  opacity: 0;
+
+  animation-name: c-login-fade-slide-up;
+  animation-duration: 480ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+
+  will-change: opacity, transform;
+}
+
+.c-login__eyebrow { animation-delay: 80ms; }
+.c-login__logo { animation-delay: 150ms; }
+.c-login__sub { animation-delay: 220ms; }
+
+.c-login__field:nth-of-type(1) {
+  animation-delay: 300ms;
+}
+
+.c-login__field:nth-of-type(2) {
+  animation-delay: 380ms;
+}
+
+.c-login__button {
+  animation-delay: 460ms;
+}
+
+.c-login__error {
+  animation-delay: 260ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-login__eyebrow,
+  .c-login__logo,
+  .c-login__sub,
+  .c-login__field,
+  .c-login__button,
+  .c-login__error {
+    opacity: 1;
+
+    animation: none;
+    transform: none;
+
+    will-change: auto;
+  }
 }
 
 @media (max-width: 480px) {
-  .auth {
+  .c-login {
     padding: 16px;
   }
 
-  .auth__card {
+  .c-login__panel {
     max-width: 360px;
     padding: 16px;
   }
+}
+
+
+/* Final focus contract — single visible border only. */
+.c-login .c-login__input:focus,
+.c-login .c-login__input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }

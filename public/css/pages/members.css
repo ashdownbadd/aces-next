@@ -549,3 +549,9 @@
     justify-content: flex-end;
   }
 }
+
+/* Title-free list header: retain only the page action. */
+.members__header--actions {
+  justify-content: flex-end;
+  min-height: 0;
+}

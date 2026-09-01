@@ -26,3 +26,9 @@
     flex-direction: column;
   }
 }
+
+/* Title-free action header variant. */
+.page-header--actions {
+  justify-content: flex-end;
+  min-height: 0;
+}

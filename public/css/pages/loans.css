@@ -1458,3 +1458,9 @@
     margin-left: 18px;
   }
 }
+
+/* Title-free list header: retain only the page action. */
+.loan-list__header--actions {
+  justify-content: flex-end;
+  min-height: 0;
+}

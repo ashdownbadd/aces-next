@@ -12,20 +12,32 @@ body {
 }
 
 h1 {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-3xl);
   font-weight: 700;
 }
 
 h2 {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
   font-weight: 700;
 }
 
 h3 {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
 }
 
 p {
   color: var(--color-text-muted);
+}
+
+
+h4 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+h5,
+h6 {
+  font-size: var(--font-size-md);
+  font-weight: 600;
 }

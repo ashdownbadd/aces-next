@@ -74,13 +74,6 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
 
 <div class="activity-logs">
 
-    <div class="page-header">
-        <div>
-            <h1>Activity Logs</h1>
-            <p>Review system activity recorded by ACES.</p>
-        </div>
-    </div>
-
     <form method="GET" action="/activity-logs" class="activity-logs__filters" data-live-search data-live-search-server="true"-container>
 
         <div>

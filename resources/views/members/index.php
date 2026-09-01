@@ -67,19 +67,7 @@ $paginationUrl = static function (
 
 <div class="members">
 
-    <div class="members__header">
-
-        <div>
-
-            <h1 class="members__title">
-                Members
-            </h1>
-
-            <p class="members__description">
-                Manage cooperative members.
-            </p>
-
-        </div>
+    <div class="members__header members__header--actions">
 
         <a
             href="/members/create?new=1"

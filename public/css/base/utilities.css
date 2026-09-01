@@ -1,17 +1,15 @@
 .container {
+
   width: min(1200px, calc(100% - 2rem));
 
   margin-inline: auto;
-}
+}.hidden {
 
-.hidden {
   display: none !important;
-}
+}.text-center {
 
-.text-center {
   text-align: center;
-}
+}.w-100 {
 
-.w-100 {
   width: 100%;
 }

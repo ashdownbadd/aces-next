@@ -4,66 +4,59 @@ $title = 'Sign In';
 
 ?>
 
-<div class="auth">
+<div class="c-login">
 
-    <div class="card auth__card">
+    <div class="c-login__panel">
 
-        <div class="auth__header">
-
-            <h1 class="auth__title">
-                ACES
-            </h1>
-
-            <p class="auth__subtitle">
-                Administrative Cooperative Enterprise System
-            </p>
-
+        <div class="c-login__eyebrow">
+            <span class="c-login__line"></span>
+            Cooperative Management
+            <span class="c-login__line c-login__line--right"></span>
         </div>
 
-        <?php if (isset($error)) : ?>
+        <div class="c-login__logo">ACES</div>
+        <div class="c-login__sub">Member Portal</div>
 
-            <div class="alert alert--danger">
-                <?= htmlspecialchars($error) ?>
+        <?php if (!empty($error)): ?>
+
+            <div class="c-login__error">
+                <?= htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8') ?>
             </div>
 
         <?php endif; ?>
 
-        <form
-            method="POST"
-            action="/login">
+        <form method="POST" action="/login">
 
-            <div class="input-group">
-
-                <label class="input-label">
+            <div class="c-login__field">
+                <label class="c-login__label" for="username">
                     Username
                 </label>
 
                 <input
-                    class="input"
+                    id="username"
+                    class="c-login__input"
                     type="text"
                     name="username"
                     required
                     autofocus>
-
             </div>
 
-            <div class="input-group">
-
-                <label class="input-label">
+            <div class="c-login__field">
+                <label class="c-login__label" for="password">
                     Password
                 </label>
 
                 <input
-                    class="input"
+                    id="password"
+                    class="c-login__input"
                     type="password"
                     name="password"
                     required>
-
             </div>
 
             <button
-                class="btn btn--primary btn--block"
-                type="submit">
+                type="submit"
+                class="c-login__button">
                 Sign In
             </button>
 

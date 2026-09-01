@@ -17,11 +17,7 @@ $statusClass = static fn(string $value): string => match ($value) {
 
 <div class="ledger-page">
 
-    <header class="page-header">
-        <div>
-            <h1>Journal Vouchers</h1>
-            <p>Review, approve, reject, and post accounting transactions.</p>
-        </div>
+    <header class="page-header page-header--actions">
         <a href="/ledger/accounts" class="btn btn--secondary">
             Chart of Accounts
         </a>

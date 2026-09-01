@@ -25,13 +25,16 @@
   --font-family-heading: "Inter", sans-serif;
   --font-family-mono: "DM Mono", monospace;
 
-  --font-size-xs: 0.72rem;
-  --font-size-sm: 0.80rem;
-  --font-size-md: 0.92rem;
-  --font-size-lg: 1.05rem;
-  --font-size-xl: 1.35rem;
-  --font-size-2xl: 1.85rem;
-  --font-size-3xl: 2.55rem;
+  /* Standard ACES typography scale */
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-md: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;  /* 18px */
+  --font-size-xl: 1.25rem;   /* 20px */
+  --font-size-2xl: 1.5rem;   /* 24px */
+  --font-size-3xl: 2rem;     /* 32px */
+  --font-size-display: 2.5rem; /* 40px */
+  --font-size-display-lg: 3rem; /* 48px */
 
   --radius-sm: 8px;
   --radius-md: 12px;

@@ -1,4 +1,5 @@
 .input {
+
   width: 100%;
   height: 40px;
 
@@ -11,30 +12,26 @@
   color: var(--color-text);
 
   font: inherit;
-  font-size: 0.82rem;
+  font-size: var(--font-size-sm);
 
   transition:
     border-color 0.16s ease,
     box-shadow 0.16s ease;
-}
+}.input:hover {
 
-.input:hover {
   border-color: var(--color-primary);
-}
+}.input:focus {
 
-.input:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-primary-soft);
-}
-
-.input[readonly],
+}.input[readonly],
 .input:disabled {
+
   background: var(--color-background);
   cursor: default;
-}
+}textarea.input {
 
-textarea.input {
   height: auto;
   min-height: 110px;
   padding: 10px 12px;
