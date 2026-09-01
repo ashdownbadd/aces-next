@@ -9,6 +9,11 @@ use App\Foundation\Session;
 final class EditSession
 {
     private const KEY = 'member_edit';
+    private const STATE_KEY = '_wizard_state';
+
+    private const STATE_DRAFTED = 'drafted';
+    private const STATE_SAVED = 'saved';
+    private const STATE_COMPLETED = 'completed';
 
     private const ORIGINAL_BENEFICIARIES_KEY =
     '_original_beneficiaries';
@@ -29,6 +34,73 @@ final class EditSession
             self::KEY,
             $edit,
         );
+    }
+
+    public function markStep(
+        string $step,
+        string $state = self::STATE_SAVED,
+    ): void {
+        $allowed = [
+            self::STATE_DRAFTED,
+            self::STATE_SAVED,
+            self::STATE_COMPLETED,
+        ];
+
+        if (! in_array($state, $allowed, true)) {
+            $state = self::STATE_SAVED;
+        }
+
+        $edit = $this->all();
+        $states = is_array($edit[self::STATE_KEY] ?? null)
+            ? $edit[self::STATE_KEY]
+            : [];
+
+        $current = (string) ($states[$step] ?? '');
+
+        $priority = [
+            self::STATE_DRAFTED => 1,
+            self::STATE_SAVED => 2,
+            self::STATE_COMPLETED => 3,
+        ];
+
+        if (
+            $current === ''
+            || ($priority[$state] ?? 0) >= ($priority[$current] ?? 0)
+        ) {
+            $states[$step] = $state;
+        }
+
+        $edit[self::STATE_KEY] = $states;
+
+        $this->session->put(
+            self::KEY,
+            $edit,
+        );
+    }
+
+    public function stepState(
+        string $step,
+    ): ?string {
+        $states = $this->all()[self::STATE_KEY] ?? [];
+
+        return is_array($states) && isset($states[$step])
+            ? (string) $states[$step]
+            : null;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function states(): array
+    {
+        $states = $this->all()[self::STATE_KEY] ?? [];
+
+        return is_array($states)
+            ? array_map(
+                static fn ($value): string => (string) $value,
+                $states,
+            )
+            : [];
     }
 
     public function getStep(

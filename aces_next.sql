@@ -423,6 +423,19 @@ INSERT INTO `loan_payment_allocations` (`id`, `payment_id`, `amortization_id`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `member_number_sequences`
+DROP TABLE IF EXISTS `member_number_sequences`;
+CREATE TABLE `member_number_sequences` (
+  `id` tinyint(3) unsigned NOT NULL,
+  `next_number` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `chk_member_number_sequence_singleton` CHECK (`id` = 1)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table `member_number_sequences`
+INSERT INTO `member_number_sequences` (`id`, `next_number`) VALUES
+(1, 102);
+
 -- Table structure for table `members`
 --
 

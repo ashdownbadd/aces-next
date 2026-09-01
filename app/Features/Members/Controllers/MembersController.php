@@ -355,19 +355,9 @@ final class MembersController
         |
         | The session is the source of truth for server-side wizard progress.
         */
-        $wizardSteps = RegistrationWorkflow::all();
-        $highestCompletedStepIndex = -1;
-
-        foreach ($wizardSteps as $index => $wizardStep) {
-            $stepData = $registration[$wizardStep['key']] ?? null;
-
-            if (
-                is_array($stepData)
-                && $stepData !== []
-            ) {
-                $highestCompletedStepIndex = $index;
-            }
-        }
+        $highestCompletedStepIndex = $isEditing
+            ? $this->editService->highestCompletedStepIndex()
+            : $this->registrationService->highestCompletedStepIndex();
 
         return new Response(
             $this->view->render(
@@ -580,13 +570,13 @@ final class MembersController
     |--------------------------------------------------------------------------
     */
 
-        $memberNumber =
-            $this->memberService->nextMemberNumber();
+        $registrationResult =
+            $this->registrationService->register(
+                'Pending',
+            );
 
-        $this->registrationService->register(
-            $memberNumber,
-            'Pending',
-        );
+        $memberNumber =
+            (string) $registrationResult['member_number'];
 
         $this->session->put(
             'members_success',

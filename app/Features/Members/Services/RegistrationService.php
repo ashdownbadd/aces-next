@@ -41,6 +41,11 @@ final class RegistrationService
             $data,
         );
 
+        $this->session->markStep(
+            $step,
+            'completed',
+        );
+
         return RegistrationWorkflow::next(
             $step,
         );
@@ -71,6 +76,15 @@ final class RegistrationService
     }
 
     /**
+     * Return the furthest step explicitly completed in this
+     * registration session.
+     */
+    public function highestCompletedStepIndex(): int
+    {
+        return $this->session->highestCompletedStepIndex();
+    }
+
+    /**
      * Complete the registration.
      *
      * The controller provides the generated member number.
@@ -78,16 +92,17 @@ final class RegistrationService
      * in one transaction.
      */
     public function register(
-        string $memberNumber,
         string $status = 'Pending',
-    ): int {
+    ): array {
         $registration = $this->buildRegistrationData();
 
-        $memberId = $this->members->create(
+        $result = $this->members->create(
             $registration,
-            $memberNumber,
             $status,
         );
+
+        $memberId = (int) $result['id'];
+        $memberNumber = (string) $result['member_number'];
 
         $userId = $this->userSession->get('user_id');
 
@@ -125,7 +140,10 @@ final class RegistrationService
 
         $this->clear();
 
-        return $memberId;
+        return [
+            'id' => $memberId,
+            'member_number' => $memberNumber,
+        ];
     }
 
     /**

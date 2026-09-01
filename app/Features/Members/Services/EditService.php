@@ -7,6 +7,7 @@ namespace App\Features\Members\Services;
 use App\Features\ActivityLogs\Services\ActivityLogService;
 use App\Features\Members\Repositories\MemberRepository;
 use App\Features\Members\Support\EditSession;
+use App\Features\Members\Support\RegistrationWorkflow;
 use App\Foundation\Session;
 
 final class EditService
@@ -247,6 +248,17 @@ final class EditService
                 (string) (
                     $member['highest_educational_attainment'] ?? ''
                 ),
+
+                'school_name' =>
+                (string) (
+                    $member['school_name'] ?? ''
+                ),
+
+                'graduation_year' =>
+                $member['graduation_year'] !== null
+                    && $member['graduation_year'] !== ''
+                    ? (int) $member['graduation_year']
+                    : null,
             ],
         );
 
@@ -266,6 +278,24 @@ final class EditService
         $this->session->setOriginalBeneficiaries(
             $originalBeneficiaries,
         );
+
+        foreach (RegistrationWorkflow::all() as $wizardStep) {
+            $key = $wizardStep['key'];
+
+            if (
+                $key === RegistrationWorkflow::last()
+                || $this->session->getStep($key) !== []
+                || (
+                    $key === 'beneficiaries'
+                    && $originalBeneficiaries !== []
+                )
+            ) {
+                $this->session->markStep(
+                    $key,
+                    'completed',
+                );
+            }
+        }
 
         return true;
     }
@@ -295,6 +325,11 @@ final class EditService
         $this->session->putStep(
             $step,
             $data,
+        );
+
+        $this->session->markStep(
+            $step,
+            'completed',
         );
     }
 
@@ -403,6 +438,23 @@ final class EditService
     public function beneficiaries(): array
     {
         return $this->session->beneficiaries();
+    }
+
+    public function highestCompletedStepIndex(): int
+    {
+        $highest = -1;
+        $states = $this->session->states();
+
+        foreach (RegistrationWorkflow::all() as $index => $wizardStep) {
+            if (
+                ($states[$wizardStep['key']] ?? null)
+                === 'completed'
+            ) {
+                $highest = $index;
+            }
+        }
+
+        return $highest;
     }
 
     public function memberId(): ?int

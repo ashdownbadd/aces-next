@@ -21,6 +21,7 @@ final class Migrator
     private const MIGRATION_ORDER = [
         'CreateUsersTable',
         'CreateMembersTable',
+        'CreateMemberNumberSequenceTable',
 
         'CreateMemberProfilesTable',
         'CreateMemberContactsTable',
@@ -34,6 +35,7 @@ final class Migrator
         'CreateLoanAmortizationsTable',
         'CreateLoanPaymentsTable',
         'CreateLoanPaymentAllocationsTable',
+        'EnforceFinancialDataIntegrity',
     ];
 
     public function __construct(

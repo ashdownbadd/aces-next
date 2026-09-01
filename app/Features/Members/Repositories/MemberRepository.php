@@ -216,24 +216,97 @@ final class MemberRepository extends Repository
     }
 
     /**
-     * Return the latest member number.
+     * Return the next member number that would be allocated.
+     *
+     * This is a preview only. The number is allocated atomically
+     * when the member is actually created.
      */
-    public function lastMemberNumber(): ?string
+    public function nextMemberNumberPreview(): string
     {
         $statement = $this->connection()->query(
-            "
-            SELECT member_number
-            FROM members
-            ORDER BY id DESC
+            '
+            SELECT next_number
+            FROM member_number_sequences
+            WHERE id = 1
             LIMIT 1
-            "
+            '
         );
 
-        $memberNumber = $statement->fetchColumn();
+        $nextNumber = $statement->fetchColumn();
 
-        return $memberNumber === false
-            ? null
-            : (string) $memberNumber;
+        if ($nextNumber === false || $nextNumber === null) {
+            throw new \RuntimeException(
+                'Member number sequence is not initialized.'
+            );
+        }
+
+        $nextNumber = (int) $nextNumber;
+
+        if ($nextNumber > 9999) {
+            throw new \RuntimeException(
+                'Member number limit of 9999 has been reached.'
+            );
+        }
+
+        return str_pad(
+            (string) $nextNumber,
+            4,
+            '0',
+            STR_PAD_LEFT,
+        );
+    }
+
+    /**
+     * Atomically allocate the next member number.
+     *
+     * The sequence row is locked for the duration of the caller's
+     * transaction.
+     */
+    private function allocateMemberNumber(PDO $pdo): string
+    {
+        $statement = $pdo->query(
+            '
+            SELECT next_number
+            FROM member_number_sequences
+            WHERE id = 1
+            FOR UPDATE
+            '
+        );
+
+        $nextNumber = $statement->fetchColumn();
+
+        if ($nextNumber === false || $nextNumber === null) {
+            throw new \RuntimeException(
+                'Member number sequence is not initialized.'
+            );
+        }
+
+        $nextNumber = (int) $nextNumber;
+
+        if ($nextNumber > 9999) {
+            throw new \RuntimeException(
+                'Member number limit of 9999 has been reached.'
+            );
+        }
+
+        $update = $pdo->prepare(
+            '
+            UPDATE member_number_sequences
+            SET next_number = :next_number
+            WHERE id = 1
+            '
+        );
+
+        $update->execute([
+            'next_number' => $nextNumber + 1,
+        ]);
+
+        return str_pad(
+            (string) $nextNumber,
+            4,
+            '0',
+            STR_PAD_LEFT,
+        );
     }
 
     /**
@@ -244,14 +317,15 @@ final class MemberRepository extends Repository
      */
     public function create(
         MemberRegistrationData $registration,
-        string $memberNumber,
         string $status = 'Pending',
-    ): int {
+    ): array {
         $pdo = $this->connection();
 
         $pdo->beginTransaction();
 
         try {
+            $memberNumber =
+                $this->allocateMemberNumber($pdo);
             /*
              |--------------------------------------------------------------------------
              | Member
@@ -509,12 +583,16 @@ final class MemberRepository extends Repository
                 INSERT INTO member_educations
                 (
                     member_id,
-                    highest_educational_attainment
+                    highest_educational_attainment,
+                    school_name,
+                    graduation_year
                 )
                 VALUES
                 (
                     :member_id,
-                    :highest_educational_attainment
+                    :highest_educational_attainment,
+                    :school_name,
+                    :graduation_year
                 )
                 "
             );
@@ -527,6 +605,18 @@ final class MemberRepository extends Repository
                         ->education
                         ->highestEducationalAttainment
                 ),
+
+                'school_name' =>
+                $this->nullable(
+                    $registration
+                        ->education
+                        ->schoolName
+                ),
+
+                'graduation_year' =>
+                $registration
+                    ->education
+                    ->graduationYear,
             ]);
 
             /*
@@ -588,7 +678,10 @@ final class MemberRepository extends Repository
 
             $pdo->commit();
 
-            return $memberId;
+            return [
+                'id' => $memberId,
+                'member_number' => $memberNumber,
+            ];
         } catch (Throwable $exception) {
 
             if ($pdo->inTransaction()) {
@@ -874,7 +967,11 @@ final class MemberRepository extends Repository
             UPDATE member_educations
             SET
                 highest_educational_attainment =
-                    :highest_educational_attainment
+                    :highest_educational_attainment,
+                school_name =
+                    :school_name,
+                graduation_year =
+                    :graduation_year
             WHERE member_id = :member_id
             "
             );
@@ -886,6 +983,18 @@ final class MemberRepository extends Repository
                         ->education
                         ->highestEducationalAttainment
                 ),
+
+                'school_name' =>
+                $this->nullable(
+                    $registration
+                        ->education
+                        ->schoolName
+                ),
+
+                'graduation_year' =>
+                $registration
+                    ->education
+                    ->graduationYear,
 
                 'member_id' => $memberId,
             ]);
@@ -1021,7 +1130,9 @@ final class MemberRepository extends Repository
             ml.employer,
             ml.monthly_income,
 
-            me.highest_educational_attainment
+            me.highest_educational_attainment,
+            me.school_name,
+            me.graduation_year
 
         FROM members AS m
 

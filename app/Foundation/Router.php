@@ -6,7 +6,6 @@ namespace App\Foundation;
 
 use App\Http\Request;
 use App\Http\Response;
-use App\Foundation\CsrfToken;
 use ReflectionMethod;
 use RuntimeException;
 
@@ -19,7 +18,6 @@ final class Router
 
     public function __construct(
         private readonly Container $container,
-        private readonly CsrfToken $csrf,
     ) {}
 
     public function get(
@@ -72,20 +70,6 @@ final class Router
 
         $route = $routeMatch['route'];
         $parameters = $routeMatch['parameters'];
-
-        if (
-            $request->isPost()
-            && ! $this->csrf->validate(
-                is_string($request->input('_csrf'))
-                    ? $request->input('_csrf')
-                    : null,
-            )
-        ) {
-            return new Response(
-                '419 Page Expired — invalid or missing CSRF token.',
-                419,
-            );
-        }
 
         $handler = $route->handler;
 
