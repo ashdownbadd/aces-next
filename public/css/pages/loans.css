@@ -692,7 +692,7 @@
   color: var(--color-primary);
 
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -756,7 +756,7 @@
   height: 24px;
 
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-circle);
+  border-radius: 50%;
 
   background: var(--color-surface);
   color: var(--color-text-soft);
@@ -765,7 +765,7 @@
 .loan-detail__workflow-dot > span {
   width: 6px;
   height: 6px;
-  border-radius: var(--radius-circle);
+  border-radius: 50%;
   background: currentColor;
 }
 
@@ -789,12 +789,12 @@
 }
 
 .loan-detail__workflow-copy strong {
-  font-size: var(--font-size-xs);
+  font-size: 0.72rem;
 }
 
 .loan-detail__workflow-copy small {
   color: var(--color-text-soft);
-  font-size: var(--font-size-xs);
+  font-size: 0.62rem;
   line-height: 1.45;
 }
 
@@ -876,7 +876,7 @@
 
   margin-top: 0.35rem;
 
-  border-radius: var(--radius-circle);
+  border-radius: 50%;
   background: var(--color-danger);
 }
 
@@ -1125,7 +1125,7 @@
   color: var(--color-primary);
 
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.10em;
   text-transform: uppercase;
@@ -1145,7 +1145,7 @@
   color: var(--color-text-soft);
 
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
+  font-size: 0.60rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1189,7 +1189,7 @@
 
   color: var(--color-primary);
 
-  font-size: var(--font-size-xs);
+  font-size: 0.68rem;
   font-weight: 650;
   text-decoration: none;
 }
@@ -1232,13 +1232,13 @@
 
 .loan-list__summary-hint {
   color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
+  font-size: 0.68rem;
 }
 
 .loan-list__status-detail {
   margin-top: 3px;
   color: var(--color-text-soft);
-  font-size: var(--font-size-xs);
+  font-size: 0.62rem;
   line-height: 1.35;
 }
 
@@ -1252,7 +1252,7 @@
 
 .loan-list__result-range {
   color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
+  font-size: 0.68rem;
 }
 
 .loan-list__pagination {
@@ -1279,12 +1279,12 @@
   padding: 0 8px;
 
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: 7px;
 
   background: transparent;
   color: var(--color-text-muted);
 
-  font-size: var(--font-size-xs);
+  font-size: 0.66rem;
   font-weight: 650;
   text-decoration: none;
   white-space: nowrap;
@@ -1377,7 +1377,7 @@
   flex: 0 0 38px;
 
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-circle);
+  border-radius: 50%;
 
   background: var(--color-surface);
   color: var(--color-text-soft);
@@ -1411,13 +1411,13 @@
 
 .loan-create__flow-label strong {
   color: var(--color-text);
-  font-size: var(--font-size-sm);
+  font-size: 0.76rem;
   line-height: 1.2;
 }
 
 .loan-create__flow-label small {
   color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
+  font-size: 0.64rem;
   line-height: 1.4;
 }
 

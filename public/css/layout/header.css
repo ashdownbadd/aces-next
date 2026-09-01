@@ -54,7 +54,7 @@
   padding: 0 10px;
 
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
 
   color: var(--color-text-muted);
 
@@ -68,8 +68,8 @@
     border-color 0.16s ease;
 }.c-navbar__link svg {
 
-  width: var(--icon-size-sm);
-  height: var(--icon-size-sm);
+  width: 15px;
+  height: 15px;
 
   fill: none;
   stroke: currentColor;
@@ -104,7 +104,7 @@
 
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
+  border-radius: 30px;
 
   color: var(--color-text-muted);
 
@@ -116,7 +116,7 @@
   width: 7px;
   height: 7px;
 
-  border-radius: var(--radius-circle);
+  border-radius: 50%;
   background: var(--color-success);
 }
 

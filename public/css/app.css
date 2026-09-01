@@ -207,35 +207,99 @@ small,
 }
 
 /* ==========================================================================
-   ACES Design System — Phase 2C page contract
-   Common page-level hierarchy inherits component tokens.
+   ACES Design System — Phase 2D responsive contract
    ========================================================================== */
 
-.page-content,
-.page-shell,
-.section {
+html,
+body,
+.app {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+table {
+  max-width: 100%;
+}
+
+/* Shared page-level action groups wrap instead of forcing horizontal overflow. */
+.page-header,
+.section__header,
+.loan-list__header,
+.members__header,
+.ledger-page__header,
+.dashboard-actions__header,
+.dashboard-health .section__header {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+/* Cards and common content areas never widen the viewport. */
+.card,
+.stat-card,
+.c-card,
+.section,
+.page-header,
+.form-card {
   min-width: 0;
 }
 
-.section__title,
-.page-header__title {
-  font-size: var(--font-size-2xl);
-  line-height: 1.25;
-  font-weight: 700;
-}
-
-.section__description,
-.page-header__description {
-  font-size: var(--font-size-sm);
-  line-height: 1.5;
-}
-
-.page-header {
-  gap: var(--space-4);
-}
-
+/* Standard mobile behavior for dense toolbars. */
 @media (max-width: 768px) {
-  .page-header {
-    gap: var(--space-3);
+  .page-header,
+  .section__header,
+  .loan-list__header,
+  .members__header,
+  .ledger-page__header,
+  .dashboard-actions__header,
+  .dashboard-health .section__header {
+    align-items: flex-start;
+  }
+
+  .page-header__actions,
+  .loan-list__header-actions,
+  .members__header-actions,
+  .ledger-page__header-actions {
+    width: 100%;
+  }
+
+  .page-header__actions > .btn,
+  .loan-list__header-actions > .btn,
+  .members__header-actions > .btn,
+  .ledger-page__header-actions > .btn {
+    width: 100%;
+  }
+
+  .table-responsive,
+  .table-scroll,
+  .loan-list__table-wrap,
+  .ledger-page__table-scroll,
+  .activity-logs__table-wrap,
+  .ledger-detail__table-scroll,
+  .loan-detail__table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Preserve readable form controls and prevent mobile viewport overflow. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea,
+  button,
+  .btn {
+    max-width: 100%;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
   }
 }

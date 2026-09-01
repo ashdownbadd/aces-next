@@ -82,6 +82,12 @@
   --color-success: #4ade80;
   --color-danger: #ff5e5e;
 
+/* Standard ACES responsive breakpoints */
+  --breakpoint-mobile: 640px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1280px;
+
   --color-surface-muted: var(--color-background);
 
   --color-surface-secondary: var(--color-surface-raised);
