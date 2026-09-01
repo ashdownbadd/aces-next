@@ -537,7 +537,7 @@
   font-size: 0.70rem;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .members__footer {
     align-items: flex-start;
     flex-direction: column;
@@ -554,4 +554,28 @@
 .members__header--actions {
   justify-content: flex-end;
   min-height: 0;
+}
+
+
+@media (max-width: 640px) {
+  .members__header--actions {
+    justify-content: stretch;
+  }
+
+  .members__header--actions .btn {
+    width: 100%;
+  }
+
+  .members__toolbar,
+  .members__filters,
+  .members__filter-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .members__toolbar .input,
+  .members__filters .input {
+    min-width: 0;
+    width: 100%;
+  }
 }

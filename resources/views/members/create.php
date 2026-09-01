@@ -15,6 +15,11 @@ foreach ($steps as $index => $wizardStep) {
     }
 }
 
+$highestCompletedStepIndex =
+    isset($highestCompletedStepIndex)
+        ? (int) $highestCompletedStepIndex
+        : $currentStepIndex;
+
 ?>
 
 <div class="wizard-layout">
@@ -26,9 +31,7 @@ foreach ($steps as $index => $wizardStep) {
     </div>
 
     <div class="member-registration__header">
-        <span class="member-registration__eyebrow">Member Administration</span>
-
-        <h1>
+<h1>
             <?= $isEditing ? 'Edit Member' : 'Register Member' ?>
         </h1>
 
@@ -51,11 +54,11 @@ foreach ($steps as $index => $wizardStep) {
                 $stepKey = (string) $wizardStep['key'];
 
                 $isActive = $stepKey === $step;
-                $isComplete = $index < $currentStepIndex;
+                $isComplete = $index <= $highestCompletedStepIndex;
                 $isNext = ! $isEditing
-                    && $index === ($currentStepIndex + 1);
+                    && $index === ($highestCompletedStepIndex + 1);
                 $isLocked = ! $isEditing
-                    && $index > ($currentStepIndex + 1);
+                    && $index > ($highestCompletedStepIndex + 1);
 
                 $query = ['step' => $stepKey];
 
@@ -83,11 +86,7 @@ foreach ($steps as $index => $wizardStep) {
                             <span class="wizard__label">
                                 <?= htmlspecialchars($wizardStep['label']) ?>
                             </span>
-
-                            <span class="wizard__locked">
-                                Complete previous step
-                            </span>
-                        </span>
+</span>
 
                     </span>
 

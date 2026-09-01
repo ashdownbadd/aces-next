@@ -57,7 +57,7 @@ $isApprovalQueue = $status === 'Under Review';
 
     <section class="card loan-list__filters">
 
-        <form method="GET" action="/loans" class="loan-list__filter-form" data-live-search data-live-search-server="true"-container>
+        <form method="GET" action="/loans" class="loan-list__filter-form" data-live-search data-live-search-server="true">
 
             <div class="form-group">
                 <label class="form-label" for="loan-search">Search</label>

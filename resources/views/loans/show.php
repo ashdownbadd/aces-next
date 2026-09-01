@@ -416,23 +416,23 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
     <?php endif; ?>
 
     <?php if ($success === 'payment-reversed'): ?>
-        <div class="alert alert--success">
+        <div class="alert alert--success" role="status" aria-live="polite">
             Payment reversed successfully. The affected amortization balances have been restored.
         </div>
     <?php elseif ($success === 'approved'): ?>
-        <div class="alert alert--success">
+        <div class="alert alert--success" role="status" aria-live="polite">
             Loan application approved successfully.
         </div>
     <?php elseif ($success === 'released'): ?>
-        <div class="alert alert--success">
+        <div class="alert alert--success" role="status" aria-live="polite">
             Loan released successfully. The loan is now Active and its schedule has been persisted.
         </div>
     <?php elseif ($success === 'rejected'): ?>
-        <div class="alert alert--success">
+        <div class="alert alert--success" role="status" aria-live="polite">
             Loan application rejected successfully.
         </div>
     <?php elseif ($error !== ''): ?>
-        <div class="alert alert--error">
+        <div class="alert alert--error" role="alert">
             <?= $e($error) ?>
         </div>
     <?php endif; ?>

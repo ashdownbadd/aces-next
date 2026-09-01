@@ -343,7 +343,7 @@
     color: var(--color-danger);
 }
 
-@media (max-width: 760px) {.dashboard-health .section__header {
+@media (max-width: 768px) {.dashboard-health .section__header {
 
         align-items: flex-start;
         flex-direction: column;
@@ -525,7 +525,7 @@
   font-size: var(--font-size-xs);
 }
 
-@media (max-width: 760px) {.dashboard-actions__header {
+@media (max-width: 768px) {.dashboard-actions__header {
 
     align-items: flex-start;
     flex-direction: column;
@@ -591,4 +591,19 @@
   box-shadow: none;
   transform: none;
   transition: none;
+}
+
+
+@media (max-width: 640px) {
+  .dashboard__stats,
+  .dashboard__grid,
+  .dashboard__action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__stats-toggle,
+  .dashboard-actions__header,
+  .dashboard-health .section__header {
+    align-items: stretch;
+  }
 }

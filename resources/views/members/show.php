@@ -169,7 +169,7 @@ $memberId = (int) ($member['id'] ?? 0);
     </header>
 
     <?php if ($successMessage !== null): ?>
-        <div class="alert alert--success member-profile__alert">
+        <div class="alert alert--success member-profile__alert" role="status" aria-live="polite">
             <div class="alert__title">Success</div>
             <div class="alert__body">
                 <?= htmlspecialchars($successMessage) ?>
@@ -178,7 +178,7 @@ $memberId = (int) ($member['id'] ?? 0);
     <?php endif; ?>
 
     <?php if ($errorMessage !== null): ?>
-        <div class="alert alert--danger member-profile__alert">
+        <div class="alert alert--danger member-profile__alert" role="alert">
             <div class="alert__title">Error</div>
             <div class="alert__body">
                 <?= htmlspecialchars($errorMessage) ?>

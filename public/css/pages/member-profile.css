@@ -308,7 +308,7 @@
 
   }
 
-@media (max-width: 720px) {.member-profile {
+@media (max-width: 768px) {.member-profile {
 
     gap: 12px;
   }.member-profile__header {
@@ -327,7 +327,7 @@
   }
 }
 
-@media (max-width: 480px) {.member-profile__card {
+@media (max-width: 640px) {.member-profile__card {
 
     padding: 16px;
   }.member-profile__identity {
@@ -344,5 +344,17 @@
   }.member-profile__data-grid--3 {
 
     grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 640px) {
+  .member-profile__data-grid,
+  .member-profile__data-grid--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .member-profile__card {
+    min-width: 0;
   }
 }

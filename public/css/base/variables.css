@@ -64,6 +64,24 @@
   --status-hold: #3b82f6;
   --status-overdue: #f59e0b;
   --status-litigation: #8b5cf6;
+
+  --breakpoint-mobile: 640px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1280px;
+  --color-surface-muted: var(--color-background);
+  --color-surface-secondary: var(--color-surface-raised);
+  --icon-gap-md: 8px;
+  --icon-size-sm: 16px;
+  --icon-size-md: 24px;
+  --icon-size-lg: 32px;
+  --icon-size-xl: 48px;
+  --radius-circle: 50%;
+  --radius-full: var(--radius-pill);
+  --shadow-none: none;
+  --shadow-card: 0 3px 8px rgba(0, 0, 0, 0.10), 0 3px 1px rgba(0, 0, 0, 0.03);
+  --shadow-card-hover: 0 4px 10px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+  --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.18);
 }
 
 [data-theme="dark"] {
