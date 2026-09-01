@@ -82,14 +82,21 @@
   --color-success: #4ade80;
   --color-danger: #ff5e5e;
 
-
-  /* Compatibility/design-system tokens */
-  --radius-full: 9999px;
-  --icon-gap-md: 8px;
-  --icon-size-sm: 16px;
-  --icon-size-md: 24px;
-  --icon-size-lg: 32px;
-  --icon-size-xl: 48px;
   --color-surface-muted: var(--color-background);
+
   --color-surface-secondary: var(--color-surface-raised);
+
+  --icon-gap-md: 8px;
+
+  --icon-size-sm: 16px;
+
+  --icon-size-md: 24px;
+
+  --icon-size-lg: 32px;
+
+  --icon-size-xl: 48px;
+
+  --radius-circle: 50%;
+
+  --radius-full: var(--radius-pill);
 }

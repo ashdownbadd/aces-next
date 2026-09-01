@@ -22,7 +22,7 @@
   overflow: visible;
 
   border: 1px solid var(--color-border);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
 
   background: var(--color-surface);
 
@@ -48,7 +48,7 @@
   flex: 0 0 36px;
 
   border: 1px solid var(--color-border);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 
   background: var(--color-surface);
   color: var(--color-primary);
@@ -83,7 +83,7 @@
   height: 36px;
 
   border: 1px solid var(--color-border);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 
   background: var(--color-surface);
   color: var(--color-text-muted);
@@ -159,7 +159,7 @@
   padding: 0 8px;
 
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   background: var(--color-surface-raised);
   color: var(--color-text-muted);
