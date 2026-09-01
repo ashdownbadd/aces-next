@@ -35,7 +35,7 @@ $statusClass = static fn(string $value): string => match ($value) {
         </div>
     </section>
 
-    <form method="GET" action="/ledger" class="ledger-page__filters card" data-live-search data-live-search-server="true"-container>
+    <form method="GET" action="/ledger" class="ledger-page__filters card" data-live-search data-live-search-server="true">
         <div class="ledger-page__filter-field">
             <label for="ledger-search">Search</label>
             <input

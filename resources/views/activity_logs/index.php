@@ -74,7 +74,7 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
 
 <div class="activity-logs">
 
-    <form method="GET" action="/activity-logs" class="activity-logs__filters" data-live-search data-live-search-server="true"-container>
+    <form method="GET" action="/activity-logs" class="activity-logs__filters" data-live-search data-live-search-server="true">
 
         <div>
             <label for="activity-search">Search</label>

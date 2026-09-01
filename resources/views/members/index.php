@@ -87,7 +87,7 @@ $paginationUrl = static function (
             <form
                 method="GET"
                 action="/members"
-                class="members__search-form" data-live-search data-live-search-server="true"-container>
+                class="members__search-form" data-live-search data-live-search-server="true">
 
                 <input
                     class="input members__search"
