@@ -21,9 +21,9 @@
   --color-text-muted: rgba(26, 25, 23, 0.60);
   --color-text-soft: rgba(26, 25, 23, 0.35);
 
-  --font-family: "Poppins", sans-serif;
-  --font-family-heading: "Syne", sans-serif;
-  --font-family-mono: "IBM Plex Mono", monospace;
+  --font-family: "Inter", sans-serif;
+  --font-family-heading: "Inter", sans-serif;
+  --font-family-mono: "DM Mono", monospace;
 
   --font-size-xs: 0.72rem;
   --font-size-sm: 0.80rem;

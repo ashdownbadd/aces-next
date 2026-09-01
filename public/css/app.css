@@ -39,3 +39,109 @@
 .stat-card:hover {
   transform: none !important;
 }
+
+/* ==========================================================================
+   ACES global icon + typography standards
+   ========================================================================== */
+
+/* Typography hierarchy */
+body {
+  font-size: var(--font-size-md);
+}
+
+h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+}
+
+h3 {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+h4 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+small,
+.text-caption {
+  font-size: var(--font-size-xs);
+}
+
+/* Form and compact application UI */
+label,
+.form-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+button,
+.btn,
+input,
+select,
+textarea {
+  font-size: var(--font-size-sm);
+}
+
+/* Navigation, tables, and compact controls */
+.nav-link,
+.table th,
+.table td,
+.pagination,
+.badge {
+  font-size: var(--font-size-sm);
+}
+
+/* Standard icon sizing by semantic role. Explicitly sized SVG/icon
+   descendants inherit the component's chosen size rather than arbitrary
+   dimensions scattered through pages. */
+.icon--sm { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.icon--md { width: var(--icon-size-md); height: var(--icon-size-md); }
+.icon--lg { width: var(--icon-size-lg); height: var(--icon-size-lg); }
+.icon--xl { width: var(--icon-size-xl); height: var(--icon-size-xl); }
+
+.icon--sm,
+.icon--md,
+.icon--lg,
+.icon--xl {
+  flex: 0 0 auto;
+  display: inline-block;
+}
+
+/* Icon + label spacing */
+.btn,
+.nav-link,
+.table-action,
+.icon-text {
+  gap: var(--icon-gap-md);
+}
+
+.btn .icon--sm,
+.btn .icon--md,
+.nav-link .icon--sm,
+.nav-link .icon--md {
+  vertical-align: middle;
+}
+
+/* Primary visual hierarchy */
+.text-primary,
+.is-active,
+.active {
+  opacity: 1;
+}
+
+.text-secondary,
+.is-secondary {
+  opacity: 0.7;
+}
+
+.text-tertiary,
+.is-tertiary {
+  opacity: 0.6;
+}
