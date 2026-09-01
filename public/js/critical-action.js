@@ -108,7 +108,9 @@
           <div
             class="critical-action-modal__spinner"
             data-critical-spinner
-            aria-hidden="true"></div>
+            role="status"
+            aria-label="Processing"
+            aria-hidden="false"></div>
 
           <div class="critical-action-modal__content">
             <strong id="critical-action-modal-title">

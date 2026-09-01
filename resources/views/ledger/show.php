@@ -174,6 +174,7 @@ $statusClass = match ($status) {
                 action="/ledger/<?= (int) $voucher['id'] ?>/reject"
                 class="ledger-detail__reject-form">
                 <input
+                    id="ledger-rejection-reason"
                     class="input"
                     type="text"
                     name="reason"

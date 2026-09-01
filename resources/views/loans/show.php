@@ -811,6 +811,7 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                                             class="loan-payment__reverse-form">
 
                                             <input
+                                                id="loan-rejection-reason"
                                                 name="reason"
                                                 class="input"
                                                 type="text"
