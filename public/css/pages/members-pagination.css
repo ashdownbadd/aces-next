@@ -64,7 +64,7 @@
   font-size: var(--font-size-xs);
 }
 
-@media (max-width: 760px) {.members__footer {
+@media (max-width: 768px) {.members__footer {
 
     align-items: flex-start;
     flex-direction: column;

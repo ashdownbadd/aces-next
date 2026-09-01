@@ -363,10 +363,20 @@ const WizardAutoSave = {
   },
 
   write(form) {
-    const draft = {
-      fields: {},
-      savedAt: Date.now(),
-    };
+    /*
+     * Keep one browser-side draft for the entire wizard.
+     *
+     * The previous implementation replaced the whole draft with the
+     * currently visible step. That meant a partially completed Personal
+     * step could be overwritten as soon as the user visited Membership
+     * again. Merge the current step into the existing draft instead.
+     */
+    const existing = this.read();
+    const fields =
+      existing.fields
+      && typeof existing.fields === "object"
+        ? { ...existing.fields }
+        : {};
 
     form.querySelectorAll(
       "input[name], select[name], textarea[name]"
@@ -375,11 +385,16 @@ const WizardAutoSave = {
         return;
       }
 
-      draft.fields[field.name] =
+      fields[field.name] =
         field.type === "checkbox"
           ? field.checked
           : field.value;
     });
+
+    const draft = {
+      fields,
+      savedAt: Date.now(),
+    };
 
     try {
       localStorage.setItem(
@@ -469,6 +484,10 @@ const WizardAutoSave = {
     );
   },
 
+  markSubmitted() {
+    this.clear();
+  },
+
   clear() {
     try {
       localStorage.removeItem(this.key);
@@ -516,6 +535,15 @@ const Wizard = {
     ConditionalFields.education();
 
     WizardAutoSave.initialize();
+
+    document
+      .querySelectorAll("[data-registration-form]")
+      .forEach((form) => {
+        form.addEventListener(
+          "submit",
+          () => WizardAutoSave.markSubmitted()
+        );
+      });
   },
 };
 

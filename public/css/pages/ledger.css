@@ -326,3 +326,33 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+
+
+@media (max-width: 768px) {
+  .ledger-page__filter-actions,
+  .ledger-page__header-actions,
+  .ledger-detail__actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .ledger-page__filter-actions .btn,
+  .ledger-page__header-actions .btn {
+    flex: 1 1 140px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ledger-page__filters {
+    padding: var(--space-4);
+  }
+
+  .ledger-detail__actions .btn {
+    width: 100%;
+  }
+
+  .ledger-detail__reject-form {
+    min-width: 0;
+    width: 100%;
+  }
+}

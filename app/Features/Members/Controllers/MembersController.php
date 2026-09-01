@@ -329,6 +329,46 @@ final class MembersController
             ? $this->editService->all()
             : $this->registrationService->all();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Member number preview
+        |--------------------------------------------------------------------------
+        |
+        | Display the next available number during a new registration.
+        | The final member number is still assigned at registration time.
+        */
+        $memberNumberPreview = null;
+
+        if (! $isEditing) {
+            $memberNumberPreview =
+                $this->memberService->nextMemberNumber();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Preserve wizard progress when navigating backward
+        |--------------------------------------------------------------------------
+        |
+        | The active step is not the same thing as the furthest completed step.
+        | A user may return to Membership after completing Personal and should
+        | still be able to enter Contact without redoing Personal.
+        |
+        | The session is the source of truth for server-side wizard progress.
+        */
+        $wizardSteps = RegistrationWorkflow::all();
+        $highestCompletedStepIndex = -1;
+
+        foreach ($wizardSteps as $index => $wizardStep) {
+            $stepData = $registration[$wizardStep['key']] ?? null;
+
+            if (
+                is_array($stepData)
+                && $stepData !== []
+            ) {
+                $highestCompletedStepIndex = $index;
+            }
+        }
+
         return new Response(
             $this->view->render(
                 'members.create',
@@ -341,6 +381,9 @@ final class MembersController
 
                     'steps' =>
                     RegistrationWorkflow::all(),
+
+                    'highestCompletedStepIndex' =>
+                    $highestCompletedStepIndex,
 
                     'previousStep' =>
                     RegistrationWorkflow::previous($step),
@@ -355,6 +398,9 @@ final class MembersController
                     $isEditing
                         ? $this->editService->memberId()
                         : null,
+
+                    'memberNumberPreview' =>
+                    $memberNumberPreview,
 
                     'registration' =>
                     $registration,

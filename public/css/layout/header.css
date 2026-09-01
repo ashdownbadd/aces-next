@@ -148,3 +148,28 @@
     display: none;
   }
 }
+
+
+/* ==========================================================================
+   Phase 3E — responsive navigation
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .c-navbar {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .c-navbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .c-navbar {
+    gap: var(--space-2);
+  }
+}

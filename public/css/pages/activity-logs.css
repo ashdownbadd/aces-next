@@ -404,3 +404,18 @@ php -l "$base/resources/views/activity_logs/show.php"
 
 # show diffs against original
 cd /tmp/aces/aces-next && git diff --no-index -- resources/views/activity_logs/index.php /dev/null >/dev/null 2>&1 || true
+
+
+@media (max-width: 640px) {
+  .activity-logs__filter-actions {
+    width: 100%;
+  }
+
+  .activity-logs__filter-actions .btn {
+    flex: 1 1 140px;
+  }
+
+  .activity-logs__table-wrap {
+    border-radius: var(--radius-sm);
+  }
+}

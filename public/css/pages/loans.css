@@ -1323,7 +1323,7 @@
   color: var(--color-text-soft);
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .loan-list__footer {
     align-items: flex-start;
     flex-direction: column;
@@ -1439,7 +1439,7 @@
   background: var(--color-primary);
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .loan-create__flow {
     grid-template-columns: 1fr;
     gap: 0;
@@ -1463,4 +1463,25 @@
 .loan-list__header--actions {
   justify-content: flex-end;
   min-height: 0;
+}
+
+
+@media (max-width: 640px) {
+  .loan-list__header--actions,
+  .loan-list__filters,
+  .loan-detail__actions,
+  .loan-review__actions {
+    width: 100%;
+  }
+
+  .loan-list__header--actions .btn,
+  .loan-review__actions > .btn,
+  .loan-review__actions form,
+  .loan-review__actions form .btn {
+    width: 100%;
+  }
+
+  .loan-member-picker__results {
+    max-height: 260px;
+  }
 }

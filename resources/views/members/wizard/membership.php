@@ -28,7 +28,7 @@ declare(strict_types=1);
                     class="form-label"
                     for="member_number">
 
-                    Member Number
+                    Member Number Preview
 
                 </label>
 
@@ -36,8 +36,20 @@ declare(strict_types=1);
                     id="member_number"
                     class="input form-input--readonly"
                     type="text"
-                    value="Generated upon registration"
-                    readonly>
+                    value="<?= htmlspecialchars(
+                        $memberNumberPreview
+                            ?? ($membership['member_number'] ?? '—')
+                    ) ?>"
+                    readonly
+                    aria-describedby="member-number-preview-note">
+
+                <small
+                    id="member-number-preview-note"
+                    class="form-help">
+
+                    Preview only; the final number is assigned when registration is completed.
+
+                </small>
 
             </div>
 

@@ -37,3 +37,17 @@
   padding: 10px 12px;
   resize: vertical;
 }
+
+
+/* ==========================================================================
+   Phase 3D — keyboard focus
+   ========================================================================== */
+
+.input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.input:focus {
+  outline: none;
+}

@@ -205,3 +205,110 @@ small,
 .dashboard-health .section__title {
   font-size: var(--font-size-2xl) !important;
 }
+
+/* ==========================================================================
+   Phase 3C — shared empty/error-state contract
+   ========================================================================== */
+
+.state-empty,
+.members__empty,
+.activity-logs__empty,
+.ledger-page__empty,
+.loan-list__empty {
+  color: var(--color-text);
+  text-align: center;
+}
+
+.state-empty p,
+.members__empty p,
+.activity-logs__empty p,
+.ledger-page__empty p,
+.loan-list__empty p {
+  color: var(--color-text-muted);
+}
+
+.state-empty :is(h2, h3),
+.members__empty :is(h2, h3),
+.activity-logs__empty :is(h2, h3),
+.ledger-page__empty :is(h2, h3),
+.loan-list__empty :is(h2, h3) {
+  margin: 0;
+}
+
+/* Keyboard focus baseline: links and non-form interactive controls receive a
+ * single visible ring; inputs/buttons own their focused appearance. */
+a:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Phase 3E — mobile edge-case contract
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .app__content {
+    width: 100%;
+    min-width: 0;
+    padding-inline: var(--space-4);
+  }
+
+  .section,
+  .card,
+  .c-card,
+  .form-card {
+    max-width: 100%;
+  }
+
+  .page-header,
+  .section__header,
+  .form-actions {
+    min-width: 0;
+  }
+
+  .form-actions {
+    flex-wrap: wrap;
+  }
+
+  .form-actions > .btn,
+  .page-header__actions > .btn {
+    min-width: 0;
+  }
+
+  .table-responsive,
+  [data-table-scroll],
+  .loan-list__table-wrap,
+  .ledger-page__table-scroll,
+  .ledger-detail__table-scroll,
+  .activity-logs__table-wrap,
+  .loan-review__schedule-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+}
+
+@media (max-width: 640px) {
+  .app__content {
+    padding-inline: var(--space-3);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    max-width: 100%;
+  }
+
+  .pagination,
+  .members__footer,
+  .loan-list__footer,
+  .ledger-page__pagination,
+  .activity-logs__pagination {
+    flex-wrap: wrap;
+  }
+}

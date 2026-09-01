@@ -83,3 +83,12 @@ body::-webkit-scrollbar {
 
   display: none;              /* Chrome / Safari / Chromium Edge */
 }
+
+
+/* Prevent page-level horizontal drift. Inner data regions manage their own
+ * horizontal scrolling where required. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}

@@ -1053,3 +1053,13 @@
     min-height: 60px;
   }
 }
+
+
+/* Member number preview helper */
+.form-help {
+  display: block;
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+}
