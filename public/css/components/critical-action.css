@@ -188,6 +188,7 @@
     flex: 1;
   }
 }
+<<<<<<< HEAD
 
 
 .critical-action-modal.is-open {
@@ -215,3 +216,5 @@
     width: min(100%, 430px);
   }
 }
+=======
+>>>>>>> 41f870af3fd4b414161ee0b42bd155be4a805aef
