@@ -62,3 +62,10 @@
     grid-column: auto;
   }
 }
+
+/* Required field indicator */
+.form-group:has(:required) > .form-label::after {
+  content: " *";
+  color: var(--color-primary);
+  font-weight: 700;
+}

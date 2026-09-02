@@ -6,7 +6,21 @@ declare(strict_types=1);
 
 <div class="form-section">
 
+    <?php
+
+    $sectionTitle = 'Beneficiaries';
+
+    $sectionDescription = 'Add one or more beneficiaries before completing registration.';
+
+    require __DIR__ . '/../partials/section-header.php';
+
+    ?>
+
     <div class="beneficiary-manager">
+
+        <!-- ========================================================= -->
+        <!-- Add Beneficiary -->
+        <!-- ========================================================= -->
 
         <?php
         $editingIndex = isset($_GET['edit'])
@@ -26,66 +40,30 @@ declare(strict_types=1);
         $submitLabel = $isEditing
             ? 'Update Beneficiary'
             : 'Add Beneficiary';
-
-        $beneficiaryCount = count($beneficiaries ?? []);
         ?>
 
-        <section
-            class="beneficiary-manager__section beneficiary-manager__section--form"
-            aria-labelledby="beneficiary-form-title">
+        <form
+            method="POST"
+            action="<?= htmlspecialchars($formAction) ?>">
 
-            <div class="beneficiary-manager__section-header">
+            <?php if ($isEditing): ?>
+                <input
+                    type="hidden"
+                    name="index"
+                    value="<?= $editingIndex ?>">
+            <?php endif; ?>
 
-                <div>
-                    <span class="beneficiary-manager__eyebrow">
-                        <?= $isEditing ? 'Edit Entry' : 'Add Person' ?>
-                    </span>
-
-                    <h2
-                        id="beneficiary-form-title"
-                        class="beneficiary-manager__title">
-
-                        <?= htmlspecialchars($submitLabel) ?>
-
-                    </h2>
-
-                    <p class="beneficiary-manager__description">
-                        <?= $isEditing
-                            ? 'Update the beneficiary details below.'
-                            : 'Record a person who should be listed as a beneficiary.' ?>
-                    </p>
-                </div>
-
-                <?php if ($beneficiaryCount > 0): ?>
-
-                    <span class="beneficiary-manager__count">
-                        <?= $beneficiaryCount ?>
-                        <?= $beneficiaryCount === 1 ? 'Added' : 'Added' ?>
-                    </span>
-
-                <?php endif; ?>
-
-            </div>
-
-            <form
-                method="POST"
-                action="<?= htmlspecialchars($formAction) ?>"
-                class="beneficiary-manager__form">
-
-                <?php if ($isEditing): ?>
-
-                    <input
-                        type="hidden"
-                        name="index"
-                        value="<?= $editingIndex ?>">
-
-                <?php endif; ?>
-
-                <div class="form-grid">
+            <div class="beneficiary-manager__form">
+<div class="form-grid">
 
                     <div class="form-group">
-                        <label class="form-label" for="beneficiary_first_name">
+
+                        <label
+                            class="form-label"
+                            for="beneficiary_first_name">
+
                             First Name
+
                         </label>
 
                         <input
@@ -93,16 +71,18 @@ declare(strict_types=1);
                             class="input"
                             type="text"
                             name="first_name"
-                            data-type="personName"
-                            maxlength="100"
-                            autocomplete="given-name"
-                            value="<?= htmlspecialchars($editingBeneficiary['first_name'] ?? '') ?>"
-                            required>
+                            data-type="personName" value="<?= htmlspecialchars($editingBeneficiary["first_name"] ?? "") ?>" required>
+
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="beneficiary_middle_name">
+
+                        <label
+                            class="form-label"
+                            for="beneficiary_middle_name">
+
                             Middle Name
+
                         </label>
 
                         <input
@@ -110,15 +90,18 @@ declare(strict_types=1);
                             class="input"
                             type="text"
                             name="middle_name"
-                            data-type="personName"
-                            maxlength="100"
-                            autocomplete="additional-name"
-                            value="<?= htmlspecialchars($editingBeneficiary['middle_name'] ?? '') ?>">
+                            data-type="personName" value="<?= htmlspecialchars($editingBeneficiary["middle_name"] ?? "") ?>">
+
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="beneficiary_last_name">
+
+                        <label
+                            class="form-label"
+                            for="beneficiary_last_name">
+
                             Last Name
+
                         </label>
 
                         <input
@@ -126,16 +109,18 @@ declare(strict_types=1);
                             class="input"
                             type="text"
                             name="last_name"
-                            data-type="personName"
-                            maxlength="100"
-                            autocomplete="family-name"
-                            value="<?= htmlspecialchars($editingBeneficiary['last_name'] ?? '') ?>"
-                            required>
+                            data-type="personName" value="<?= htmlspecialchars($editingBeneficiary["last_name"] ?? "") ?>" required>
+
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="beneficiary_suffix">
+
+                        <label
+                            class="form-label"
+                            for="beneficiary_suffix">
+
                             Suffix
+
                         </label>
 
                         <input
@@ -143,14 +128,18 @@ declare(strict_types=1);
                             class="input"
                             type="text"
                             name="suffix"
-                            data-type="suffix"
-                            maxlength="20"
-                            value="<?= htmlspecialchars($editingBeneficiary['suffix'] ?? '') ?>">
+                            data-type="suffix" value="<?= htmlspecialchars($editingBeneficiary["suffix"] ?? "") ?>">
+
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="relationship">
+
+                        <label
+                            class="form-label"
+                            for="relationship">
+
                             Relationship
+
                         </label>
 
                         <input
@@ -158,222 +147,166 @@ declare(strict_types=1);
                             class="input"
                             type="text"
                             name="relationship"
-                            data-type="title"
-                            maxlength="100"
-                            value="<?= htmlspecialchars($editingBeneficiary['relationship'] ?? '') ?>"
-                            required>
+                            data-type="title" value="<?= htmlspecialchars($editingBeneficiary["relationship"] ?? "") ?>" required>
+
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="beneficiary_birth_date">
+
+                        <label
+                            class="form-label"
+                            for="beneficiary_birth_date">
+
                             Birth Date
+
                         </label>
 
                         <input
                             id="beneficiary_birth_date"
                             class="input"
                             type="date"
-                            name="birth_date"
-                            value="<?= htmlspecialchars($editingBeneficiary['birth_date'] ?? '') ?>">
+                            name="birth_date" value="<?= htmlspecialchars($editingBeneficiary["birth_date"] ?? "") ?>">
+
                     </div>
 
                 </div>
 
-                <div class="beneficiary-manager__form-actions">
+                <div class="form-actions">
 
-                    <button type="submit" class="btn btn--secondary">
+                    <button
+                        type="submit"
+                        class="btn btn--secondary">
+
                         <?= htmlspecialchars($submitLabel) ?>
+
                     </button>
-
                     <?php if ($isEditing): ?>
-
                         <a
                             href="/members/create?step=beneficiaries"
                             class="btn btn--ghost">
-
                             Cancel
-
                         </a>
-
                     <?php endif; ?>
 
+
                 </div>
-
-            </form>
-
-        </section>
-
-        <section
-            class="beneficiary-manager__section beneficiary-manager__section--list"
-            aria-labelledby="beneficiary-list-title">
-
-            <div class="beneficiary-manager__section-header">
-
-                <div>
-                    <span class="beneficiary-manager__eyebrow">
-                        Your Entries
-                    </span>
-
-                    <h2
-                        id="beneficiary-list-title"
-                        class="beneficiary-manager__title">
-
-                        Added Beneficiaries
-
-                    </h2>
-
-                    <p class="beneficiary-manager__description">
-                        Review or change the people you've added.
-                    </p>
-                </div>
-
-                <?php if ($beneficiaryCount > 0): ?>
-
-                    <span class="beneficiary-manager__count">
-                        <?= $beneficiaryCount ?>
-                        <?= $beneficiaryCount === 1 ? 'Person' : 'People' ?>
-                    </span>
-
-                <?php endif; ?>
 
             </div>
 
-            <?php if ($beneficiaryCount === 0): ?>
+        </form>
 
-                <div
-                    class="beneficiary-manager__empty"
-                    role="status">
+        <hr>
 
-                    <strong>No beneficiaries added yet.</strong>
+        <!-- ========================================================= -->
+        <!-- Beneficiary List -->
+        <!-- ========================================================= -->
 
-                    <span>
-                        Use the form above to add the first beneficiary.
-                    </span>
+        <div class="beneficiary-manager__list">
+
+            <h3>
+
+                Beneficiary List
+
+            </h3>
+
+            <?php if (empty($beneficiaries)): ?>
+
+                <div class="beneficiary-manager__empty">
+
+                    No beneficiaries added.
 
                 </div>
 
             <?php else: ?>
 
-                <div class="beneficiary-manager__entries">
+                <?php foreach ($beneficiaries as $index => $beneficiary): ?>
 
-                    <?php foreach ($beneficiaries as $index => $beneficiary): ?>
+                    <div class="beneficiary-card">
 
-                        <?php
-                        $fullName = trim(
-                            implode(
-                                ' ',
-                                array_filter([
-                                    $beneficiary['first_name'] ?? '',
-                                    $beneficiary['middle_name'] ?? '',
-                                    $beneficiary['last_name'] ?? '',
-                                    $beneficiary['suffix'] ?? '',
-                                ])
-                            )
-                        );
+                        <div class="beneficiary-card__content">
 
-                        $birthDate = ! empty($beneficiary['birth_date'])
-                            ? strtotime((string) $beneficiary['birth_date'])
-                            : false;
-                        ?>
+                            <strong>
 
-                        <article class="beneficiary-card">
-
-                            <div class="beneficiary-card__identity">
-
-                                <div
-                                    class="beneficiary-card__avatar"
-                                    aria-hidden="true">
-
-                                    <?= htmlspecialchars(
-                                        strtoupper(
-                                            substr(
-                                                $fullName !== '' ? $fullName : 'B',
-                                                0,
-                                                1
-                                            )
+                                <?= htmlspecialchars(
+                                    trim(
+                                        implode(
+                                            ' ',
+                                            array_filter([
+                                                $beneficiary['first_name'] ?? '',
+                                                $beneficiary['middle_name'] ?? '',
+                                                $beneficiary['last_name'] ?? '',
+                                                $beneficiary['suffix'] ?? '',
+                                            ])
                                         )
-                                    ) ?>
+                                    )
+                                ) ?>
 
-                                </div>
+                            </strong>
 
-                                <div class="beneficiary-card__content">
+                            <div>
 
-                                    <strong class="beneficiary-card__name">
-                                        <?= htmlspecialchars(
-                                            $fullName !== ''
-                                                ? $fullName
-                                                : 'Unnamed beneficiary'
-                                        ) ?>
-                                    </strong>
-
-                                    <span class="beneficiary-card__meta">
-
-                                        <?= htmlspecialchars(
-                                            $beneficiary['relationship']
-                                                ?? 'Relationship not specified'
-                                        ) ?>
-
-                                        <?php if ($birthDate !== false): ?>
-
-                                            <span aria-hidden="true">·</span>
-
-                                            <?= htmlspecialchars(
-                                                date('F j, Y', $birthDate)
-                                            ) ?>
-
-                                        <?php endif; ?>
-
-                                    </span>
-
-                                </div>
+                                <?= htmlspecialchars(
+                                    $beneficiary['relationship'] ?? ''
+                                ) ?>
 
                             </div>
 
-                            <div class="beneficiary-card__actions">
+                        </div>
 
-                                <a
-                                    href="/members/create?step=beneficiaries&edit=<?= $index ?>"
-                                    class="btn btn--ghost btn--sm">
+                        <div class="beneficiary-card__actions">
 
-                                    Edit
+                            <a
 
-                                </a>
 
-                                <form
-                                    method="POST"
-                                    action="/members/beneficiaries/delete">
+                                href="/members/create?step=beneficiaries&edit=<?= $index ?>"
 
-                                    <input
-                                        type="hidden"
-                                        name="index"
-                                        value="<?= $index ?>">
 
-                                    <button
-                                        type="submit"
-                                        class="btn btn--danger btn--sm">
+                                class="btn btn--secondary btn--sm">
 
-                                        Remove
 
-                                    </button>
+                                Edit
 
-                                </form>
 
-                            </div>
+                            </a>
 
-                        </article>
 
-                    <?php endforeach; ?>
 
-                </div>
+                            <form
+                                method="POST"
+                                action="/members/beneficiaries/delete">
+
+                                <input
+                                    type="hidden"
+                                    name="index"
+                                    value="<?= $index ?>">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn--danger btn--sm">
+
+                                    Remove
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                <?php endforeach; ?>
 
             <?php endif; ?>
 
-        </section>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- Wizard Navigation -->
+        <!-- ========================================================= -->
 
         <form
             method="POST"
-            action="/members/create?step=beneficiaries"
-            class="beneficiary-manager__navigation">
+            action="/members/create?step=beneficiaries">
 
             <?php
 

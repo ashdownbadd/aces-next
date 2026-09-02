@@ -54,10 +54,15 @@ $highestCompletedStepIndex =
                 $stepKey = (string) $wizardStep['key'];
 
                 $isActive = $stepKey === $step;
-                $isComplete = $index <= $highestCompletedStepIndex;
+                $isComplete = ! $isActive
+                    && $index <= $highestCompletedStepIndex;
+
                 $isNext = ! $isEditing
+                    && ! $isActive
                     && $index === ($highestCompletedStepIndex + 1);
-                $isLocked = ! $isEditing
+
+                $isLocked = ! $isActive
+                    && ! $isEditing
                     && $index > ($highestCompletedStepIndex + 1);
 
                 $query = ['step' => $stepKey];
