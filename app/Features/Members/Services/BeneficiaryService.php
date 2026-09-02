@@ -39,6 +39,7 @@ final class BeneficiaryService
 
         $beneficiaries[] = $beneficiary;
         $session->setBeneficiaries($beneficiaries);
+        $session->markStep('beneficiaries', 'completed');
 
         $memberId = $this->editSession->memberId();
 
@@ -76,6 +77,7 @@ final class BeneficiaryService
 
         $beneficiaries[$index] = $beneficiary;
         $session->setBeneficiaries($beneficiaries);
+        $session->markStep('beneficiaries', 'completed');
 
         $memberId = $this->editSession->memberId();
 
@@ -113,6 +115,13 @@ final class BeneficiaryService
 
         $session->setBeneficiaries(
             array_values($beneficiaries),
+        );
+
+        $session->markStep(
+            'beneficiaries',
+            $session->beneficiaries() === []
+                ? 'saved'
+                : 'completed',
         );
 
         $memberId = $this->editSession->memberId();

@@ -1,0 +1,208 @@
+/* ==========================================================================
+   Beneficiary Wizard — add / review / manage
+   ========================================================================== */
+
+.beneficiary-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.beneficiary-manager__section {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.beneficiary-manager__section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.beneficiary-manager__eyebrow {
+  display: block;
+  color: var(--color-text-soft);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.beneficiary-manager__title {
+  margin: 4px 0 0;
+  color: var(--color-text);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.beneficiary-manager__description {
+  max-width: 620px;
+  margin: 5px 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.45;
+}
+
+.beneficiary-manager__count {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.beneficiary-manager__form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.beneficiary-manager__form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.beneficiary-manager__empty {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+}
+
+.beneficiary-manager__empty strong {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.beneficiary-manager__empty span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.beneficiary-manager__entries {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.beneficiary-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.beneficiary-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.beneficiary-card__avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  color: var(--color-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+}
+
+.beneficiary-card__content {
+  min-width: 0;
+}
+
+.beneficiary-card__name {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.beneficiary-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 3px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.beneficiary-card__actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.beneficiary-card__actions form {
+  margin: 0;
+}
+
+.beneficiary-manager__navigation {
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .beneficiary-manager__section {
+    padding: 16px;
+  }
+
+  .beneficiary-manager__section-header {
+    flex-direction: column;
+  }
+
+  .beneficiary-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .beneficiary-card__actions {
+    width: 100%;
+  }
+
+  .beneficiary-card__actions .btn,
+  .beneficiary-card__actions form {
+    flex: 1 1 auto;
+  }
+
+  .beneficiary-card__actions .btn {
+    width: 100%;
+  }
+
+  .beneficiary-manager__form-actions {
+    justify-content: stretch;
+  }
+
+  .beneficiary-manager__form-actions .btn {
+    flex: 1 1 auto;
+  }
+}
