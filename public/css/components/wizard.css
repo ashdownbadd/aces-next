@@ -1063,3 +1063,45 @@
   font-size: var(--font-size-xs);
   line-height: 1.4;
 }
+
+/* ==========================================================================
+   Wizard indicator geometry
+   --------------------------------------------------------------------------
+   The indicator is a fixed circular control. It must never shrink when the
+   tab label occupies the remaining space.
+   ========================================================================== */
+
+.wizard__indicator-link {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+}
+
+.wizard__indicator {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  flex: 0 0 28px;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  border-radius: 50% !important;
+}
+
+/* Locked steps use a stacked indicator + label layout. This prevents the
+   step-content's full width from forcing the circular icon to shrink. */
+.wizard__step--locked {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wizard__step--locked .wizard__step-content {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.wizard__step--locked .wizard__indicator-link {
+  flex: 0 0 28px;
+}
