@@ -11,6 +11,7 @@ declare(strict_types=1);
  * $body, $meta, $status
  * $icon, $actionUrl, $actionLabel
  * $href, $class, $variant, $hidden
+ * $actionOutsideCard, $shellClass
  */
 
 $className = trim(
@@ -26,15 +27,22 @@ $hrefAttribute = ! empty($href)
     ? ' href="' . htmlspecialchars((string) $href, ENT_QUOTES, 'UTF-8') . '"'
     : '';
 $hiddenAttribute = ! empty($hidden) ? ' hidden' : '';
+$actionOutsideCard = ! empty($actionOutsideCard) && ! empty($actionUrl);
 
 ?>
+
+<?php if ($actionOutsideCard): ?>
+
+    <div class="c-card__shell<?= ! empty($shellClass) ? ' ' . htmlspecialchars((string) $shellClass, ENT_QUOTES, 'UTF-8') : '' ?>"<?= $hiddenAttribute ?>>
+
+<?php endif; ?>
 
 <<?= $tag ?>
     class="<?= htmlspecialchars($className, ENT_QUOTES, 'UTF-8') ?>"
     <?= $hrefAttribute ?>
-    <?= $hiddenAttribute ?>>
+    <?= $actionOutsideCard ? '' : $hiddenAttribute ?>>
 
-    <?php if (! empty($icon) || ! empty($actionUrl)): ?>
+    <?php if (! empty($icon) || (! $actionOutsideCard && ! empty($actionUrl))): ?>
 
         <div class="c-card__top">
 
@@ -46,7 +54,7 @@ $hiddenAttribute = ! empty($hidden) ? ' hidden' : '';
 
             <?php endif; ?>
 
-            <?php if (! empty($actionUrl)): ?>
+            <?php if (! $actionOutsideCard && ! empty($actionUrl)): ?>
 
                 <span class="c-card__action-wrap">
 
@@ -119,3 +127,16 @@ $hiddenAttribute = ! empty($hidden) ? ' hidden' : '';
     <?php endif; ?>
 
 </<?= $tag ?>>
+
+<?php if ($actionOutsideCard): ?>
+
+        <a
+            class="c-card__action"
+            href="<?= htmlspecialchars((string) $actionUrl, ENT_QUOTES, 'UTF-8') ?>"
+            aria-label="<?= htmlspecialchars((string) ($actionLabel ?: 'Open'), ENT_QUOTES, 'UTF-8') ?>">
+            <span aria-hidden="true">↗</span>
+        </a>
+
+    </div>
+
+<?php endif; ?>

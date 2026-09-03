@@ -3,24 +3,23 @@
    ========================================================================== */
 
 .dashboard {
-
   display: flex;
   flex-direction: column;
   gap: 32px;
-}.dashboard-hero {
-
+}
+.dashboard-hero {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}.dashboard-hero__eyebrow {
-
+}
+.dashboard-hero__eyebrow {
   color: var(--color-text-soft);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-xs);
   letter-spacing: 0.13em;
   text-transform: uppercase;
-}.dashboard-hero__title {
-
+}
+.dashboard-hero__title {
   margin: 0;
 
   color: var(--color-text);
@@ -29,20 +28,19 @@
   font-weight: 800;
   line-height: 1.08;
   letter-spacing: -0.035em;
-}.dashboard-hero__description {
-
+}
+.dashboard-hero__description {
   margin: 0;
 
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-}.dashboard__stats {
-
+}
+.dashboard__stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
-}/* Uniform metric cards */
+} /* Uniform metric cards */
 .dashboard__stats .stat-card {
-
   min-width: 0;
   min-height: 148px;
   height: 148px;
@@ -64,13 +62,13 @@
   transition:
     border-color 0.16s ease,
     background-color 0.16s ease;
-}.dashboard__stats .stat-card:hover {
-
+}
+.dashboard__stats .stat-card:hover {
   transform: none;
   border-color: var(--color-border-strong);
   box-shadow: none;
-}.dashboard__stats .stat-card__body {
-
+}
+.dashboard__stats .stat-card__body {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -78,8 +76,8 @@
   gap: 14px;
   width: 100%;
   height: 100%;
-}.dashboard__stats .stat-card__content {
-
+}
+.dashboard__stats .stat-card__content {
   min-width: 0;
 
   display: flex;
@@ -87,13 +85,13 @@
   justify-content: space-between;
 
   height: 100%;
-}.dashboard__stats .stat-card__title {
-
+}
+.dashboard__stats .stat-card__title {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   font-weight: 600;
-}.dashboard__stats .stat-card__value {
-
+}
+.dashboard__stats .stat-card__value {
   margin: 0;
 
   color: var(--color-text);
@@ -103,13 +101,13 @@
   line-height: 1;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
-}.dashboard__stats .stat-card__subtitle {
-
+}
+.dashboard__stats .stat-card__subtitle {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
   line-height: 1.35;
-}.dashboard__stats .stat-card__icon {
-
+}
+.dashboard__stats .stat-card__icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -125,22 +123,22 @@
   color: var(--color-primary);
 
   font-size: var(--font-size-sm);
-}.dashboard__stats .stat-card--success .stat-card__icon {
-
+}
+.dashboard__stats .stat-card--success .stat-card__icon {
   color: var(--color-success);
-}.dashboard__stats .stat-card--warning .stat-card__icon {
-
+}
+.dashboard__stats .stat-card--warning .stat-card__icon {
   color: var(--color-warning);
-}.dashboard__stats .stat-card--danger .stat-card__icon {
-
+}
+.dashboard__stats .stat-card--danger .stat-card__icon {
   color: var(--color-danger);
-}.dashboard__stats-toggle {
-
+}
+.dashboard__stats-toggle {
   display: flex;
   justify-content: flex-end;
   margin-top: -2px;
-}.dashboard__show-more {
-
+}
+.dashboard__show-more {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -157,8 +155,8 @@
   font-weight: 600;
 
   cursor: pointer;
-}.dashboard__show-more:hover {
-
+}
+.dashboard__show-more:hover {
   color: var(--color-primary);
 }
 
@@ -177,200 +175,198 @@
 
 .dashboard__show-more svg.is-open {
   transform: rotate(180deg);
-}.dashboard > .section {
-
+}
+.dashboard > .section {
   margin: 0;
-}.dashboard > .section:first-of-type .section__header {
-
+}
+.dashboard > .section:first-of-type .section__header {
   margin-bottom: 14px;
-}.dashboard-health {
-
+}
+.dashboard-health {
   margin-top: 0;
 }
 
-@media (max-width: 1050px) {.dashboard__stats {
-
+@media (max-width: 1050px) {
+  .dashboard__stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 640px) {.dashboard__stats {
-
+@media (max-width: 640px) {
+  .dashboard__stats {
     grid-template-columns: 1fr;
-  }.dashboard__stats .stat-card {
-
+  }
+  .dashboard__stats .stat-card {
     height: 144px;
     min-height: 144px;
   }
-}.dashboard__stats .stat-card[hidden] {
-
-    display: none !important;
-}/* ==========================================================================
+}
+.dashboard__stats .stat-card[hidden] {
+  display: none !important;
+} /* ==========================================================================
    Cooperative Alerts
    Matches the statistic-card visual language.
    ========================================================================== */
 
 .dashboard-health {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.dashboard-health .section__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 0;
+}
+.dashboard-health__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
 
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}.dashboard-health .section__header {
+  min-height: 28px;
+  padding: 0 10px;
 
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 18px;
-    margin-bottom: 0;
-}.dashboard-health__status {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
 
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.dashboard-health__status--healthy {
+  color: var(--color-success);
+  background: rgba(39, 168, 88, 0.05);
+  border-color: rgba(39, 168, 88, 0.18);
+}
+.dashboard-health__status--attention {
+  color: var(--color-danger);
+  background: rgba(217, 61, 61, 0.05);
+  border-color: rgba(217, 61, 61, 0.18);
+}
+.dashboard-health__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.dashboard-health__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.dashboard-health__card {
+  min-width: 0;
+  min-height: 148px;
+  height: 148px;
 
-    min-height: 28px;
-    padding: 0 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
 
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-pill);
+  padding: 20px;
 
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-xs);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-}.dashboard-health__status--healthy {
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
 
-    color: var(--color-success);
-    background: rgba(39, 168, 88, 0.05);
-    border-color: rgba(39, 168, 88, 0.18);
-}.dashboard-health__status--attention {
+  background: var(--color-surface);
+  color: inherit;
+}
+.dashboard-health__card--healthy {
+  border-color: var(--color-border);
+}
+.dashboard-health__card--warning {
+  border-color: var(--color-border-strong);
+}
+.dashboard-health__card-content {
+  min-width: 0;
+  height: 100%;
 
-    color: var(--color-danger);
-    background: rgba(217, 61, 61, 0.05);
-    border-color: rgba(217, 61, 61, 0.18);
-}.dashboard-health__status-dot {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.dashboard-health__label {
+  display: block;
 
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-}.dashboard-health__grid {
+  color: var(--color-text-muted);
 
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-}.dashboard-health__card {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+.dashboard-health__value {
+  display: block;
+  margin: 0;
 
-    min-width: 0;
-    min-height: 148px;
-    height: 148px;
+  color: var(--color-text);
 
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 14px;
+  font-family: var(--font-family);
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.dashboard-health__description {
+  margin: 0;
 
-    padding: 20px;
+  color: var(--color-text-muted);
 
-    border: 1px solid var(--color-border);
-    border-radius: 18px;
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+}
+.dashboard-health__card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    background: var(--color-surface);
-    color: inherit;
-}.dashboard-health__card--healthy {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
 
-    border-color: var(--color-border);
-}.dashboard-health__card--warning {
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
 
-    border-color: var(--color-border-strong);
-}.dashboard-health__card-content {
+  background: var(--color-surface);
+  color: var(--color-success);
 
-    min-width: 0;
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}.dashboard-health__label {
-
-    display: block;
-
-    color: var(--color-text-muted);
-
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-}.dashboard-health__value {
-
-    display: block;
-    margin: 0;
-
-    color: var(--color-text);
-
-    font-family: var(--font-family);
-    font-size: var(--font-size-3xl);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-}.dashboard-health__description {
-
-    margin: 0;
-
-    color: var(--color-text-muted);
-
-    font-size: var(--font-size-xs);
-    line-height: 1.35;
-}.dashboard-health__card-icon {
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 36px;
-    height: 36px;
-    flex: 0 0 36px;
-
-    border: 1px solid var(--color-border);
-    border-radius: 50%;
-
-    background: var(--color-surface);
-    color: var(--color-success);
-
-    font-size: var(--font-size-sm);
-}.dashboard-health__card--warning .dashboard-health__card-icon {
-
-    color: var(--color-danger);
+  font-size: var(--font-size-sm);
+}
+.dashboard-health__card--warning .dashboard-health__card-icon {
+  color: var(--color-danger);
 }
 
-@media (max-width: 768px) {.dashboard-health .section__header {
-
-        align-items: flex-start;
-        flex-direction: column;
-    }.dashboard-health__grid {
-
-        grid-template-columns: 1fr;
-    }
-}/* ==========================================================================
+@media (max-width: 768px) {
+  .dashboard-health .section__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .dashboard-health__grid {
+    grid-template-columns: 1fr;
+  }
+} /* ==========================================================================
    Action Required
    ========================================================================== */
 
 .dashboard-actions {
-
   display: flex;
   flex-direction: column;
   gap: 16px;
 
   margin: 0;
-}.dashboard-actions__header {
-
+}
+.dashboard-actions__header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
 
   gap: 18px;
-}.dashboard-actions__eyebrow {
-
+}
+.dashboard-actions__eyebrow {
   display: block;
   margin-bottom: 4px;
 
@@ -381,23 +377,23 @@
   font-weight: 700;
   letter-spacing: 0.11em;
   text-transform: uppercase;
-}.dashboard-actions__title {
-
+}
+.dashboard-actions__title {
   margin: 0;
 
   color: var(--color-text);
 
   font-size: var(--font-size-md);
   font-weight: 750;
-}.dashboard-actions__description {
-
+}
+.dashboard-actions__description {
   margin: 3px 0 0;
 
   color: var(--color-text-muted);
 
   font-size: var(--font-size-xs);
-}.dashboard-actions__count {
-
+}
+.dashboard-actions__count {
   display: inline-flex;
   align-items: center;
 
@@ -413,13 +409,13 @@
   font-size: var(--font-size-xs);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-}.dashboard-actions__grid {
-
+}
+.dashboard-actions__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-}.dashboard-actions__item {
-
+}
+.dashboard-actions__item {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -441,13 +437,13 @@
   transition:
     border-color 0.14s ease,
     background-color 0.14s ease;
-}.dashboard-actions__item:hover {
-
+}
+.dashboard-actions__item:hover {
   border-color: var(--color-border-strong);
   background: var(--color-surface);
-}.dashboard-actions__icon,
+}
+.dashboard-actions__icon,
 .dashboard-actions__empty-icon {
-
   display: grid;
   place-items: center;
 
@@ -467,15 +463,15 @@
 
 .dashboard-actions__icon--warning {
   color: var(--color-danger);
-}.dashboard-actions__content {
-
+}
+.dashboard-actions__content {
   display: flex;
   flex-direction: column;
   gap: 3px;
 
   min-width: 0;
-}.dashboard-actions__content strong {
-
+}
+.dashboard-actions__content strong {
   overflow: hidden;
 
   color: var(--color-text);
@@ -483,19 +479,19 @@
   font-size: var(--font-size-sm);
   font-weight: 700;
   text-overflow: ellipsis;
-}.dashboard-actions__content small {
-
+}
+.dashboard-actions__content small {
   color: var(--color-text-muted);
 
   font-size: var(--font-size-xs);
   line-height: 1.35;
-}.dashboard-actions__arrow {
-
+}
+.dashboard-actions__arrow {
   color: var(--color-text-soft);
 
   font-size: var(--font-size-xs);
-}.dashboard-actions__empty {
-
+}
+.dashboard-actions__empty {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -507,92 +503,149 @@
   border-radius: 18px;
 
   background: var(--color-surface);
-}.dashboard-actions__empty-icon {
-
+}
+.dashboard-actions__empty-icon {
   color: var(--color-success);
-}.dashboard-actions__empty div {
-
+}
+.dashboard-actions__empty div {
   display: flex;
   flex-direction: column;
   gap: 3px;
-}.dashboard-actions__empty strong {
-
+}
+.dashboard-actions__empty strong {
   color: var(--color-text);
   font-size: var(--font-size-sm);
-}.dashboard-actions__empty span {
-
+}
+.dashboard-actions__empty span {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
 }
 
-@media (max-width: 768px) {.dashboard-actions__header {
-
+@media (max-width: 768px) {
+  .dashboard-actions__header {
     align-items: flex-start;
     flex-direction: column;
-  }.dashboard-actions__grid {
-
+  }
+  .dashboard-actions__grid {
     grid-template-columns: 1fr;
   }
-}/* ==========================================================================
+} /* ==========================================================================
    Dashboard standard card corrections
    ========================================================================== */
 
 .dashboard__stats {
-
   align-items: stretch;
-}.dashboard__stats .dashboard-stat-card {
-
+}
+.dashboard__stats .c-card__shell {
   position: relative;
 
   min-width: 0;
-  min-height: 148px;
-  height: auto;
+}
+.dashboard__stats .c-card__shell[hidden] {
+  display: none !important;
+}
+.dashboard__stats .dashboard-stat-card {
+  position: relative;
+
+  width: 100%;
+  min-width: 0;
 
   box-sizing: border-box;
-}/* Overview cards intentionally have no left-side icon. */
+
+  /*
+   * The notch clip-path (see clipPath#dashboard-card-clip in dashboard.php)
+   * uses objectBoundingBox arcs, so its radii are computed as a % of this
+   * element's own width and height, independently on each axis. That only
+   * stays a true circular curve if width:height never changes — so the
+   * card is pinned to the same 13:10 ratio the original reference used.
+   * Height is now derived from width instead of being fixed; min-height
+   * above is just a floor for very narrow columns.
+   */
+  aspect-ratio: 13 / 10;
+
+  /* Notched-card silhouette. Replaces the previous border-radius +
+   * painted-overlay cutout with a real clipped corner, so the border is
+   * dropped in favor of a shape-following drop-shadow. */
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  clip-path: url("#dashboard-card-clip");
+  filter: drop-shadow(0 1px 2px rgba(16, 24, 40, 0.08));
+}
+.dashboard__stats .dashboard-stat-card:hover {
+  filter: drop-shadow(0 4px 10px rgba(16, 24, 40, 0.12));
+} /* Overview cards intentionally have no left-side icon. */
 .dashboard__stats .dashboard-stat-card .c-card__top {
-
   min-height: 0;
-}.dashboard__stats .dashboard-stat-card .c-card__content {
-
+}
+.dashboard__stats .dashboard-stat-card .c-card__content {
   margin-top: 6px;
+} /* The corner notch is now cut directly out of the card via clip-path, so
+ * the action must stay outside the clipped element. Keep the button fully
+ * inside the notch's upper-right pocket instead of overlapping the card body. */
+.dashboard__stats .dashboard-stat-card .c-card__action-wrap {
+  display: none;
+}
+.dashboard__stats .c-card__shell > .c-card__action {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 32px;
+  flex: 0 0 42px;
+
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+
+  font-size: var(--font-size-sm);
+  line-height: 1;
+  text-decoration: none;
+
+  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.18);
+}
+.dashboard__stats .c-card__shell > .c-card__action:hover,
+.dashboard__stats .c-card__shell > .c-card__action:focus-visible,
+.dashboard__stats .c-card__shell > .c-card__action:active {
+  transform: none;
+  color: var(--color-on-primary, #fff);
+  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.18);
 }/* The component owns visibility for expanded cards; this selector is kept so
  * the Show More script can still target the additional cards. */
 .dashboard__stats .dashboard__stat--additional[hidden] {
-
   display: none !important;
-}.dashboard__stats .dashboard__stat--additional:not([hidden]) {
-
-  display: flex;
+}
+.dashboard__stats .dashboard__stat--additional:not([hidden]) {
+  display: block;
 }
 
-@media (max-width: 640px) {.dashboard__stats .dashboard-stat-card {
-
-    min-height: 144px;
-  }
-}/* ==========================================================================
+/* ==========================================================================
    Dashboard header/card refinements
    ========================================================================== */
 
 .dashboard-hero__user {
-
   color: var(--color-primary);
   font-weight: 800;
-}.dashboard-overview > .section__body {
-
+}
+.dashboard-overview > .section__body {
   margin-top: 0;
-}/* The circular corner action is visually static; only the whole card remains
- * interactive where appropriate. */
-.dashboard__stats .c-card__action,
-.dashboard__stats .c-card__action:hover,
-.dashboard__stats .c-card__action:focus,
-.dashboard__stats .c-card__action:active {
-
-  box-shadow: none;
+} /* The corner button sits statically in the notch — it's a visual affordance,
+ * not a separate interactive target (the whole card is already the link),
+ * so it doesn't lift or pulse on hover. Its own shadow (set above) stays. */
+.dashboard__stats .c-card__shell > .c-card__action:hover,
+.dashboard__stats .c-card__shell > .c-card__action:focus,
+.dashboard__stats .c-card__shell > .c-card__action:active {
   transform: none;
   transition: none;
 }
-
 
 @media (max-width: 640px) {
   .dashboard__stats,
