@@ -23,7 +23,15 @@ $alerts = $alerts ?? [
 ];
 ?>
 
-<svg xmlns="http://www.w3.org/2000/svg" style="display: block; position: absolute;" width="0" height="0">
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 1 1"
+    preserveAspectRatio="none"
+    style="display:block;position:absolute;width:0;height:0;max-width:0;max-height:0;margin:0;padding:0;overflow:hidden;pointer-events:none;"
+    width="0"
+    height="0"
+    aria-hidden="true"
+    focusable="false">
     <defs>
         <clipPath id="dashboard-card-clip" clipPathUnits="objectBoundingBox">
             <path d="M0.0769,0H0.6923A0.0769,0.1,0,0,1,0.7692,0.1V0.1A0.0769,0.1,0,0,0,0.8462,0.2H0.9231A0.0769,0.1,0,0,1,1,0.3V0.9A0.0769,0.1,0,0,1,0.9231,1H0.0769A0.0769,0.1,0,0,1,0,0.9V0.1A0.0769,0.1,0,0,1,0.0769,0Z" />
