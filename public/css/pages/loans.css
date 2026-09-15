@@ -1485,3 +1485,44 @@
     max-height: 260px;
   }
 }
+
+/* Data-table UX */
+.loan-list__table th,
+.loan-list__table td {
+  height: 48px;
+}
+
+.loan-list__table th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.loan-list__table th:first-child,
+.loan-list__table td:first-child {
+  position: sticky;
+  left: 0;
+}
+
+.loan-list__table th:first-child { z-index: 6; }
+.loan-list__table td:first-child {
+  z-index: 2;
+  background: var(--color-surface);
+}
+
+.loan-list__table td:nth-child(4) {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.loan-list__table tbody tr:hover,
+.loan-list__table tbody tr:focus-within {
+  background: rgba(245, 155, 10, 0.035);
+}
+
+.loan-list__table tbody tr:hover td:first-child,
+.loan-list__table tbody tr:focus-within td:first-child {
+  background: var(--color-surface);
+}

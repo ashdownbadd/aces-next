@@ -207,9 +207,9 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
                                 </a>
                             </td>
 
-                            <td class="activity-logs__description">
+                            <td class="activity-logs__description table__truncate" title="<?= htmlspecialchars((string) ($log['description'] ?? '-'), ENT_QUOTES) ?>">
                                 <?= htmlspecialchars(
-                                    (string) ($log['description'] ?? '')
+                                    (string) ($log['description'] ?? '-')
                                 ) ?>
                             </td>
 
@@ -241,13 +241,13 @@ $getActionBadgeType = static function (string $action) use ($actionBadgeTypes): 
                                     <?php endif; ?>
 
                                 <?php else: ?>
-                                    —
+                                    -
                                 <?php endif; ?>
                             </td>
 
                             <td>
                                 <?= htmlspecialchars(
-                                    (string) ($log['ip_address'] ?? '—')
+                                    (string) ($log['ip_address'] ?? '-' )
                                 ) ?>
                             </td>
                         </tr>

@@ -579,3 +579,40 @@
     width: 100%;
   }
 }
+
+/* Data-table UX */
+.members__table th,
+.members__table td {
+  height: 48px;
+  padding-block: 0;
+}
+
+.members__table th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.members__table th:first-child,
+.members__table td:first-child {
+  position: sticky;
+  left: 0;
+}
+
+.members__table th:first-child { z-index: 6; }
+.members__table td:first-child {
+  z-index: 2;
+  background: var(--color-surface);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.members__table tbody tr:hover,
+.members__table tbody tr:focus-within {
+  background: rgba(245, 155, 10, 0.035);
+}
+
+.members__table tbody tr:hover td:first-child,
+.members__table tbody tr:focus-within td:first-child {
+  background: var(--color-surface);
+}

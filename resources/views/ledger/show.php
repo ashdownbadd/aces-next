@@ -16,7 +16,7 @@ $statusClass = match ($status) {
     <div class="ledger-detail__breadcrumb">
         <a href="/ledger">Journal Vouchers</a>
         <span>/</span>
-        <span><?= $e($voucher['reference_number'] ?? '—') ?></span>
+        <span><?= $e($voucher['reference_number'] ?? '-' ) ?></span>
     </div>
 
     <?php if (!empty($success)): ?>
@@ -30,7 +30,7 @@ $statusClass = match ($status) {
     <header class="ledger-detail__header">
         <div>
             <h1><?= $e($voucher['reference_number'] ?? 'Journal Voucher') ?></h1>
-            <p><?= $e($voucher['particulars'] ?? '—') ?></p>
+            <p><?= $e($voucher['particulars'] ?? '-' ) ?></p>
         </div>
         <span class="ledger-status ledger-status--<?= $e($statusClass) ?>">
             <?= $e($status) ?>
@@ -43,7 +43,7 @@ $statusClass = match ($status) {
 
             <div class="ledger-detail__meta">
                 <span>Transaction Date</span>
-                <strong><?= $e($voucher['transaction_date'] ?? '—') ?></strong>
+                <strong><?= $e($voucher['transaction_date'] ?? '-' ) ?></strong>
             </div>
 
             <div class="ledger-detail__meta">
@@ -55,24 +55,24 @@ $statusClass = match ($status) {
                             #<?= (int) $voucher['source_id'] ?>
                         <?php endif; ?>
                     <?php else: ?>
-                        —
+                        -
                     <?php endif; ?>
                 </strong>
             </div>
 
             <div class="ledger-detail__meta">
                 <span>Created By</span>
-                <strong><?= $e($voucher['created_by_username'] ?? '—') ?></strong>
+                <strong><?= $e($voucher['created_by_username'] ?? '-' ) ?></strong>
             </div>
 
             <div class="ledger-detail__meta">
                 <span>Approved By</span>
-                <strong><?= $e($voucher['approved_by_username'] ?? '—') ?></strong>
+                <strong><?= $e($voucher['approved_by_username'] ?? '-' ) ?></strong>
             </div>
 
             <div class="ledger-detail__meta">
                 <span>Posted By</span>
-                <strong><?= $e($voucher['posted_by_username'] ?? '—') ?></strong>
+                <strong><?= $e($voucher['posted_by_username'] ?? '-' ) ?></strong>
             </div>
 
             <div class="ledger-detail__meta">
@@ -83,7 +83,7 @@ $statusClass = match ($status) {
                             JV #<?= (int) $voucher['reversal_of_voucher_id'] ?>
                         </a>
                     <?php else: ?>
-                        —
+                        -
                     <?php endif; ?>
                 </strong>
             </div>
@@ -121,16 +121,16 @@ $statusClass = match ($status) {
                     <?php foreach ($lines as $line): ?>
                         <tr>
                             <td>
-                                <strong><?= $e($line['account_code'] ?? '—') ?></strong>
+                                <strong><?= $e($line['account_code'] ?? '-' ) ?></strong>
                                 <span class="ledger-detail__account-name">
-                                    <?= $e($line['account_name'] ?? '—') ?>
+                                    <?= $e($line['account_name'] ?? '-' ) ?>
                                 </span>
                             </td>
-                            <td><?= $e($line['line_description'] ?? '—') ?></td>
+                            <td><?= $e($line['line_description'] ?? '-' ) ?></td>
                             <td>
                                 <?= (int) ($line['member_id'] ?? 0) > 0
                                     ? '#' . (int) $line['member_id']
-                                    : '—' ?>
+                                    : '-'  ?>
                             </td>
                             <td>
                                 <?php if ((int) ($line['loan_id'] ?? 0) > 0): ?>
@@ -138,14 +138,14 @@ $statusClass = match ($status) {
                                         Loan #<?= (int) $line['loan_id'] ?>
                                     </a>
                                 <?php else: ?>
-                                    —
+                                    -
                                 <?php endif; ?>
                             </td>
                             <td class="ledger-detail__amount">
-                                <?= (float) $line['debit'] > 0 ? $money((float) $line['debit']) : '—' ?>
+                                <?= (float) $line['debit'] > 0 ? $money((float) $line['debit']) : '-'  ?>
                             </td>
                             <td class="ledger-detail__amount">
-                                <?= (float) $line['credit'] > 0 ? $money((float) $line['credit']) : '—' ?>
+                                <?= (float) $line['credit'] > 0 ? $money((float) $line['credit']) : '-'  ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

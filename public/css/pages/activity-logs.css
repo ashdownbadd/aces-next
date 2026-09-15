@@ -419,3 +419,38 @@ cd /tmp/aces/aces-next && git diff --no-index -- resources/views/activity_logs/i
     border-radius: var(--radius-sm);
   }
 }
+
+/* Data-table UX */
+.activity-logs__table th,
+.activity-logs__table td {
+  height: 48px;
+  padding-block: 0;
+}
+
+.activity-logs__table th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.activity-logs__table th:first-child,
+.activity-logs__table td:first-child {
+  position: sticky;
+  left: 0;
+}
+
+.activity-logs__table th:first-child { z-index: 6; }
+.activity-logs__table td:first-child {
+  z-index: 2;
+  background: var(--color-surface);
+}
+
+.activity-logs__table tbody tr:hover,
+.activity-logs__table tbody tr:focus-within {
+  background: rgba(245, 155, 10, 0.035);
+}
+
+.activity-logs__table tbody tr:hover td:first-child,
+.activity-logs__table tbody tr:focus-within td:first-child {
+  background: var(--color-surface);
+}

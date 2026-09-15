@@ -319,18 +319,18 @@ $paginationUrl = static function (
                                 <?= htmlspecialchars(
                                     (string) (
                                         $member['member_number']
-                                        ?? '—'
+                                        ?? '-' 
                                     )
                                 ) ?>
 
                             </td>
 
-                            <td>
+                            <td class="table__truncate" title="<?= htmlspecialchars((string) ($member['full_name'] ?? '-'), ENT_QUOTES) ?>">
 
                                 <?= htmlspecialchars(
                                     (string) (
                                         $member['full_name']
-                                        ?? '—'
+                                        ?? '-'
                                     )
                                 ) ?>
 
@@ -341,7 +341,7 @@ $paginationUrl = static function (
                                 <?= htmlspecialchars(
                                     (string) (
                                         $member['mobile_number']
-                                        ?? '—'
+                                        ?? '-' 
                                     )
                                 ) ?>
 
@@ -354,7 +354,7 @@ $paginationUrl = static function (
                                     <?= htmlspecialchars(
                                         (string) (
                                             $member['status']
-                                            ?? '—'
+                                            ?? '-' 
                                         )
                                     ) ?>
 
@@ -386,7 +386,7 @@ $paginationUrl = static function (
 
                             </td>
 
-                            <td>
+                            <td class="table__row-action">
 
                                 <a
                                     href="/members/<?= urlencode(

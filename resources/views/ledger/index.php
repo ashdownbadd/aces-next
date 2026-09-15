@@ -92,10 +92,10 @@ $statusClass = static fn(string $value): string => match ($value) {
                     <tbody id="ledger-table-body">
                         <?php foreach ($vouchers as $voucher): ?>
                             <tr data-live-search-item="true">
-                                <td><strong><?= $e($voucher['reference_number'] ?? '—') ?></strong></td>
-                                <td><?= $e($voucher['transaction_date'] ?? '—') ?></td>
+                                <td><strong><?= $e($voucher['reference_number'] ?? '-' ) ?></strong></td>
+                                <td><?= $e($voucher['transaction_date'] ?? '-' ) ?></td>
                                 <td class="ledger-page__particulars">
-                                    <?= $e($voucher['particulars'] ?? '—') ?>
+                                    <?= $e($voucher['particulars'] ?? '-' ) ?>
                                 </td>
                                 <td>
                                     <?php if (!empty($voucher['source_type'])): ?>
@@ -104,16 +104,16 @@ $statusClass = static fn(string $value): string => match ($value) {
                                             #<?= (int) $voucher['source_id'] ?>
                                         <?php endif; ?>
                                     <?php else: ?>
-                                        —
+                                        -
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <span class="ledger-status ledger-status--<?= $e($statusClass((string) ($voucher['status'] ?? ''))) ?>">
-                                        <?= $e($voucher['status'] ?? '—') ?>
+                                        <?= $e($voucher['status'] ?? '-' ) ?>
                                     </span>
                                 </td>
-                                <td><?= $e($voucher['created_by_username'] ?? '—') ?></td>
-                                <td>
+                                <td><?= $e($voucher['created_by_username'] ?? '-' ) ?></td>
+                                <td class="table__row-action">
                                     <a
                                         class="btn btn--secondary btn--sm"
                                         href="/ledger/<?= (int) $voucher['id'] ?>">

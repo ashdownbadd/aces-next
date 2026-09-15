@@ -92,8 +92,8 @@ $money=static fn(float $v):string=>'₱'.number_format($v,2,'.',',');
 <tr>
 <td><?= $e($row['transaction_date']) ?></td>
 <td><a href="/ledger/<?= (int)$row['voucher_id'] ?>"><?= $e($row['reference_number']) ?></a></td>
-<td><?= $e($row['particulars']) ?><?php if(!empty($row['line_description'])): ?><span class="ledger-detail__account-name"><?= $e($row['line_description']) ?></span><?php endif; ?></td>
-<td><?= $e($row['source_type']??'—') ?><?php if((int)($row['source_id']??0)>0): ?> #<?= (int)$row['source_id'] ?><?php endif; ?></td>
+<td class="table__truncate" title="<?= $e($row['particulars']) ?>"><?= $e($row['particulars']) ?><?php if(!empty($row['line_description'])): ?><span class="ledger-detail__account-name"><?= $e($row['line_description']) ?></span><?php endif; ?></td>
+<td><?= $e($row['source_type']??'-') ?><?php if((int)($row['source_id']??0)>0): ?> #<?= (int)$row['source_id'] ?><?php endif; ?></td>
 <td class="ledger-detail__amount"><?= (float)$row['debit']>0?$money((float)$row['debit']):'—' ?></td>
 <td class="ledger-detail__amount"><?= (float)$row['credit']>0?$money((float)$row['credit']):'—' ?></td>
 <td class="ledger-detail__amount"><?= $money((float)$row['running_balance']) ?></td>

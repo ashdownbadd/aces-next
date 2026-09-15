@@ -164,28 +164,28 @@ $isApprovalQueue = $status === 'Under Review';
                                 <td>
                                     <div class="loan-list__member">
                                         <strong>
-                                            <?= $e($loan['member_name'] ?? '—') ?>
+                                            <?= $e($loan['member_name'] ?? '-' ) ?>
                                         </strong>
                                         <span>
-                                            Member #<?= $e($loan['member_number'] ?? '—') ?>
+                                            Member #<?= $e($loan['member_number'] ?? '-' ) ?>
                                         </span>
                                     </div>
                                 </td>
 
-                                <td><?= $e($loan['loan_type'] ?? '—') ?></td>
+                                <td><?= $e($loan['loan_type'] ?? '-' ) ?></td>
 
-                                <td>
+                                <td class="table__numeric">
                                     <?= $money((float) ($loan['principal_amount'] ?? 0)) ?>
                                 </td>
 
-                                <td><?= $e($loan['created_at'] ?? '—') ?></td>
+                                <td><?= $e($loan['created_at'] ?? '-' ) ?></td>
 
                                 <td>
 
                                     <span class="badge">
                                         <?= $status === 'Overdue'
                                             ? 'Overdue'
-                                            : $e($loan['application_status'] ?? '—') ?>
+                                            : $e($loan['application_status'] ?? '-' ) ?>
                                     </span>
 
                                     <?php if ($status === 'Overdue'): ?>
@@ -198,7 +198,7 @@ $isApprovalQueue = $status === 'Under Review';
 
                                 </td>
 
-                                <td class="loan-list__action-column">
+                                <td class="loan-list__action-column table__row-action">
 
                                     <?php
                                     $loanId = (int) ($loan['id'] ?? 0);

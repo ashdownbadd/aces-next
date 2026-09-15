@@ -1,37 +1,121 @@
+/* Data table foundation */
 .table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: auto;
 }
 
 .table th,
 .table td {
-  padding: 11px 14px;
-
+  height: 48px;
+  box-sizing: border-box;
+  padding: 0 14px;
   border-bottom: 1px solid var(--color-border);
-
   text-align: left;
   vertical-align: middle;
 }
 
 .table th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
   background: var(--color-surface);
-
   color: var(--color-text-soft);
-
   font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Keep the primary identity column visible during horizontal scrolling. */
+.table th:first-child,
+.table td:first-child {
+  position: sticky;
+  left: 0;
+}
+
+.table th:first-child {
+  z-index: 6;
+}
+
+.table td:first-child {
+  z-index: 2;
+  background: var(--color-surface);
 }
 
 .table tbody tr {
   transition: background-color 0.12s ease;
 }
 
-.table tbody tr:hover {
+.table tbody tr:hover,
+.table tbody tr:focus-within {
   background: rgba(245, 155, 10, 0.035);
+}
+
+.table tbody tr:hover td:first-child,
+.table tbody tr:focus-within td:first-child {
+  background: var(--color-surface);
 }
 
 .table tbody tr:last-child td {
   border-bottom: 0;
+}
+
+.table__numeric,
+.ledger-detail__amount {
+  text-align: right !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.table__truncate {
+  max-width: 32rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table__row-action {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.table__row-action > a,
+.table__row-action > button,
+.table__row-action > form {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+.table tbody tr:hover .table__row-action > a,
+.table tbody tr:hover .table__row-action > button,
+.table tbody tr:hover .table__row-action > form,
+.table tbody tr:focus-within .table__row-action > a,
+.table tbody tr:focus-within .table__row-action > button,
+.table tbody tr:focus-within .table__row-action > form {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .table__row-action > a,
+  .table__row-action > button,
+  .table__row-action > form {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+    padding-inline: 12px;
+  }
 }
