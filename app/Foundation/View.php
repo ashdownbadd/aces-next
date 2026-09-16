@@ -15,7 +15,16 @@ final class View
 
     public function __construct(
         private readonly string $viewsPath,
+        private readonly CsrfToken $csrf,
     ) {}
+
+    public function csrfField(): string
+    {
+        return sprintf(
+            '<input type="hidden" name="_csrf" value="%s">',
+            htmlspecialchars($this->csrf->token(), ENT_QUOTES, 'UTF-8'),
+        );
+    }
 
     /**
      * @param array<string, mixed> $data

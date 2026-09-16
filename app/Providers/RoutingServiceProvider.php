@@ -15,7 +15,10 @@ final class RoutingServiceProvider extends ServiceProvider
             Router::class,
             function (Container $container): Router {
 
-                $router = new Router($container);
+                $router = new Router(
+                    $container,
+                    $container->get(\App\Foundation\CsrfToken::class),
+                );
 
                 $router->load(__DIR__ . '/../../routes/web.php');
 

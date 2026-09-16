@@ -28,7 +28,21 @@ final class Response
     {
         http_response_code($this->status);
 
-        foreach ($this->headers as $name => $value) {
+        $defaultHeaders = [
+            'X-Content-Type-Options' => 'nosniff',
+            'X-Frame-Options' => 'DENY',
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+            'Permissions-Policy' => 'camera=(), microphone=(), geolocation=()',
+        ];
+
+        if (
+            (($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off')
+            || (($_SERVER['SERVER_PORT'] ?? '') === '443')
+        ) {
+            $defaultHeaders['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains';
+        }
+
+        foreach (array_merge($defaultHeaders, $this->headers) as $name => $value) {
             header(sprintf('%s: %s', $name, $value));
         }
 

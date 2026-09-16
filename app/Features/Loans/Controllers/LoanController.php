@@ -332,12 +332,14 @@ final class LoanController
             (string) $request->input('amount_paid', '0'),
         );
         $remarks = trim((string) $request->input('remarks', ''));
+        $idempotencyKey = trim((string) $request->input('payment_token', ''));
 
         try {
             $result = $this->paymentService->apply(
                 loanId: $loanId,
                 amountPaid: $amount,
                 remarks: $remarks !== '' ? $remarks : null,
+                idempotencyKey: $idempotencyKey,
             );
 
             $message = ($result['loan_fully_paid'] ?? false)

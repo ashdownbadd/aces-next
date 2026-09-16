@@ -14,6 +14,7 @@ final readonly class User
         private ?string $middleName,
         private string $lastName,
         private bool $isActive,
+        private string $role = 'operations',
     ) {}
 
     public function id(): ?int
@@ -60,5 +61,15 @@ final readonly class User
     public function isActive(): bool
     {
         return $this->isActive;
+    }
+
+    public function role(): string
+    {
+        return $this->role;
+    }
+
+    public function hasRole(string ...$roles): bool
+    {
+        return in_array($this->role, $roles, true);
     }
 }

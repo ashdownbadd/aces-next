@@ -20,9 +20,18 @@ final class Migrator
      */
     private const MIGRATION_ORDER = [
         'CreateUsersTable',
+        'AddUserRoles',
+        'CreateLoginAttemptsTable',
+
+        'CreateAccountsTable',
+        'CreateActivityLogsTable',
+        'CreateJournalVouchersTable',
+        'CreateJournalLinesTable',
+        'AddPostedStatusToJournalVouchersTable',
+        'AddReversalLinkToJournalVouchersTable',
+
         'CreateMembersTable',
         'CreateMemberNumberSequenceTable',
-
         'CreateMemberProfilesTable',
         'CreateMemberContactsTable',
         'CreateMemberAddressesTable',
@@ -30,11 +39,15 @@ final class Migrator
         'AddEducationDetailsToMemberEducationsTable',
         'CreateMemberLivelihoodsTable',
         'CreateMemberBeneficiariesTable',
+        'RemoveArchivedStatusFromMembersTable',
+        'RemoveSharePercentageFromMemberBeneficiariesTable',
 
         'CreateLoansTable',
         'CreateLoanAmortizationsTable',
         'CreateLoanPaymentsTable',
         'CreateLoanPaymentAllocationsTable',
+        'AddPaymentReversalFields',
+        'AddPaymentIdempotencyAndUnappliedAccount',
         'EnforceFinancialDataIntegrity',
     ];
 

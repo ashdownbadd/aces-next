@@ -45,6 +45,7 @@ final class LoansServiceProvider extends ServiceProvider
                 $container->get(AmortizationService::class),
                 $container->get(ActivityLogService::class),
                 $container->get(Session::class),
+                $container->get(\App\Foundation\Database::class),
             ),
         );
 
@@ -65,6 +66,7 @@ final class LoansServiceProvider extends ServiceProvider
                 $container->get(AmortizationService::class),
                 $container->get(ActivityLogService::class),
                 $container->get(Session::class),
+                $container->get(\App\Foundation\Database::class),
             ),
         );
 

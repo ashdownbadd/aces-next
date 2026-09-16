@@ -83,6 +83,8 @@ $humanize = static function (?string $value): string {
     action="/members/register"
     data-registration-form>
 
+    <?= $view->csrfField() ?>
+
     <div class="form-section">
 
         <?php

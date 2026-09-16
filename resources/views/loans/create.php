@@ -125,6 +125,8 @@ $paymentFrequencies = [
         enctype="multipart/form-data"
         novalidate>
 
+    <?= $view->csrfField() ?>
+
         <section class="card loan-create__section">
 
             <div class="form-section__header">

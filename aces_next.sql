@@ -73,6 +73,7 @@ INSERT INTO `accounts` (`id`, `parent_id`, `account_code`, `account_name`, `acco
 (47, 17, '4040', 'Processing Fee Income', 'Income', 'Credit', 1, '2026-08-24 00:58:34', '2026-08-24 00:58:34'),
 (48, 17, '4050', 'Insurance Recovery Income', 'Income', 'Credit', 1, '2026-08-24 00:58:34', '2026-08-24 00:58:34'),
 (49, 17, '4060', 'Notarial Fee Recovery Income', 'Income', 'Credit', 1, '2026-08-24 00:58:34', '2026-08-24 00:58:34');
+(50, 9, '2030', 'Unapplied Loan Payments', 'Liability', 'Credit', 1, '2026-09-16 00:00:00', '2026-09-16 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -349,6 +350,7 @@ INSERT INTO `loan_amortizations` (`id`, `loan_id`, `period`, `due_date`, `princi
 CREATE TABLE `loan_payments` (
   `id` int(10) UNSIGNED NOT NULL,
   `loan_id` int(10) UNSIGNED NOT NULL,
+  `idempotency_key` varchar(80) DEFAULT NULL,
   `payment_datetime` timestamp NOT NULL DEFAULT current_timestamp(),
   `amount_paid` decimal(15,2) NOT NULL,
   `penalty_applied` decimal(15,2) NOT NULL DEFAULT 0.00,
@@ -369,10 +371,10 @@ CREATE TABLE `loan_payments` (
 -- Dumping data for table `loan_payments`
 --
 
-INSERT INTO `loan_payments` (`id`, `loan_id`, `payment_datetime`, `amount_paid`, `penalty_applied`, `interest_applied`, `principal_applied`, `excess`, `type`, `remarks`, `created_by`, `created_at`, `updated_at`, `reversed_at`, `reversed_by`, `reversal_reason`) VALUES
-(7, 14, '2026-08-26 19:18:26', 12400.00, 0.00, 2400.00, 10000.00, 0.00, 'Global', 'QA 4 - First Payment', 1, '2026-08-27 01:18:26', '2026-08-27 01:40:49', '2026-08-26 19:40:49', 1, 'test'),
-(8, 14, '2026-08-26 19:19:30', 123200.00, 0.00, 13200.00, 110000.00, 0.00, 'Global', 'test', 1, '2026-08-27 01:19:30', '2026-08-27 01:26:49', '2026-08-26 19:26:49', 1, 'Entered under wrong transaction.'),
-(9, 14, '2026-08-26 19:28:11', 100.00, 0.00, 100.00, 0.00, 0.00, 'Global', NULL, 1, '2026-08-27 01:28:11', '2026-08-27 01:28:48', '2026-08-26 19:28:48', 1, 'Entered under wrong transaction.');
+INSERT INTO `loan_payments` (`id`, `loan_id`, `idempotency_key`, `payment_datetime`, `amount_paid`, `penalty_applied`, `interest_applied`, `principal_applied`, `excess`, `type`, `remarks`, `created_by`, `created_at`, `updated_at`, `reversed_at`, `reversed_by`, `reversal_reason`) VALUES
+(7, 14, NULL, '2026-08-26 19:18:26', 12400.00, 0.00, 2400.00, 10000.00, 0.00, 'Global', 'QA 4 - First Payment', 1, '2026-08-27 01:18:26', '2026-08-27 01:40:49', '2026-08-26 19:40:49', 1, 'test'),
+(8, 14, NULL, '2026-08-26 19:19:30', 123200.00, 0.00, 13200.00, 110000.00, 0.00, 'Global', 'test', 1, '2026-08-27 01:19:30', '2026-08-27 01:26:49', '2026-08-26 19:26:49', 1, 'Entered under wrong transaction.'),
+(9, 14, NULL, '2026-08-26 19:28:11', 100.00, 0.00, 100.00, 0.00, 0.00, 'Global', NULL, 1, '2026-08-27 01:28:11', '2026-08-27 01:28:48', '2026-08-26 19:28:48', 1, 'Entered under wrong transaction.');
 
 -- --------------------------------------------------------
 
@@ -1329,6 +1331,20 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `login_attempts`
+--
+
+CREATE TABLE `login_attempts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `attempted_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `was_successful` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -1340,6 +1356,7 @@ CREATE TABLE `users` (
   `middle_name` varchar(100) DEFAULT NULL,
   `last_name` varchar(100) NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `role` varchar(30) NOT NULL DEFAULT 'operations',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1348,8 +1365,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `middle_name`, `last_name`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '$2y$10$Y6oHM7R4tkYHqpkUb.bkxuYRSEb9cLiYnkt1tLSpW86.pTHhK.3SC', 'System', NULL, 'Administrator', 1, '2026-08-04 01:58:35', '2026-08-04 01:58:35');
+INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `middle_name`, `last_name`, `is_active`, `role`, `created_at`, `updated_at`) VALUES
+(1, 'admin', '$2y$10$Y6oHM7R4tkYHqpkUb.bkxuYRSEb9cLiYnkt1tLSpW86.pTHhK.3SC', 'System', NULL, 'Administrator', 1, 'admin', '2026-08-04 01:58:35', '2026-08-04 01:58:35');
 
 --
 -- Indexes for dumped tables
@@ -1492,6 +1509,16 @@ ALTER TABLE `migrations`
   ADD UNIQUE KEY `migration` (`migration`);
 
 --
+-- Indexes for table `login_attempts`
+--
+ALTER TABLE `login_attempts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_login_attempts_lookup` (`username`,`ip_address`,`attempted_at`),
+  ADD KEY `idx_login_attempts_ip` (`ip_address`,`attempted_at`);
+
+-- --------------------------------------------------------
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -1567,6 +1594,12 @@ ALTER TABLE `member_beneficiaries`
 --
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `login_attempts`
+--
+ALTER TABLE `login_attempts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`

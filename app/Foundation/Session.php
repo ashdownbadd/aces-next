@@ -8,9 +8,23 @@ final class Session
 {
     public function __construct()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            return;
         }
+
+        $secure = (getenv('APP_ENV') ?: 'production') !== 'local'
+            || (($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off')
+            || (($_SERVER['SERVER_PORT'] ?? '') === '443');
+
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '/',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+
+        session_start();
     }
 
     public function get(string $key, mixed $default = null): mixed

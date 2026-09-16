@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Foundation\View;
+use App\Foundation\CsrfToken;
 use App\Foundation\Container;
 
 final class ViewServiceProvider extends ServiceProvider
@@ -15,6 +16,7 @@ final class ViewServiceProvider extends ServiceProvider
             View::class,
             fn(Container $container) => new View(
                 __DIR__ . '/../../resources/views',
+                $container->get(CsrfToken::class),
             ),
         );
     }

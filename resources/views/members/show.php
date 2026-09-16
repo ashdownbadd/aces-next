@@ -291,6 +291,8 @@ $memberId = (int) ($member['id'] ?? 0);
                         action="/members/<?= $memberId ?>/status"
                         onsubmit="return confirm('Are you sure you want to approve <?= htmlspecialchars($fullName !== '' ? $fullName : 'this member', ENT_QUOTES) ?>? The member will become Active.');">
 
+    <?= $view->csrfField() ?>
+
                         <input
                             type="hidden"
                             name="status"
@@ -308,6 +310,8 @@ $memberId = (int) ($member['id'] ?? 0);
                         method="POST"
                         action="/members/<?= $memberId ?>/status"
                         onsubmit="return confirm('Are you sure you want to mark <?= htmlspecialchars($fullName !== '' ? $fullName : 'this member', ENT_QUOTES) ?> as Inactive?');">
+
+    <?= $view->csrfField() ?>
 
                         <input
                             type="hidden"
@@ -329,6 +333,8 @@ $memberId = (int) ($member['id'] ?? 0);
                         action="/members/<?= $memberId ?>/status"
                         onsubmit="return confirm('Are you sure you want to deactivate <?= htmlspecialchars($fullName !== '' ? $fullName : 'this member', ENT_QUOTES) ?>?');">
 
+    <?= $view->csrfField() ?>
+
                         <input
                             type="hidden"
                             name="status"
@@ -348,6 +354,8 @@ $memberId = (int) ($member['id'] ?? 0);
                         method="POST"
                         action="/members/<?= $memberId ?>/status"
                         onsubmit="return confirm('Are you sure you want to reactivate <?= htmlspecialchars($fullName !== '' ? $fullName : 'this member', ENT_QUOTES) ?>? The member will become Active.');">
+
+    <?= $view->csrfField() ?>
 
                         <input
                             type="hidden"

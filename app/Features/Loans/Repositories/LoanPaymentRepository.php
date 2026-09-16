@@ -141,16 +141,20 @@ final class LoanPaymentRepository extends Repository
         array $updatedRows,
     ): int {
         $pdo = $this->connection();
-        $pdo->beginTransaction();
+        $ownsTransaction = ! $pdo->inTransaction();
+
+        if ($ownsTransaction) {
+            $pdo->beginTransaction();
+        }
 
         try {
             $statement = $pdo->prepare(
                 'INSERT INTO loan_payments (
-                    loan_id, payment_datetime, amount_paid,
+                    loan_id, idempotency_key, payment_datetime, amount_paid,
                     penalty_applied, interest_applied, principal_applied,
                     excess, type, remarks, created_by
                  ) VALUES (
-                    :loan_id, :payment_datetime, :amount_paid,
+                    :loan_id, :idempotency_key, :payment_datetime, :amount_paid,
                     :penalty_applied, :interest_applied, :principal_applied,
                     :excess, :type, :remarks, :created_by
                  )'
@@ -158,6 +162,7 @@ final class LoanPaymentRepository extends Repository
 
             $statement->execute([
                 'loan_id' => $payment['loan_id'],
+                'idempotency_key' => $payment['idempotency_key'] ?? null,
                 'payment_datetime' => $payment['payment_datetime'],
                 'amount_paid' => $payment['amount_paid'],
                 'penalty_applied' => $payment['penalty_applied'],
@@ -242,10 +247,13 @@ final class LoanPaymentRepository extends Repository
                 ]);
             }
 
-            $pdo->commit();
+            if ($ownsTransaction) {
+                $pdo->commit();
+            }
+
             return $paymentId;
         } catch (\Throwable $exception) {
-            if ($pdo->inTransaction()) {
+            if ($ownsTransaction && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
             throw $exception;
@@ -268,16 +276,20 @@ final class LoanPaymentRepository extends Repository
         callable $accountingCallback,
     ): int {
         $pdo = $this->connection();
-        $pdo->beginTransaction();
+        $ownsTransaction = ! $pdo->inTransaction();
+
+        if ($ownsTransaction) {
+            $pdo->beginTransaction();
+        }
 
         try {
             $statement = $pdo->prepare(
                 'INSERT INTO loan_payments (
-                    loan_id, payment_datetime, amount_paid,
+                    loan_id, idempotency_key, payment_datetime, amount_paid,
                     penalty_applied, interest_applied, principal_applied,
                     excess, type, remarks, created_by
                  ) VALUES (
-                    :loan_id, :payment_datetime, :amount_paid,
+                    :loan_id, :idempotency_key, :payment_datetime, :amount_paid,
                     :penalty_applied, :interest_applied, :principal_applied,
                     :excess, :type, :remarks, :created_by
                  )'
@@ -285,6 +297,7 @@ final class LoanPaymentRepository extends Repository
 
             $statement->execute([
                 'loan_id' => $payment['loan_id'],
+                'idempotency_key' => $payment['idempotency_key'] ?? null,
                 'payment_datetime' => $payment['payment_datetime'],
                 'amount_paid' => $payment['amount_paid'],
                 'penalty_applied' => $payment['penalty_applied'],
@@ -367,16 +380,30 @@ final class LoanPaymentRepository extends Repository
 
             $accountingCallback($paymentId);
 
-            $pdo->commit();
+            if ($ownsTransaction) {
+                $pdo->commit();
+            }
 
             return $paymentId;
         } catch (\Throwable $exception) {
-            if ($pdo->inTransaction()) {
+            if ($ownsTransaction && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
 
             throw $exception;
         }
+    }
+
+    /** @return array<string, mixed>|null */
+    public function findByIdempotencyKey(string $key): ?array
+    {
+        $statement = $this->connection()->prepare(
+            'SELECT id, loan_id, amount_paid, penalty_applied, interest_applied, principal_applied, excess, reversed_at
+             FROM loan_payments WHERE idempotency_key = :key LIMIT 1'
+        );
+        $statement->execute(['key' => $key]);
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+        return $row === false ? null : $row;
     }
 
     /** @return array<string, mixed>|null */

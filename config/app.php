@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 return [
 
-    'name' => 'ACES Next',
+    'name' => getenv('APP_NAME') ?: 'ACES Next',
 
-    'env' => 'local',
+    'env' => getenv('APP_ENV') ?: 'production',
 
-    'debug' => true,
+    'debug' => filter_var(getenv('APP_DEBUG') ?: 'false', FILTER_VALIDATE_BOOLEAN),
 
-    'timezone' => 'Asia/Manila',
+    'url' => getenv('APP_URL') ?: 'http://localhost',
+
+    'timezone' => getenv('APP_TIMEZONE') ?: 'Asia/Manila',
 
 ];

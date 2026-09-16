@@ -11,6 +11,7 @@ use App\Features\Members\Repositories\MemberRepository;
 use App\Features\Members\Services\BeneficiaryService;
 use App\Features\Members\Services\EditService;
 use App\Features\Members\Services\MemberService;
+use App\Features\Members\Services\MemberInputValidator;
 use App\Features\Members\Services\RegistrationService;
 use App\Features\Loans\Services\LoanService;
 use App\Features\Members\Support\EditSession;
@@ -64,6 +65,11 @@ final class MembersServiceProvider extends ServiceProvider
             ),
         );
 
+        $this->container->singleton(
+            MemberInputValidator::class,
+            fn(Container $container) => new MemberInputValidator(),
+        );
+
         /*
         |--------------------------------------------------------------------------
         | Member Service
@@ -76,6 +82,7 @@ final class MembersServiceProvider extends ServiceProvider
                 $container->get(MemberRepository::class),
                 $container->get(ActivityLogService::class),
                 $container->get(Session::class),
+                $container->get(MemberInputValidator::class),
             ),
         );
 
@@ -92,6 +99,7 @@ final class MembersServiceProvider extends ServiceProvider
                 $container->get(MemberRepository::class),
                 $container->get(ActivityLogService::class),
                 $container->get(Session::class),
+                $container->get(MemberInputValidator::class),
             ),
         );
 

@@ -46,6 +46,8 @@ declare(strict_types=1);
             method="POST"
             action="<?= htmlspecialchars($formAction) ?>">
 
+    <?= $view->csrfField() ?>
+
             <?php if ($isEditing): ?>
                 <input
                     type="hidden"
@@ -275,6 +277,8 @@ declare(strict_types=1);
                                 method="POST"
                                 action="/members/beneficiaries/delete">
 
+    <?= $view->csrfField() ?>
+
                                 <input
                                     type="hidden"
                                     name="index"
@@ -307,6 +311,8 @@ declare(strict_types=1);
         <form
             method="POST"
             action="/members/create?step=beneficiaries">
+
+    <?= $view->csrfField() ?>
 
             <?php
 

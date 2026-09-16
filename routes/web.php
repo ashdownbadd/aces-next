@@ -12,6 +12,9 @@ use App\Features\Ledger\Controllers\LedgerController;
 use App\Foundation\Router;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
+use App\Http\Middleware\OperationsMiddleware;
+use App\Http\Middleware\AccountingMiddleware;
+use App\Http\Middleware\AdminMiddleware;
 
 /** @var Router $router */
 
@@ -79,7 +82,7 @@ $router->get(
     '/members/{id}/edit',
     [MembersController::class, 'edit'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -95,7 +98,7 @@ $router->post(
     '/members/{id}/status',
     [MembersController::class, 'changeStatus'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -111,7 +114,7 @@ $router->post(
     '/members/create',
     [MembersController::class, 'storeStep'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -119,7 +122,7 @@ $router->post(
     '/members/register',
     [MembersController::class, 'register'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -133,7 +136,7 @@ $router->post(
     '/members/beneficiaries',
     [BeneficiaryController::class, 'store'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -141,7 +144,7 @@ $router->post(
     '/members/beneficiaries/update',
     [BeneficiaryController::class, 'update'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -149,7 +152,7 @@ $router->post(
     '/members/beneficiaries/delete',
     [BeneficiaryController::class, 'destroy'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -188,7 +191,7 @@ $router->post(
     '/loans/create',
     [LoanController::class, 'store'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -204,7 +207,7 @@ $router->post(
     '/loans/{id}/submit',
     [LoanController::class, 'submit'],
     [
-        AuthMiddleware::class,
+        OperationsMiddleware::class,
     ],
 );
 
@@ -220,7 +223,7 @@ $router->post(
     '/loans/payments/{id}/reverse',
     [LoanController::class, 'reversePayment'],
     [
-        AuthMiddleware::class,
+        AccountingMiddleware::class,
     ],
 );
 
@@ -236,7 +239,7 @@ $router->post(
     '/loans/{id}/payments',
     [LoanController::class, 'payment'],
     [
-        AuthMiddleware::class,
+        AccountingMiddleware::class,
     ],
 );
 
@@ -244,7 +247,7 @@ $router->post(
     '/loans/{id}/release',
     [LoanController::class, 'release'],
     [
-        AuthMiddleware::class,
+        AccountingMiddleware::class,
     ],
 );
 
@@ -252,7 +255,7 @@ $router->post(
     '/loans/{id}/approve',
     [LoanController::class, 'approve'],
     [
-        AuthMiddleware::class,
+        AdminMiddleware::class,
     ],
 );
 
@@ -260,7 +263,7 @@ $router->post(
     '/loans/{id}/reject',
     [LoanController::class, 'reject'],
     [
-        AuthMiddleware::class,
+        AdminMiddleware::class,
     ],
 );
 
@@ -333,7 +336,7 @@ $router->post(
     '/ledger/{id}/approve',
     [LedgerController::class, 'approve'],
     [
-        AuthMiddleware::class,
+        AccountingMiddleware::class,
     ],
 );
 
@@ -341,7 +344,7 @@ $router->post(
     '/ledger/{id}/reject',
     [LedgerController::class, 'reject'],
     [
-        AuthMiddleware::class,
+        AccountingMiddleware::class,
     ],
 );
 
@@ -349,7 +352,7 @@ $router->post(
     '/ledger/{id}/post',
     [LedgerController::class, 'post'],
     [
-        AuthMiddleware::class,
+        AccountingMiddleware::class,
     ],
 );
 
@@ -374,7 +377,7 @@ $router->post(
     ],
 );
 
-$router->get(
+$router->post(
     '/logout',
     [LoginController::class, 'logout'],
     [

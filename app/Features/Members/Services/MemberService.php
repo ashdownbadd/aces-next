@@ -15,6 +15,7 @@ final class MemberService
         private readonly MemberRepository $repository,
         private readonly ActivityLogService $activityLog,
         private readonly Session $session,
+        private readonly MemberInputValidator $validator,
     ) {}
 
     /**
@@ -181,6 +182,8 @@ final class MemberService
         int $memberId,
         MemberRegistrationData $registration,
     ): void {
+        $this->validator->validateRegistration($registration);
+
         $this->repository->update(
             $memberId,
             $registration,

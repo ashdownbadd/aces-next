@@ -25,6 +25,7 @@ final class RegistrationService
         private readonly MemberRepository $members,
         private readonly ActivityLogService $activityLog,
         private readonly Session $userSession,
+        private readonly MemberInputValidator $validator,
     ) {}
 
     /**
@@ -36,6 +37,8 @@ final class RegistrationService
         string $step,
         array $data,
     ): ?string {
+        $this->validator->validateStep($step, $data);
+
         $this->session->putStep(
             $step,
             $data,
@@ -95,6 +98,7 @@ final class RegistrationService
         string $status = 'Pending',
     ): array {
         $registration = $this->buildRegistrationData();
+        $this->validator->validateRegistration($registration);
 
         $result = $this->members->create(
             $registration,

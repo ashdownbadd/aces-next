@@ -164,6 +164,8 @@ $statusClass = match ($status) {
     <section class="ledger-detail__actions">
         <?php if ($status === 'Pending'): ?>
             <form method="POST" action="/ledger/<?= (int) $voucher['id'] ?>/approve">
+
+    <?= $view->csrfField() ?>
                 <button type="submit" class="btn btn--primary">
                     Approve Voucher
                 </button>
@@ -173,6 +175,8 @@ $statusClass = match ($status) {
                 method="POST"
                 action="/ledger/<?= (int) $voucher['id'] ?>/reject"
                 class="ledger-detail__reject-form">
+
+    <?= $view->csrfField() ?>
                 <input
                     class="input"
                     type="text"
@@ -186,6 +190,8 @@ $statusClass = match ($status) {
             </form>
         <?php elseif ($status === 'Approved'): ?>
             <form method="POST" action="/ledger/<?= (int) $voucher['id'] ?>/post">
+
+    <?= $view->csrfField() ?>
                 <button type="submit" class="btn btn--primary">
                     Post Voucher
                 </button>

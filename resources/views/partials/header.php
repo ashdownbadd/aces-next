@@ -75,9 +75,12 @@ function topnavActive(
             Administrator
         </span>
 
-        <a href="/logout" class="btn btn--outline btn--sm">
-            Logout
-        </a>
+        <form method="POST" action="/logout" class="u-inline-form">
+            <?= $view->csrfField() ?>
+            <button type="submit" class="btn btn--outline btn--sm">
+                Logout
+            </button>
+        </form>
 
     </div>
 

@@ -618,6 +618,10 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                 action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/payments"
                 class="loan-payment__form">
 
+    <?= $view->csrfField() ?>
+
+                <input type="hidden" name="payment_token" value="<?= htmlspecialchars(bin2hex(random_bytes(32)), ENT_QUOTES, 'UTF-8') ?>">
+
                 <div class="form-group">
                     <label class="form-label" for="amount-paid">
                         Amount Paid
@@ -810,6 +814,8 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                                             action="/loans/payments/<?= $paymentId ?>/reverse"
                                             class="loan-payment__reverse-form">
 
+    <?= $view->csrfField() ?>
+
                                             <input
                                                 name="reason"
                                                 class="input"
@@ -878,6 +884,8 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                 method="POST"
                 action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/release"
                 class="loan-detail__release-form">
+
+    <?= $view->csrfField() ?>
 
                 <div class="loan-detail__action-grid">
 
@@ -970,6 +978,8 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                         method="POST"
                         action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/approve">
 
+    <?= $view->csrfField() ?>
+
                         <button
                             type="submit"
                             class="btn btn--primary">
@@ -995,6 +1005,8 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                         method="POST"
                         action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/reject"
                         class="loan-detail__reject-form">
+
+    <?= $view->csrfField() ?>
 
                         <div class="form-group">
 

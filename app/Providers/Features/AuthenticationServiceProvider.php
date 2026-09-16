@@ -9,6 +9,9 @@ use App\Features\Authentication\Repositories\UserRepository;
 use App\Features\Authentication\Services\AuthService;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
+use App\Http\Middleware\OperationsMiddleware;
+use App\Http\Middleware\AccountingMiddleware;
+use App\Http\Middleware\AdminMiddleware;
 use App\Foundation\Container;
 use App\Foundation\Session;
 use App\Providers\ServiceProvider;
@@ -29,6 +32,7 @@ final class AuthenticationServiceProvider extends ServiceProvider
             fn(Container $container) => new AuthService(
                 $container->get(UserRepository::class),
                 $container->get(Session::class),
+                $container->get(\App\Foundation\Database::class),
             ),
         );
 
@@ -43,6 +47,27 @@ final class AuthenticationServiceProvider extends ServiceProvider
         $this->container->singleton(
             AuthMiddleware::class,
             fn(Container $container) => new AuthMiddleware(
+                $container->get(AuthService::class),
+            ),
+        );
+
+        $this->container->singleton(
+            OperationsMiddleware::class,
+            fn(Container $container) => new OperationsMiddleware(
+                $container->get(AuthService::class),
+            ),
+        );
+
+        $this->container->singleton(
+            AccountingMiddleware::class,
+            fn(Container $container) => new AccountingMiddleware(
+                $container->get(AuthService::class),
+            ),
+        );
+
+        $this->container->singleton(
+            AdminMiddleware::class,
+            fn(Container $container) => new AdminMiddleware(
                 $container->get(AuthService::class),
             ),
         );

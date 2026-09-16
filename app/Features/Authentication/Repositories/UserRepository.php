@@ -105,6 +105,11 @@ final readonly class UserRepository
             middleName: $user['middle_name'],
             lastName: $user['last_name'],
             isActive: (bool) $user['is_active'],
+            role: isset($user['role'])
+                ? (string) $user['role']
+                : ((string) $user['username'] === 'admin'
+                    ? 'admin'
+                    : 'operations'),
         );
     }
 }

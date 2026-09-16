@@ -75,8 +75,6 @@ function sidebarActive(
             <?= sidebarActive('/ledger', $currentRoute) ?>>
             Ledger
         </a>
-        <a href="#">Reports</a>
-        <a href="#">Settings</a>
 
     </nav>
 

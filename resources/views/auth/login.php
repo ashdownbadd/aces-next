@@ -27,6 +27,8 @@ $title = 'Sign In';
 
         <form method="POST" action="/login">
 
+    <?= $view->csrfField() ?>
+
             <div class="c-login__field">
                 <label class="c-login__label" for="username">
                     Username

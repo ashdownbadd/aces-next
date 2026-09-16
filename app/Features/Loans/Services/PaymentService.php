@@ -12,6 +12,7 @@ use App\Features\Ledger\Services\LedgerService;
 use App\Features\Loans\Repositories\LoanPaymentRepository;
 use App\Features\Loans\Repositories\LoanRepository;
 use App\Foundation\Session;
+use App\Foundation\Database;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use RuntimeException;
@@ -26,6 +27,7 @@ final class PaymentService
         private readonly AmortizationService $amortization,
         private readonly ActivityLogService $activityLog,
         private readonly Session $session,
+        private readonly Database $database,
     ) {}
 
     /** @return array<string, mixed> */
@@ -33,46 +35,86 @@ final class PaymentService
         int $loanId,
         float $amountPaid,
         ?string $remarks = null,
+        ?string $idempotencyKey = null,
     ): array {
         if ($loanId <= 0) {
             throw new InvalidArgumentException('Invalid loan ID.');
         }
 
         $amountPaid = $this->money($amountPaid);
+        $idempotencyKey = trim((string)($idempotencyKey ?? ''));
+        if ($idempotencyKey === '' || !preg_match('/^[A-Za-z0-9_-]{32,80}$/', $idempotencyKey)) {
+            throw new InvalidArgumentException('A valid payment request token is required.');
+        }
 
         if ($amountPaid <= 0.0) {
-            return [
-                'payment_id' => null,
-                'amount_paid' => 0.00,
-                'penalty_applied' => 0.00,
-                'interest_applied' => 0.00,
-                'principal_applied' => 0.00,
-                'excess' => 0.00,
-                'loan_fully_paid' => false,
-            ];
-        }
-
-        $loan = $this->loanRepository->find($loanId);
-
-        if ($loan === null) {
-            throw new RuntimeException('Loan not found.');
-        }
-
-        if (($loan['loan_status'] ?? null) !== LoanStatus::ACTIVE) {
-            throw new RuntimeException(
-                'Payments can only be applied to Active loans.'
+            throw new InvalidArgumentException(
+                'Payment amount must be greater than zero.',
             );
         }
 
-        $rows = $this->repository->amortizations($loanId);
+        $pdo = $this->database->connection();
+        $pdo->beginTransaction();
 
-        if ($rows === []) {
-            throw new RuntimeException(
-                'The loan does not have an amortization schedule.'
+        try {
+            $existing = $this->repository->findByIdempotencyKey($idempotencyKey);
+            if ($existing !== null) {
+                if ((int)$existing['loan_id'] !== $loanId || abs((float)$existing['amount_paid'] - $amountPaid) > 0.005) {
+                    throw new RuntimeException('This payment request token was already used for a different payment.');
+                }
+                return [
+                    'payment_id' => (int)$existing['id'],
+                    'amount_paid' => (float)$existing['amount_paid'],
+                    'penalty_applied' => (float)$existing['penalty_applied'],
+                    'interest_applied' => (float)$existing['interest_applied'],
+                    'principal_applied' => (float)$existing['principal_applied'],
+                    'excess' => (float)$existing['excess'],
+                    'loan_fully_paid' => ($this->loanRepository->find($loanId)['loan_status'] ?? null) === LoanStatus::FULLY_PAID,
+                ];
+            }
+
+            $lockLoan = $pdo->prepare(
+                'SELECT id, member_id, loan_status
+                 FROM loans
+                 WHERE id = :id
+                 LIMIT 1
+                 FOR UPDATE'
             );
-        }
+            $lockLoan->execute(['id' => $loanId]);
+            $lockedLoan = $lockLoan->fetch(\PDO::FETCH_ASSOC);
 
-        $refreshedRows = $this->amortization->refresh($rows);
+            if ($lockedLoan === false) {
+                throw new RuntimeException('Loan not found.');
+            }
+
+            if (($lockedLoan['loan_status'] ?? null) !== LoanStatus::ACTIVE) {
+                throw new RuntimeException(
+                    'Payments can only be applied to Active loans.'
+                );
+            }
+
+            // The lock is held until the payment, allocations, accounting
+            // voucher, and amortization updates all commit together.
+            $rowsStatement = $pdo->prepare(
+                'SELECT id, loan_id, period, due_date, principal, interest,
+                        rem_principal, rem_interest, rem_penalty, orig_penalty,
+                        status, remarks
+                 FROM loan_amortizations
+                 WHERE loan_id = :loan_id
+                 ORDER BY period ASC
+                 FOR UPDATE'
+            );
+            $rowsStatement->execute(['loan_id' => $loanId]);
+            $rows = $rowsStatement->fetchAll(\PDO::FETCH_ASSOC);
+
+            if ($rows === []) {
+                throw new RuntimeException(
+                    'The loan does not have an amortization schedule.'
+                );
+            }
+
+            $loan = $lockedLoan;
+            $refreshedRows = $this->amortization->refresh($rows);
 
         $unpaidRows = array_values(
             array_filter(
@@ -83,15 +125,9 @@ final class PaymentService
         );
 
         if ($unpaidRows === []) {
-            return [
-                'payment_id' => null,
-                'amount_paid' => $amountPaid,
-                'penalty_applied' => 0.00,
-                'interest_applied' => 0.00,
-                'principal_applied' => 0.00,
-                'excess' => $amountPaid,
-                'loan_fully_paid' => true,
-            ];
+            throw new RuntimeException(
+                'The loan has no outstanding balance and cannot accept another payment.',
+            );
         }
 
         $remaining = $amountPaid;
@@ -249,6 +285,9 @@ final class PaymentService
         unset($row);
 
         $excess = $this->money($remaining);
+
+        // Any excess is held in the unapplied payment liability account until explicitly refunded/applied.
+
         $allPaid = true;
 
         foreach ($updatedRows as $row) {
@@ -269,7 +308,8 @@ final class PaymentService
          *
          * The payment and its accounting voucher must be persisted
          * atomically. The voucher callback runs inside the same database
-         * transaction opened by LoanPaymentRepository.
+         * transaction opened by PaymentService. The repository participates
+         * in that transaction instead of creating a nested transaction.
          */
         if ($totalPenalty > 0.005) {
             throw new RuntimeException(
@@ -289,6 +329,7 @@ final class PaymentService
         $cashAccountId = $this->ledgerAccountId('1010');
         $principalAccountId = $this->ledgerAccountId('1110');
         $interestAccountId = $this->ledgerAccountId('4010');
+        $unappliedAccountId = $excess > 0.005 ? $this->ledgerAccountId('2030') : 0;
 
         $ledgerLines = [
             [
@@ -296,9 +337,7 @@ final class PaymentService
                 'member_id' => (int) $loan['member_id'],
                 'loan_id' => $loanId,
                 'line_description' => 'Loan payment cash receipt',
-                'debit' => $this->money(
-                    $totalPrincipal + $totalInterest
-                ),
+                'debit' => $amountPaid,
                 'credit' => 0.00,
             ],
         ];
@@ -325,9 +364,21 @@ final class PaymentService
             ];
         }
 
+        if ($excess > 0.005) {
+            $ledgerLines[] = [
+                'account_id' => $unappliedAccountId,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Unapplied excess cash from loan payment',
+                'debit' => 0.00,
+                'credit' => $excess,
+            ];
+        }
+
         $paymentId = $this->repository->persistPaymentWithAccounting(
             payment: [
                 'loan_id' => $loanId,
+                'idempotency_key' => $idempotencyKey,
                 'payment_datetime' => $this->now(),
                 'amount_paid' => $amountPaid,
                 'penalty_applied' => $totalPenalty,
@@ -410,15 +461,24 @@ final class PaymentService
             ipAddress: $_SERVER['REMOTE_ADDR'] ?? null,
         );
 
-        return [
-            'payment_id' => $paymentId,
-            'amount_paid' => $amountPaid,
-            'penalty_applied' => $totalPenalty,
-            'interest_applied' => $totalInterest,
-            'principal_applied' => $totalPrincipal,
-            'excess' => $excess,
-            'loan_fully_paid' => $allPaid,
-        ];
+            $pdo->commit();
+
+            return [
+                'payment_id' => $paymentId,
+                'amount_paid' => $amountPaid,
+                'penalty_applied' => $totalPenalty,
+                'interest_applied' => $totalInterest,
+                'principal_applied' => $totalPrincipal,
+                'excess' => $excess,
+                'loan_fully_paid' => $allPaid,
+            ];
+        } catch (\Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
+        }
     }
 
     /** @return array<int, array<string, mixed>> */

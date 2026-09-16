@@ -8,6 +8,8 @@ declare(strict_types=1);
     method="POST"
     action="/members/create?step=education">
 
+    <?= $view->csrfField() ?>
+
     <div class="form-section">
 
         <?php

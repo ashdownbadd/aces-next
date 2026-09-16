@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Foundation\Config;
+use App\Foundation\CsrfToken;
 use App\Foundation\Container;
 use App\Foundation\Database;
 use App\Foundation\Session;
@@ -28,6 +29,13 @@ final class FoundationServiceProvider extends ServiceProvider
         $this->container->singleton(
             Session::class,
             fn() => new Session(),
+        );
+
+        $this->container->singleton(
+            CsrfToken::class,
+            fn(Container $container) => new CsrfToken(
+                $container->get(Session::class),
+            ),
         );
 
         $this->container->singleton(

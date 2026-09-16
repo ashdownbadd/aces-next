@@ -79,6 +79,13 @@ final class Request
         return $this->input[$key] ?? $default;
     }
 
+    public function header(string $name, mixed $default = null): mixed
+    {
+        $key = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
+
+        return $_SERVER[$key] ?? $default;
+    }
+
     /**
      * @return array<string, mixed>
      */

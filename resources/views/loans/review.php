@@ -391,6 +391,8 @@ $money = static fn (float $value): string => '₱' . number_format(
                 method="POST"
                 action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/submit">
 
+    <?= $view->csrfField() ?>
+
                 <button
                     type="submit"
                     class="btn btn--primary"

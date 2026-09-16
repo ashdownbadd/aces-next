@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Seeders;
 
 use PDO;
+use RuntimeException;
 
 final class UserSeeder extends Seeder
 {
@@ -22,15 +23,23 @@ final class UserSeeder extends Seeder
             );
 
         $statement->execute([
-            'username' => 'admin',
+            'username' => getenv('SEED_ADMIN_USERNAME') ?: 'admin',
         ]);
 
         if ($statement->fetch(PDO::FETCH_ASSOC) !== false) {
             return;
         }
 
+        $plainPassword = getenv('SEED_ADMIN_PASSWORD') ?: '';
+
+        if (strlen($plainPassword) < 12) {
+            throw new RuntimeException(
+                'SEED_ADMIN_PASSWORD must be configured with at least 12 characters.',
+            );
+        }
+
         $password = password_hash(
-            'admin123',
+            $plainPassword,
             PASSWORD_DEFAULT,
         );
 
@@ -45,7 +54,8 @@ final class UserSeeder extends Seeder
                     first_name,
                     middle_name,
                     last_name,
-                    is_active
+                    is_active,
+                    role
                 )
                 VALUES
                 (
@@ -54,7 +64,8 @@ final class UserSeeder extends Seeder
                     :first_name,
                     :middle_name,
                     :last_name,
-                    :is_active
+                    :is_active,
+                    :role
                 )
                 '
             );

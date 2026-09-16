@@ -221,6 +221,9 @@ final class LoanService
         );
 
         $actorId = $this->actorId();
+        if ((int)($loan['created_by'] ?? 0) === $actorId) {
+            throw new RuntimeException('The user who created a loan cannot approve the same loan.');
+        }
 
         $this->repository->updateApplicationStatus(
             $loanId,
@@ -307,6 +310,9 @@ final class LoanService
         }
 
         $actorId = $this->actorId();
+        if ((int)($loan['approved_by'] ?? 0) === $actorId) {
+            throw new RuntimeException('The user who approved a loan cannot release the same loan.');
+        }
         $releaseDate ??= $this->today();
 
         $this->validateDate($releaseDate, 'Release date');
