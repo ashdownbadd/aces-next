@@ -11,8 +11,67 @@
     /^\/members\/register(?:$|\?|\/)/i,
   ];
 
+  const SUCCESS_MESSAGES = [
+    [/^\/members\/\d+\/status(?:$|\/|\?)/i, [
+      "Member status changed",
+      "The member status was updated successfully.",
+    ]],
+    [/^\/members\/beneficiaries\/delete(?:$|\/|\?)/i, [
+      "Beneficiary removed",
+      "The beneficiary was removed successfully.",
+    ]],
+    [/^\/members\/beneficiaries\/update(?:$|\/|\?)/i, [
+      "Beneficiary updated",
+      "The beneficiary details were updated successfully.",
+    ]],
+    [/^\/members\/beneficiaries(?:$|\/|\?)/i, [
+      "Beneficiary added",
+      "The beneficiary was added successfully.",
+    ]],
+    [/^\/loans\/payments\/[^/]+\/reverse(?:$|\/|\?)/i, [
+      "Payment reversed",
+      "The payment was reversed successfully.",
+    ]],
+    [/^\/loans\/[^/]+\/submit(?:$|\/|\?)/i, [
+      "Loan application submitted",
+      "The loan application was submitted for review.",
+    ]],
+    [/^\/loans\/[^/]+\/release(?:$|\/|\?)/i, [
+      "Loan released",
+      "The loan was released successfully.",
+    ]],
+    [/^\/loans\/[^/]+\/approve(?:$|\/|\?)/i, [
+      "Loan approved",
+      "The loan application was approved successfully.",
+    ]],
+    [/^\/loans\/[^/]+\/reject(?:$|\/|\?)/i, [
+      "Loan rejected",
+      "The loan application was rejected successfully.",
+    ]],
+    [/^\/loans\/[^/]+\/payments(?:$|\/|\?)/i, [
+      "Payment recorded",
+      "The loan payment was recorded successfully.",
+    ]],
+    [/^\/loans\/create(?:$|\?|\/)/i, [
+      "Loan application created",
+      "The loan application was created successfully.",
+    ]],
+    [/^\/ledger\/[^/]+\/approve(?:$|\/|\?)/i, [
+      "Voucher approved",
+      "The journal voucher was approved successfully.",
+    ]],
+    [/^\/ledger\/[^/]+\/reject(?:$|\/|\?)/i, [
+      "Voucher rejected",
+      "The journal voucher was rejected successfully.",
+    ]],
+    [/^\/ledger\/[^/]+\/post(?:$|\/|\?)/i, [
+      "Voucher posted",
+      "The journal voucher was posted successfully.",
+    ]],
+  ];
+
   const ACTION_LABELS = [
-    [/^\/members\/status(?:$|\/|\?)/i, "Updating member status..."],
+    [/^\/members\/\d+\/status(?:$|\/|\?)/i, "Updating member status..."],
     [/^\/members\/beneficiaries\/delete(?:$|\/|\?)/i, "Removing beneficiary..."],
     [/^\/members\/beneficiaries\/update(?:$|\/|\?)/i, "Updating beneficiary..."],
     [/^\/members\/beneficiaries(?:$|\/|\?)/i, "Adding beneficiary..."],
@@ -149,6 +208,24 @@
     }
 
     return "Processing your request...";
+  };
+
+  const successMessage = (form) => {
+    const path = getActionPath(form);
+
+    for (const [pattern, messages] of SUCCESS_MESSAGES) {
+      if (pattern.test(path)) {
+        return {
+          title: messages[0],
+          message: messages[1],
+        };
+      }
+    }
+
+    return {
+      title: "Action completed",
+      message: "The requested action was completed successfully.",
+    };
   };
 
   const ensureModal = () => {
@@ -400,6 +477,10 @@
     try {
       const requestStartedAt = performance.now();
 
+      form.dispatchEvent(
+        new CustomEvent("critical-action:before-submit")
+      );
+
       const response = await fetch(
         form.action || window.location.href,
         {
@@ -438,9 +519,11 @@
         throw new Error(details);
       }
 
+      const success = successMessage(form);
+
       setState({
-        title: "Operation complete",
-        message: "The requested changes were saved successfully.",
+        title: success.title,
+        message: success.message,
         loading: false,
         canClose: true,
         error: false,

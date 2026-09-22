@@ -22,9 +22,6 @@
   const memberResults =
     form.querySelector("[data-member-results]");
 
-  const memberSelected =
-    form.querySelector("[data-member-selected]");
-
   let memberSearchTimer = null;
   let memberSearchController = null;
   let activeMemberIndex = -1;
@@ -60,12 +57,6 @@
     memberIdInput.value = String(member.id);
     memberSearchInput.value =
       `${member.member_number} — ${member.name}`;
-
-    if (memberSelected) {
-      memberSelected.textContent =
-        `Selected member: ${member.member_number} — ${member.name}`;
-      memberSelected.hidden = false;
-    }
 
     clearMemberResults();
   };
@@ -265,10 +256,6 @@
     "input",
     () => {
       memberIdInput.value = "";
-
-      if (memberSelected) {
-        memberSelected.hidden = true;
-      }
 
       window.clearTimeout(
         memberSearchTimer
@@ -1208,21 +1195,22 @@
     generatePreview
   );
 
+  const normalizeMoneyInputsForSubmit = () => {
+    form
+      .querySelectorAll("[data-loan-money]")
+      .forEach((input) => {
+        input.value = input.value.replace(/,/g, "");
+      });
+  };
+
+  form.addEventListener(
+    "critical-action:before-submit",
+    normalizeMoneyInputsForSubmit
+  );
+
   form.addEventListener(
     "submit",
-    () => {
-      form
-        .querySelectorAll(
-          "[data-loan-money]"
-        )
-        .forEach((input) => {
-          input.value =
-            input.value.replace(
-              /,/g,
-              ""
-            );
-        });
-    }
+    normalizeMoneyInputsForSubmit
   );
 
   reviewButton?.addEventListener(

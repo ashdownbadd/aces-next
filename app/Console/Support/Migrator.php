@@ -6,6 +6,7 @@ namespace App\Console\Support;
 
 use App\Console\Migrations\Migration;
 use App\Foundation\Database;
+use PDO;
 use RuntimeException;
 
 final class Migrator
@@ -103,6 +104,24 @@ final class Migrator
                 continue;
             }
 
+            /*
+             * Existing installations may predate the migration
+             * tracking entries while already containing some of the
+             * newer schema changes (for example, after a manual SQL
+             * update or a previous security-fix build). Re-running a
+             * CREATE/ALTER migration in that state would fail even
+             * though the intended schema change is already present.
+             *
+             * Reconcile only migrations for which we can prove the
+             * complete schema change is already present. Migrations
+             * that are only partially applied are still executed.
+             */
+            if ($this->isAppliedInSchema($class)) {
+                $this->record($class);
+                echo "Reconciled: {$class}" . PHP_EOL;
+                continue;
+            }
+
             /** @var Migration $migration */
             $migration = new $class();
 
@@ -125,6 +144,168 @@ final class Migrator
         }
 
         echo PHP_EOL . 'Done.' . PHP_EOL;
+    }
+
+
+    /**
+     * Determine whether an unrecorded migration's complete schema
+     * change is already present. This is intentionally explicit rather
+     * than a generic table-existence heuristic so a partially applied
+     * migration is never silently skipped.
+     */
+    private function isAppliedInSchema(string $migration): bool
+    {
+        $pdo = $this->database->connection();
+
+        return match ($migration) {
+            self::MIGRATION_NAMESPACE . 'CreateMemberNumberSequenceTable'
+                => $this->tableExists($pdo, 'member_number_sequences'),
+
+            self::MIGRATION_NAMESPACE . 'AddEducationDetailsToMemberEducationsTable'
+                => $this->columnsExist(
+                    $pdo,
+                    'member_educations',
+                    ['school_name', 'graduation_year'],
+                ),
+
+            self::MIGRATION_NAMESPACE . 'AddUserRoles'
+                => $this->columnExists($pdo, 'users', 'role'),
+
+            self::MIGRATION_NAMESPACE . 'CreateLoginAttemptsTable'
+                => $this->tableExists($pdo, 'login_attempts'),
+
+            self::MIGRATION_NAMESPACE . 'AddPaymentIdempotencyAndUnappliedAccount'
+                => $this->columnExists(
+                    $pdo,
+                    'loan_payments',
+                    'idempotency_key',
+                )
+                && $this->indexExists(
+                    $pdo,
+                    'loan_payments',
+                    'uq_loan_payments_idempotency',
+                )
+                && $this->accountExists($pdo, '2030'),
+
+            self::MIGRATION_NAMESPACE . 'EnforceFinancialDataIntegrity'
+                => $this->constraintsExist(
+                    $pdo,
+                    [
+                        'loans' => 'chk_loans_financial_values',
+                        'loan_amortizations' => 'chk_loan_amortizations_amounts',
+                        'loan_payments' => 'chk_loan_payments_amounts',
+                        'loan_payment_allocations' => 'chk_loan_payment_allocation_amount',
+                        'journal_lines' => 'chk_journal_lines_nonnegative',
+                    ],
+                ),
+
+            default => false,
+        };
+    }
+
+    private function tableExists(PDO $pdo, string $table): bool
+    {
+        $statement = $pdo->prepare(
+            'SELECT COUNT(*)
+             FROM information_schema.tables
+             WHERE table_schema = DATABASE()
+               AND table_name = :table'
+        );
+        $statement->execute(['table' => $table]);
+
+        return (int) $statement->fetchColumn() > 0;
+    }
+
+    private function columnExists(PDO $pdo, string $table, string $column): bool
+    {
+        $statement = $pdo->prepare(
+            'SELECT COUNT(*)
+             FROM information_schema.columns
+             WHERE table_schema = DATABASE()
+               AND table_name = :table
+               AND column_name = :column'
+        );
+        $statement->execute([
+            'table' => $table,
+            'column' => $column,
+        ]);
+
+        return (int) $statement->fetchColumn() > 0;
+    }
+
+    /**
+     * @param array<int, string> $columns
+     */
+    private function columnsExist(
+        PDO $pdo,
+        string $table,
+        array $columns,
+    ): bool {
+        foreach ($columns as $column) {
+            if (! $this->columnExists($pdo, $table, $column)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function indexExists(
+        PDO $pdo,
+        string $table,
+        string $index,
+    ): bool {
+        $statement = $pdo->prepare(
+            'SELECT COUNT(*)
+             FROM information_schema.statistics
+             WHERE table_schema = DATABASE()
+               AND table_name = :table
+               AND index_name = :index'
+        );
+        $statement->execute([
+            'table' => $table,
+            'index' => $index,
+        ]);
+
+        return (int) $statement->fetchColumn() > 0;
+    }
+
+    private function accountExists(PDO $pdo, string $accountCode): bool
+    {
+        $statement = $pdo->prepare(
+            'SELECT COUNT(*) FROM accounts WHERE account_code = :account_code'
+        );
+        $statement->execute(['account_code' => $accountCode]);
+
+        return (int) $statement->fetchColumn() > 0;
+    }
+
+    /**
+     * @param array<string, string> $constraints
+     */
+    private function constraintsExist(
+        PDO $pdo,
+        array $constraints,
+    ): bool {
+        foreach ($constraints as $table => $constraint) {
+            $statement = $pdo->prepare(
+                'SELECT COUNT(*)
+                 FROM information_schema.table_constraints
+                 WHERE constraint_schema = DATABASE()
+                   AND table_name = :table
+                   AND constraint_name = :constraint'
+            );
+            $statement->execute([
+                'table' => $table,
+                'constraint' => $constraint,
+            ]);
+
+            if ((int) $statement->fetchColumn() === 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

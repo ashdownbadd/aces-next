@@ -53,6 +53,12 @@ $paymentFrequencies = [
         </div>
     </header>
 
+    <?php if (!empty($error)): ?>
+        <div class="alert alert--error loan-create__server-error" role="alert">
+            <?= htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+    <?php endif; ?>
+
     <ol
         class="loan-create__flow"
         aria-label="Loan application progress">
@@ -184,12 +190,6 @@ $paymentFrequencies = [
                     <span class="form-help">
                         Search by member number or name. Only active members can be selected.
                     </span>
-
-                    <p
-                        class="loan-member-picker__selected"
-                        data-member-selected
-                        hidden
-                        aria-live="polite"></p>
 
                 </div>
 

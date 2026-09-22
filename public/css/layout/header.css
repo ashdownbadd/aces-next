@@ -33,7 +33,7 @@
 
   color: var(--color-text-soft);
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   font-weight: 400;
   letter-spacing: 0.14em;

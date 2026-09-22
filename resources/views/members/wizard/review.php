@@ -1059,10 +1059,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 processing = false;
 
+                if (button) {
+                    button.disabled = false;
+                    button.textContent =
+                        isUpdate
+                            ? "Update Member"
+                            : "Register Member";
+                }
+
                 setModalState({
                     titleText:
                         isUpdate
-                            ? "Update complete"
+                            ? "Member details updated"
                             : "Registration complete",
                     messageText:
                         isUpdate

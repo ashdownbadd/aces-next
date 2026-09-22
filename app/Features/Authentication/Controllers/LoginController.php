@@ -32,16 +32,22 @@ final readonly class LoginController
         $username = trim((string) $request->input('username'));
         $password = (string) $request->input('password');
 
-        if ($this->auth->login($username, $password)) {
+        $result = $this->auth->login($username, $password);
+
+        if ($result === 'success') {
             return Response::redirect('/dashboard');
         }
+
+        $error = $result === 'rate_limited'
+            ? 'Too many login attempts. Please try again later.'
+            : 'Invalid username or password.';
 
         return new Response(
             $this->view->render(
                 'auth.login',
                 [
                     'title' => 'Sign In',
-                    'error' => 'Invalid username or password.',
+                    'error' => $error,
                 ],
                 'layouts.guest',
             )

@@ -92,7 +92,7 @@
   font-size: var(--font-size-xs);
 }.member-profile__meta > span:first-child {
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   letter-spacing: 0.04em;
 }.member-profile__meta strong {
 
@@ -176,17 +176,6 @@
   font-size: var(--font-size-md);
   font-weight: 800;
   letter-spacing: -0.025em;
-}.member-profile__eyebrow {
-
-  display: block;
-
-  color: var(--color-text-soft);
-
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
 }.member-profile__card-icon {
 
   display: grid;
@@ -236,7 +225,7 @@
 
   color: var(--color-text-soft);
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   font-weight: 500;
   letter-spacing: 0.10em;
@@ -277,7 +266,7 @@
 
   color: var(--color-text-soft);
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;

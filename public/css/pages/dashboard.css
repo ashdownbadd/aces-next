@@ -14,7 +14,7 @@
 }
 .dashboard-hero__eyebrow {
   color: var(--color-text-soft);
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   letter-spacing: 0.13em;
   text-transform: uppercase;
@@ -231,7 +231,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -372,7 +372,7 @@
 
   color: var(--color-primary);
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.11em;
@@ -405,7 +405,7 @@
 
   color: var(--color-text-muted);
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   letter-spacing: 0.05em;
   text-transform: uppercase;

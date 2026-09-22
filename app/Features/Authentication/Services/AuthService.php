@@ -18,7 +18,7 @@ final readonly class AuthService
         private Database $database,
     ) {}
 
-    public function login(string $username, string $password): bool
+    public function login(string $username, string $password): string
     {
         $username = trim($username);
         $ipAddress = substr(
@@ -28,7 +28,7 @@ final readonly class AuthService
         );
 
         if ($this->isRateLimited($username, $ipAddress)) {
-            return false;
+            return 'rate_limited';
         }
 
         $user = $this->users->findByUsername($username);
@@ -39,7 +39,7 @@ final readonly class AuthService
             || ! password_verify($password, $user->password())
         ) {
             $this->recordAttempt($username, $ipAddress, false);
-            return false;
+            return 'invalid';
         }
 
         $this->recordAttempt($username, $ipAddress, true);
@@ -47,7 +47,7 @@ final readonly class AuthService
         $this->session->put('user_id', $user->id());
         $this->session->regenerate();
 
-        return true;
+        return 'success';
     }
 
     private function isRateLimited(string $username, string $ipAddress): bool

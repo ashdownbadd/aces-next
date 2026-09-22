@@ -311,24 +311,21 @@ final class PaymentService
          * transaction opened by PaymentService. The repository participates
          * in that transaction instead of creating a nested transaction.
          */
-        if ($totalPenalty > 0.005) {
-            throw new RuntimeException(
-                'Loan payment ledger integration does not yet support penalty accounting.'
-            );
-        }
-
         if (
             $totalPrincipal <= 0.005
             && $totalInterest <= 0.005
+            && $totalPenalty <= 0.005
+            && $excess <= 0.005
         ) {
             throw new RuntimeException(
-                'Loan payment cannot create an accounting voucher with no principal or interest.'
+                'Loan payment cannot create an accounting voucher without an applied amount or unapplied excess.'
             );
         }
 
         $cashAccountId = $this->ledgerAccountId('1010');
         $principalAccountId = $this->ledgerAccountId('1110');
         $interestAccountId = $this->ledgerAccountId('4010');
+        $penaltyAccountId = $totalPenalty > 0.005 ? $this->ledgerAccountId('4020') : 0;
         $unappliedAccountId = $excess > 0.005 ? $this->ledgerAccountId('2030') : 0;
 
         $ledgerLines = [
@@ -361,6 +358,17 @@ final class PaymentService
                 'line_description' => 'Interest income from loan payment',
                 'debit' => 0.00,
                 'credit' => $totalInterest,
+            ];
+        }
+
+        if ($totalPenalty > 0.005) {
+            $ledgerLines[] = [
+                'account_id' => $penaltyAccountId,
+                'member_id' => (int) $loan['member_id'],
+                'loan_id' => $loanId,
+                'line_description' => 'Penalty income from loan payment',
+                'debit' => 0.00,
+                'credit' => $totalPenalty,
             ];
         }
 

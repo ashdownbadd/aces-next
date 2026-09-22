@@ -8,6 +8,7 @@ use App\Features\ActivityLogs\Services\ActivityLogService;
 use App\Features\Ledger\Repositories\JournalVoucherRepository;
 use App\Features\Ledger\Services\LedgerService;
 use App\Features\Loans\Repositories\LoanRepository;
+use App\Features\Authentication\Repositories\UserRepository;
 use App\Features\Loans\Repositories\LoanPaymentRepository;
 use App\Features\Loans\Services\AmortizationService;
 use App\Features\Loans\Services\LoanService;
@@ -45,7 +46,7 @@ final class LoansServiceProvider extends ServiceProvider
                 $container->get(AmortizationService::class),
                 $container->get(ActivityLogService::class),
                 $container->get(Session::class),
-                $container->get(\App\Foundation\Database::class),
+                $container->get(UserRepository::class),
             ),
         );
 

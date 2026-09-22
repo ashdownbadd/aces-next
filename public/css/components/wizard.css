@@ -16,7 +16,7 @@
   align-items: center;
   gap: 6px;
   color: var(--color-text-soft);
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -35,7 +35,7 @@
 }.member-registration__eyebrow {
 
   color: var(--color-primary);
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   font-weight: 600;
   letter-spacing: 0.13em;
@@ -192,7 +192,7 @@
 
   margin-top: 2px;
   color: var(--color-primary);
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -236,7 +236,7 @@
 
   margin-top: 2px;
   color: var(--color-text-soft);
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   letter-spacing: 0.04em;
 }.wizard > .card,
@@ -439,7 +439,7 @@
 
   margin-top: 3px;
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   letter-spacing: 0.05em;
   line-height: 1.25;
@@ -743,7 +743,7 @@
 
   margin-top: 3px;
 
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family);
   font-size: var(--font-size-xs);
   line-height: 1.2;
   letter-spacing: 0.05em;

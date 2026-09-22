@@ -15,6 +15,7 @@ use App\Features\Loans\Domain\LoanStatus;
 use App\Features\Loans\Domain\LoanType;
 use App\Features\Loans\Domain\PaymentFrequency;
 use App\Features\Loans\Repositories\LoanRepository;
+use App\Features\Authentication\Repositories\UserRepository;
 use App\Foundation\Session;
 use DateTimeImmutable;
 use InvalidArgumentException;
@@ -28,6 +29,7 @@ final class LoanService
         private readonly AmortizationService $amortization,
         private readonly ActivityLogService $activityLog,
         private readonly Session $session,
+        private readonly UserRepository $users,
     ) {}
 
     /**
@@ -221,7 +223,10 @@ final class LoanService
         );
 
         $actorId = $this->actorId();
-        if ((int)($loan['created_by'] ?? 0) === $actorId) {
+        if (
+            (int) ($loan['created_by'] ?? 0) === $actorId
+            && ! $this->isAdministrator($actorId)
+        ) {
             throw new RuntimeException('The user who created a loan cannot approve the same loan.');
         }
 
@@ -310,7 +315,10 @@ final class LoanService
         }
 
         $actorId = $this->actorId();
-        if ((int)($loan['approved_by'] ?? 0) === $actorId) {
+        if (
+            (int) ($loan['approved_by'] ?? 0) === $actorId
+            && ! $this->isAdministrator($actorId)
+        ) {
             throw new RuntimeException('The user who approved a loan cannot release the same loan.');
         }
         $releaseDate ??= $this->today();
@@ -606,6 +614,22 @@ final class LoanService
 
     private function prepareLoanData(LoanData $loan): array
     {
+        $financials = $this->calculateFinancials($loan);
+
+        return [
+            ...$loan->toArray(),
+            'processing_fee' => $financials['processing_fee'],
+            'insurance' => $financials['insurance'],
+            'notarial_fee' => $financials['notarial_fee'],
+            'net_proceeds' => $financials['net_proceeds'],
+        ];
+    }
+
+    /**
+     * @return array{processing_fee: float, insurance: float, notarial_fee: float, net_proceeds: float}
+     */
+    private function calculateFinancials(LoanData $loan): array
+    {
         $processingFee = round(
             $loan->principalAmount * 0.02,
             2,
@@ -626,7 +650,6 @@ final class LoanService
         );
 
         return [
-            ...$loan->toArray(),
             'processing_fee' => $processingFee,
             'insurance' => $insurance,
             'notarial_fee' => $notarialFee,
@@ -667,6 +690,14 @@ final class LoanService
         if ($loan->termsMonths <= 0) {
             throw new InvalidArgumentException(
                 'Loan terms must be greater than zero.'
+            );
+        }
+
+        $financials = $this->calculateFinancials($loan);
+
+        if ($financials['net_proceeds'] < 0.00) {
+            throw new InvalidArgumentException(
+                'The loan deductions exceed the principal amount. Increase the principal or adjust the loan terms.'
             );
         }
 
@@ -789,6 +820,13 @@ final class LoanService
         }
 
         return $loan;
+    }
+
+    private function isAdministrator(int $userId): bool
+    {
+        $user = $this->users->findById($userId);
+
+        return $user !== null && $user->hasRole('admin', 'administrator');
     }
 
     private function actorId(): int

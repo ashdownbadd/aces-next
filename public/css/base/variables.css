@@ -23,8 +23,6 @@
 
   --font-family: "Inter", sans-serif;
   --font-family-heading: "Inter", sans-serif;
-  --font-family-mono: "DM Mono", monospace;
-
   /* Standard ACES typography scale */
   --font-size-xs: 0.75rem;   /* 12px */
   --font-size-sm: 0.875rem;  /* 14px */

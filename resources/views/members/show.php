@@ -192,10 +192,7 @@ $memberId = (int) ($member['id'] ?? 0);
 
             <div class="member-profile__card-head">
                 <div>
-                    <span class="member-profile__eyebrow">
-                        Membership
-                    </span>
-                    <h2>Membership Details</h2>
+<h2>Membership Details</h2>
                 </div>
 
                 <span class="member-profile__card-icon" aria-hidden="true">
@@ -263,10 +260,7 @@ $memberId = (int) ($member['id'] ?? 0);
 
             <div class="member-profile__card-head">
                 <div>
-                    <span class="member-profile__eyebrow">
-                        Account Control
-                    </span>
-                    <h2>Member Status</h2>
+<h2>Member Status</h2>
                 </div>
 
                 <span class="member-profile__card-icon" aria-hidden="true">
@@ -390,8 +384,7 @@ $memberId = (int) ($member['id'] ?? 0);
 
             <div class="member-profile__card-head">
                 <div>
-                    <span class="member-profile__eyebrow">Identity</span>
-                    <h2>Personal Information</h2>
+<h2>Personal Information</h2>
                 </div>
 
                 <span class="member-profile__card-icon" aria-hidden="true">
@@ -457,8 +450,7 @@ $memberId = (int) ($member['id'] ?? 0);
 
             <div class="member-profile__card-head">
                 <div>
-                    <span class="member-profile__eyebrow">Reach</span>
-                    <h2>Contact Information</h2>
+<h2>Contact Information</h2>
                 </div>
 
                 <span class="member-profile__card-icon" aria-hidden="true">
@@ -493,8 +485,7 @@ $memberId = (int) ($member['id'] ?? 0);
 
             <div class="member-profile__card-head">
                 <div>
-                    <span class="member-profile__eyebrow">Location</span>
-                    <h2>Address</h2>
+<h2>Address</h2>
                 </div>
 
                 <span class="member-profile__card-icon" aria-hidden="true">
@@ -545,8 +536,7 @@ $memberId = (int) ($member['id'] ?? 0);
 
             <div class="member-profile__card-head">
                 <div>
-                    <span class="member-profile__eyebrow">Work</span>
-                    <h2>Livelihood</h2>
+<h2>Livelihood</h2>
                 </div>
 
                 <span class="member-profile__card-icon" aria-hidden="true">
@@ -594,8 +584,7 @@ $memberId = (int) ($member['id'] ?? 0);
 
             <div class="member-profile__card-head">
                 <div>
-                    <span class="member-profile__eyebrow">Background</span>
-                    <h2>Education</h2>
+<h2>Education</h2>
                 </div>
 
                 <span class="member-profile__card-icon" aria-hidden="true">
@@ -649,11 +638,7 @@ $memberId = (int) ($member['id'] ?? 0);
             <div class="member-profile__card-head">
 
                 <div>
-                    <span class="member-profile__eyebrow">
-                        Family
-                    </span>
-
-                    <h2>Beneficiaries</h2>
+<h2>Beneficiaries</h2>
                 </div>
 
                 <?php if ($beneficiaries !== []): ?>
@@ -757,11 +742,7 @@ $memberId = (int) ($member['id'] ?? 0);
         <div class="member-profile__card-head">
 
             <div>
-                <span class="member-profile__eyebrow">
-                    Cooperative Activity
-                </span>
-
-                <h2>Loans</h2>
+<h2>Loans</h2>
             </div>
 
             <span class="member-profile__count">

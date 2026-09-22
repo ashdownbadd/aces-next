@@ -152,12 +152,16 @@ final class LoanController
     public function create(Request $request): Response
     {
         // Members are loaded on demand by the searchable picker.
+        $error = $this->session->get('loan_error');
+        $this->session->forget('loan_error');
+
         return new Response(
             $this->view->render(
                 'loans.create',
                 [
                     'title' => 'Create Loan',
                     'members' => [],
+                    'error' => $error,
                 ],
                 'layouts.app',
             ),
