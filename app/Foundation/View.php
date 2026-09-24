@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Foundation;
 
 use RuntimeException;
+use App\Features\Authentication\Services\AuthService;
 
 final class View
 {
@@ -16,6 +17,7 @@ final class View
     public function __construct(
         private readonly string $viewsPath,
         private readonly CsrfToken $csrf,
+        private readonly AuthService $auth,
     ) {}
 
     public function csrfField(): string
@@ -87,6 +89,7 @@ final class View
         }
 
         $viewRenderer = $this;
+        $authUser = $this->auth->user();
 
         extract($data, EXTR_SKIP);
 

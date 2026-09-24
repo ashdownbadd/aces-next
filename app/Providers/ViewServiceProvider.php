@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Foundation\View;
 use App\Foundation\CsrfToken;
 use App\Foundation\Container;
+use App\Features\Authentication\Services\AuthService;
 
 final class ViewServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,7 @@ final class ViewServiceProvider extends ServiceProvider
             fn(Container $container) => new View(
                 __DIR__ . '/../../resources/views',
                 $container->get(CsrfToken::class),
+                $container->get(AuthService::class),
             ),
         );
     }

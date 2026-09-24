@@ -327,13 +327,15 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                         </span>
                     </div>
 
-                    <a
-                        href="#loan-release"
-                        class="btn btn--primary">
+                    <?php if ($authUser?->hasRole('accounting')): ?>
+                        <a
+                            href="#loan-release"
+                            class="btn btn--primary">
 
-                        Release Loan
+                            Release Loan
 
-                    </a>
+                        </a>
+                    <?php endif; ?>
 
                 </div>
 
@@ -349,13 +351,15 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                         </span>
                     </div>
 
-                    <a
-                        href="#payment-summary"
-                        class="btn btn--primary">
+                    <?php if ($authUser?->hasRole('accounting')): ?>
+                        <a
+                            href="#payment-summary"
+                            class="btn btn--primary">
 
-                        Record Payment
+                            Record Payment
 
-                    </a>
+                        </a>
+                    <?php endif; ?>
 
                 </div>
 
@@ -370,13 +374,15 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                         </span>
                     </div>
 
-                    <a
-                        href="#payment-summary"
-                        class="btn btn--primary">
+                    <?php if ($authUser?->hasRole('accounting')): ?>
+                        <a
+                            href="#payment-summary"
+                            class="btn btn--primary">
 
-                        Record Payment
+                            Record Payment
 
-                    </a>
+                        </a>
+                    <?php endif; ?>
 
                 </div>
 
@@ -613,6 +619,8 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
 
             </div>
 
+            <?php if ($authUser?->hasRole('accounting')): ?>
+
             <form
                 method="POST"
                 action="/loans/<?= (int) ($loan['id'] ?? 0) ?>/payments"
@@ -657,6 +665,8 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                 </button>
 
             </form>
+
+            <?php endif; ?>
 
         </section>
 
@@ -807,7 +817,7 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                                 </td>
 
                                 <td>
-                                    <?php if (!$reversed && $paymentId > 0): ?>
+                                    <?php if ($authUser?->hasRole('accounting') && !$reversed && $paymentId > 0): ?>
 
                                         <form
                                             method="POST"
@@ -857,7 +867,7 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
 
     </section>
 
-    <?php if ($status === 'Approved' && ($loanStatus === '' || $loanStatus === null)): ?>
+    <?php if ($authUser?->hasRole('accounting') && $status === 'Approved' && ($loanStatus === '' || $loanStatus === null)): ?>
 
         <section class="card loan-detail__section loan-detail__action-section" id="loan-release">
 
@@ -938,7 +948,7 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
 
     <?php endif; ?>
 
-    <?php if ($status === 'Under Review'): ?>
+    <?php if ($authUser?->hasRole('admin') && $status === 'Under Review'): ?>
 
         <section class="card loan-detail__section loan-detail__action-section" id="loan-decision">
 
