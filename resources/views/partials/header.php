@@ -23,6 +23,17 @@ function topnavActive(
 
 ?>
 
+<?php
+$roleLabel = match ($authUser?->role()) {
+    'admin' => 'Administrator',
+    'membership' => 'Membership Officer',
+    'loan_officer' => 'Loan Officer',
+    'accounting' => 'Accounting',
+    default => 'User',
+};
+
+?>
+
 <header class="c-navbar">
 
     <a href="/dashboard" class="c-navbar__brand">
@@ -72,7 +83,7 @@ function topnavActive(
 
         <span class="c-navbar__user">
             <span class="c-navbar__status"></span>
-            Administrator
+            <?= htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8') ?>
         </span>
 
         <form method="POST" action="/logout" class="u-inline-form">

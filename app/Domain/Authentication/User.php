@@ -14,7 +14,7 @@ final readonly class User
         private ?string $middleName,
         private string $lastName,
         private bool $isActive,
-        private string $role = 'operations',
+        private string $role = 'membership',
     ) {}
 
     public function id(): ?int

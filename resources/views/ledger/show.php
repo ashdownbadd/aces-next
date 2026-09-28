@@ -162,7 +162,7 @@ $statusClass = match ($status) {
     </section>
 
     <section class="ledger-detail__actions">
-        <?php if ($authUser?->hasRole('accounting') && $status === 'Pending'): ?>
+        <?php if ($authUser?->hasRole('admin', 'accounting') && $status === 'Pending'): ?>
             <form method="POST" action="/ledger/<?= (int) $voucher['id'] ?>/approve">
 
     <?= $view->csrfField() ?>
@@ -188,7 +188,7 @@ $statusClass = match ($status) {
                     Reject Voucher
                 </button>
             </form>
-        <?php elseif ($authUser?->hasRole('accounting') && $status === 'Approved'): ?>
+        <?php elseif ($authUser?->hasRole('admin', 'accounting') && $status === 'Approved'): ?>
             <form method="POST" action="/ledger/<?= (int) $voucher['id'] ?>/post">
 
     <?= $view->csrfField() ?>

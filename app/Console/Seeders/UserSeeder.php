@@ -71,12 +71,13 @@ final class UserSeeder extends Seeder
             );
 
         $statement->execute([
-            'username'    => 'admin',
+            'username'    => getenv('SEED_ADMIN_USERNAME') ?: 'admin',
             'password'    => $password,
             'first_name'  => 'System',
             'middle_name' => null,
             'last_name'   => 'Administrator',
             'is_active'   => true,
+            'role'        => 'admin',
         ]);
     }
 }

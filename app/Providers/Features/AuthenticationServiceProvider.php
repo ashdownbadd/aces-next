@@ -9,7 +9,8 @@ use App\Features\Authentication\Repositories\UserRepository;
 use App\Features\Authentication\Services\AuthService;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
-use App\Http\Middleware\OperationsMiddleware;
+use App\Http\Middleware\MembershipMiddleware;
+use App\Http\Middleware\LoanOfficerMiddleware;
 use App\Http\Middleware\AccountingMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 use App\Foundation\Container;
@@ -52,8 +53,15 @@ final class AuthenticationServiceProvider extends ServiceProvider
         );
 
         $this->container->singleton(
-            OperationsMiddleware::class,
-            fn(Container $container) => new OperationsMiddleware(
+            MembershipMiddleware::class,
+            fn(Container $container) => new MembershipMiddleware(
+                $container->get(AuthService::class),
+            ),
+        );
+
+        $this->container->singleton(
+            LoanOfficerMiddleware::class,
+            fn(Container $container) => new LoanOfficerMiddleware(
                 $container->get(AuthService::class),
             ),
         );

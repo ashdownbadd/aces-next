@@ -22,6 +22,7 @@ final class Migrator
     private const MIGRATION_ORDER = [
         'CreateUsersTable',
         'AddUserRoles',
+        'UpdateCooperativeStaffRoles',
         'CreateLoginAttemptsTable',
 
         'CreateAccountsTable',

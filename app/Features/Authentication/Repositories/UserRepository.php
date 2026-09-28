@@ -68,7 +68,8 @@ final readonly class UserRepository
                     first_name,
                     middle_name,
                     last_name,
-                    is_active
+                    is_active,
+                    role
                 )
                 VALUES
                 (
@@ -77,7 +78,8 @@ final readonly class UserRepository
                     :first_name,
                     :middle_name,
                     :last_name,
-                    :is_active
+                    :is_active,
+                    :role
                 )'
             );
 
@@ -88,6 +90,7 @@ final readonly class UserRepository
             'middle_name' => $user->middleName(),
             'last_name'   => $user->lastName(),
             'is_active'   => $user->isActive(),
+            'role'        => $user->role(),
         ]);
 
         return (int) $this->database
@@ -109,7 +112,7 @@ final readonly class UserRepository
                 ? (string) $user['role']
                 : ((string) $user['username'] === 'admin'
                     ? 'admin'
-                    : 'operations'),
+                    : 'membership'),
         );
     }
 }

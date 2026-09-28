@@ -12,7 +12,7 @@ final class AddUserRoles extends Migration
     {
         $pdo->exec(
             "ALTER TABLE users
-             ADD COLUMN role VARCHAR(30) NOT NULL DEFAULT 'operations'
+             ADD COLUMN role VARCHAR(30) NOT NULL DEFAULT 'membership'
              AFTER is_active"
         );
 

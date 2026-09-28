@@ -44,15 +44,20 @@ $activeStatusDescription =
     ?? 'Review and manage cooperative loans.';
 
 $isApprovalQueue = $status === 'Under Review';
+$isAdmin = $authUser?->hasRole('admin');
+$isLoanOfficer = $authUser?->hasRole('loan_officer');
+$isAccounting = $authUser?->hasRole('accounting');
 
 ?>
 
 <div class="loan-list">
 
     <header class="loan-list__header loan-list__header--actions">
-        <a class="btn btn--primary" href="/loans/create">
-            + Create Loan
-        </a>
+        <?php if ($isAdmin || $isLoanOfficer): ?>
+            <a class="btn btn--primary" href="/loans/create">
+                + Create Loan
+            </a>
+        <?php endif; ?>
     </header>
 
     <section class="card loan-list__filters">
@@ -209,10 +214,13 @@ $isApprovalQueue = $status === 'Under Review';
 
                                     $actionLabel = match (true) {
                                         $status === 'Overdue' => 'View Loan',
-                                        $applicationStatus === 'Under Review' => 'Review',
-                                        $applicationStatus === 'Pending' => 'Review',
+                                        $applicationStatus === 'Under Review'
+                                            && ($isAdmin || $isLoanOfficer) => 'Review',
+                                        $applicationStatus === 'Pending'
+                                            && ($isAdmin || $isLoanOfficer) => 'Review',
                                         $applicationStatus === 'Approved'
-                                            && $loanLifecycleStatus === '' => 'Release',
+                                            && $loanLifecycleStatus === ''
+                                            && ($isAdmin || $isAccounting) => 'Release',
                                         $loanLifecycleStatus === 'Active' => 'Manage',
                                         default => 'View Loan',
                                     };

@@ -37,6 +37,9 @@ $to =
 $successMessage =
     $successMessage ?? null;
 
+$isAdmin = $authUser?->hasRole('admin');
+$isMembership = $authUser?->hasRole('membership');
+
 /**
  * Build a pagination URL while preserving
  * the current search and status filters.
@@ -69,13 +72,15 @@ $paginationUrl = static function (
 
     <div class="members__header members__header--actions">
 
-        <a
-            href="/members/create?new=1"
-            class="btn btn--primary">
+        <?php if ($isAdmin || $isMembership): ?>
+            <a
+                href="/members/create?new=1"
+                class="btn btn--primary">
 
-            Register Member
+                Register Member
 
-        </a>
+            </a>
+        <?php endif; ?>
 
     </div>
 
@@ -290,13 +295,15 @@ $paginationUrl = static function (
                                         get started.
                                     </p>
 
-                                    <a
-                                        href="/members/create?new=1"
-                                        class="btn btn--primary">
+                                    <?php if ($isAdmin || $isMembership): ?>
+                                        <a
+                                            href="/members/create?new=1"
+                                            class="btn btn--primary">
 
-                                        Register Member
+                                            Register Member
 
-                                    </a>
+                                        </a>
+                                    <?php endif; ?>
 
                                 <?php endif; ?>
 

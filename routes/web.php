@@ -12,7 +12,8 @@ use App\Features\Ledger\Controllers\LedgerController;
 use App\Foundation\Router;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
-use App\Http\Middleware\OperationsMiddleware;
+use App\Http\Middleware\MembershipMiddleware;
+use App\Http\Middleware\LoanOfficerMiddleware;
 use App\Http\Middleware\AccountingMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 
@@ -82,7 +83,7 @@ $router->get(
     '/members/{id}/edit',
     [MembersController::class, 'edit'],
     [
-        OperationsMiddleware::class,
+        MembershipMiddleware::class,
     ],
 );
 
@@ -98,7 +99,7 @@ $router->post(
     '/members/{id}/status',
     [MembersController::class, 'changeStatus'],
     [
-        OperationsMiddleware::class,
+        MembershipMiddleware::class,
     ],
 );
 
@@ -114,7 +115,7 @@ $router->post(
     '/members/create',
     [MembersController::class, 'storeStep'],
     [
-        OperationsMiddleware::class,
+        MembershipMiddleware::class,
     ],
 );
 
@@ -122,7 +123,7 @@ $router->post(
     '/members/register',
     [MembersController::class, 'register'],
     [
-        OperationsMiddleware::class,
+        MembershipMiddleware::class,
     ],
 );
 
@@ -136,7 +137,7 @@ $router->post(
     '/members/beneficiaries',
     [BeneficiaryController::class, 'store'],
     [
-        OperationsMiddleware::class,
+        MembershipMiddleware::class,
     ],
 );
 
@@ -144,7 +145,7 @@ $router->post(
     '/members/beneficiaries/update',
     [BeneficiaryController::class, 'update'],
     [
-        OperationsMiddleware::class,
+        MembershipMiddleware::class,
     ],
 );
 
@@ -152,7 +153,7 @@ $router->post(
     '/members/beneficiaries/delete',
     [BeneficiaryController::class, 'destroy'],
     [
-        OperationsMiddleware::class,
+        MembershipMiddleware::class,
     ],
 );
 
@@ -183,7 +184,7 @@ $router->get(
     '/loans/create',
     [LoanController::class, 'create'],
     [
-        AuthMiddleware::class,
+        LoanOfficerMiddleware::class,
     ],
 );
 
@@ -191,7 +192,7 @@ $router->post(
     '/loans/create',
     [LoanController::class, 'store'],
     [
-        OperationsMiddleware::class,
+        LoanOfficerMiddleware::class,
     ],
 );
 
@@ -199,7 +200,7 @@ $router->get(
     '/loans/{id}/review',
     [LoanController::class, 'review'],
     [
-        AuthMiddleware::class,
+        LoanOfficerMiddleware::class,
     ],
 );
 
@@ -207,7 +208,7 @@ $router->post(
     '/loans/{id}/submit',
     [LoanController::class, 'submit'],
     [
-        OperationsMiddleware::class,
+        LoanOfficerMiddleware::class,
     ],
 );
 

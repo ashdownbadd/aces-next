@@ -50,7 +50,9 @@ $alerts = $alerts ?? [
             <?= $greeting ?>,
             <strong class="dashboard-hero__user">
                 <?= htmlspecialchars(
-                    $_SESSION['username'] ?? 'Administrator'
+                    $authUser?->firstName() ?: 'User',
+                    ENT_QUOTES,
+                    'UTF-8'
                 ) ?>
             </strong>
         </h1>

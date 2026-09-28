@@ -441,7 +441,7 @@ CREATE TABLE `users` (
   `middle_name` varchar(100) DEFAULT NULL,
   `last_name` varchar(100) NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `role` varchar(30) NOT NULL DEFAULT 'operations',
+  `role` varchar(30) NOT NULL DEFAULT 'membership',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

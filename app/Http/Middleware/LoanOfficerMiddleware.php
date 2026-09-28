@@ -8,7 +8,7 @@ use App\Features\Authentication\Services\AuthService;
 use App\Http\Request;
 use App\Http\Response;
 
-final readonly class OperationsMiddleware implements Middleware
+final readonly class LoanOfficerMiddleware implements Middleware
 {
     public function __construct(
         private AuthService $auth,
@@ -18,11 +18,8 @@ final readonly class OperationsMiddleware implements Middleware
     {
         $user = $this->auth->user();
 
-        if ($user === null || ! $user->hasRole('admin', 'operations')) {
-            return new Response(
-                '403 Forbidden',
-                403,
-            );
+        if ($user === null || ! $user->hasRole('admin', 'loan_officer')) {
+            return new Response('403 Forbidden', 403);
         }
 
         return null;
