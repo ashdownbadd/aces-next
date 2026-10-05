@@ -16,6 +16,9 @@ require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 use App\Features\ActivityLogs\Repositories\ActivityLogRepository;
 use App\Features\ActivityLogs\Services\ActivityLogService;
+use App\Features\Authentication\Repositories\UserRepository;
+use App\Features\Ledger\Repositories\JournalVoucherRepository;
+use App\Features\Ledger\Services\LedgerService;
 use App\Features\Loans\DTOs\LoanData;
 use App\Features\Loans\Domain\AmortizationType;
 use App\Features\Loans\Domain\CollateralType;
@@ -61,6 +64,17 @@ function assertNear(float $expected, float $actual, string $message): void
     }
 }
 
+function assertThrows(callable $callback, string $message): void
+{
+    try {
+        $callback();
+    } catch (Throwable) {
+        return;
+    }
+
+    throw new RuntimeException($message);
+}
+
 $config = new Config();
 $config->load(dirname(__DIR__, 3) . '/config');
 
@@ -93,22 +107,30 @@ $loanRepository = new LoanRepository($database);
 $paymentRepository = new LoanPaymentRepository($database);
 $activityRepository = new ActivityLogRepository($database);
 $activityService = new ActivityLogService($activityRepository);
+$ledgerRepository = new JournalVoucherRepository($database);
+$ledgerService = new LedgerService($ledgerRepository);
 $amortizationService = new AmortizationService();
 $session = new Session();
+$userRepository = new UserRepository($database);
 
 $loanService = new LoanService(
     repository: $loanRepository,
+    ledger: $ledgerService,
     amortization: $amortizationService,
     activityLog: $activityService,
     session: $session,
+    users: $userRepository,
 );
 
 $paymentService = new PaymentService(
     repository: $paymentRepository,
+    ledger: $ledgerService,
+    journalVoucherRepository: $ledgerRepository,
     loanRepository: $loanRepository,
     amortization: $amortizationService,
     activityLog: $activityService,
     session: $session,
+    database: $database,
 );
 
 $loanId = null;
@@ -150,7 +172,18 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | Stage 2 — Submit
+    | Stage 2 — Invalid Transition Guard
+    |--------------------------------------------------------------------------
+    */
+
+    assertThrows(
+        fn () => $loanService->approve($loanId),
+        'Pending: approval must be rejected before review.',
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Stage 3 — Submit
     |--------------------------------------------------------------------------
     */
 
@@ -176,7 +209,7 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | Stage 3 — Review
+    | Stage 4 — Review
     |--------------------------------------------------------------------------
     */
 
@@ -191,7 +224,7 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | Stage 4 — Approve
+    | Stage 5 — Approve
     |--------------------------------------------------------------------------
     */
 
@@ -217,7 +250,7 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | Stage 5 — Release + Amortization Persistence
+    | Stage 6 — Release + Amortization Persistence
     |--------------------------------------------------------------------------
     */
 
@@ -253,6 +286,11 @@ try {
         $releaseDate,
         $loan['release_date'],
         'Release: release_date must match the supplied release date.',
+    );
+
+    assertThrows(
+        fn () => $loanService->release($loanId, $releaseDate),
+        'Active: a released loan must not be released twice.',
     );
 
     $scheduleStatement = $pdo->prepare(
@@ -339,7 +377,7 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | Stage 6 — Full Settlement
+    | Stage 7 — Full Settlement
     |--------------------------------------------------------------------------
     |
     | 3 months ×:
@@ -355,6 +393,7 @@ try {
         loanId: $loanId,
         amountPaid: 6360.00,
         remarks: 'LIFECYCLE_INTEGRATION_TEST',
+        idempotencyKey: 'LIFECYCLE_TEST_PAYMENT_0000000000001',
     );
 
     assertNear(
@@ -389,7 +428,7 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | Stage 7 — Fully Paid Verification
+    | Stage 8 — Fully Paid Verification
     |--------------------------------------------------------------------------
     */
 
@@ -404,6 +443,11 @@ try {
     assertTrueValue(
         !empty($loan['fully_paid_at']),
         'Settlement: fully_paid_at must be recorded.',
+    );
+
+    assertThrows(
+        fn () => $loanService->approve($loanId),
+        'Fully Paid: a completed loan must not re-enter approval.',
     );
 
     $remainingStatement = $pdo->prepare(
@@ -456,7 +500,7 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | Stage 8 — Activity Logs
+    | Stage 9 — Activity Logs
     |--------------------------------------------------------------------------
     */
 

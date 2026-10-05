@@ -62,6 +62,12 @@ final class PaymentService
                 if ((int)$existing['loan_id'] !== $loanId || abs((float)$existing['amount_paid'] - $amountPaid) > 0.005) {
                     throw new RuntimeException('This payment request token was already used for a different payment.');
                 }
+
+                // The transaction was opened before the idempotency lookup.
+                // Commit it before returning the existing payment so a replay
+                // cannot leak an active PDO transaction into the next request.
+                $pdo->commit();
+
                 return [
                     'payment_id' => (int)$existing['id'],
                     'amount_paid' => (float)$existing['amount_paid'],
