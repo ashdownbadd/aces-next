@@ -359,6 +359,10 @@ final class MembersController
             ? $this->editService->highestCompletedStepIndex()
             : $this->registrationService->highestCompletedStepIndex();
 
+        $validationError = $isEditing
+            ? null
+            : $this->registrationService->consumeValidationError();
+
         return new Response(
             $this->view->render(
                 'members.create',
@@ -415,6 +419,9 @@ final class MembersController
 
                     'beneficiaries' =>
                     $registration['beneficiaries'] ?? [],
+
+                    'validationError' =>
+                    $validationError,
                 ],
                 'layouts.app',
             ),
@@ -503,10 +510,18 @@ final class MembersController
                     $data,
                 );
             } else {
-                $this->registrationService->saveStep(
+                $nextStep = $this->registrationService->saveStep(
                     $step,
                     $data,
                 );
+
+                if ($nextStep === null) {
+                    return Response::redirect(
+                        '/members/create?' . http_build_query([
+                            'step' => $step,
+                        ]),
+                    );
+                }
             }
         }
 

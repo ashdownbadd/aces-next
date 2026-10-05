@@ -115,27 +115,20 @@ final class MemberSeeder extends Seeder
         string $memberNumber,
         int $index,
     ): void {
-        $firstNames = [
-            'Juan',
-            'Maria',
-            'Pedro',
-            'Ana',
-            'Carlos',
-            'Sofia',
-            'Miguel',
-            'Angela',
-            'Jose',
-            'Gabriel',
-            'Patricia',
-            'Daniel',
-            'Andrea',
-            'Mark',
-            'Christine',
-            'Michael',
-            'Nicole',
-            'Joshua',
-            'Camille',
-            'Nathan',
+        $maleFirstNames = [
+            'Juan', 'Pedro', 'Carlos', 'Miguel', 'Jose',
+            'Gabriel', 'Daniel', 'Mark', 'Michael', 'Joshua',
+            'Nathan', 'Andres', 'Rafael', 'Paolo', 'Adrian',
+            'Marco', 'Luis', 'Anthony', 'Christian', 'Kevin',
+            'Ryan', 'Jerome', 'Vincent', 'Nathaniel', 'Francis',
+        ];
+
+        $femaleFirstNames = [
+            'Maria', 'Ana', 'Sofia', 'Angela', 'Patricia',
+            'Andrea', 'Christine', 'Nicole', 'Camille', 'Isabella',
+            'Bianca', 'Gabrielle', 'Katrina', 'Jasmine', 'Monica',
+            'Clarissa', 'Danielle', 'Stephanie', 'Alyssa', 'Beatrice',
+            'Hannah', 'Julia', 'Michaela', 'Samantha', 'Therese',
         ];
 
         $middleNames = [
@@ -169,29 +162,18 @@ final class MemberSeeder extends Seeder
             'Fernandez',
         ];
 
-        $firstName = $firstNames[$index % count($firstNames)];
+        $isFemale = $index >= 50;
+        $firstNames = $isFemale
+            ? $femaleFirstNames
+            : $maleFirstNames;
+
+        $firstName = $firstNames[($index % 50) % count($firstNames)];
 
         $middleName = $middleNames[$index % count($middleNames)];
 
         $lastName = $lastNames[$index % count($lastNames)];
 
-        $sex = in_array(
-            $firstName,
-            [
-                'Maria',
-                'Ana',
-                'Sofia',
-                'Angela',
-                'Patricia',
-                'Andrea',
-                'Christine',
-                'Nicole',
-                'Camille',
-            ],
-            true,
-        )
-            ? 'Female'
-            : 'Male';
+        $sex = $isFemale ? 'Female' : 'Male';
 
         $civilStatuses = [
             'Single',
@@ -293,8 +275,7 @@ final class MemberSeeder extends Seeder
                 birth_date,
                 birth_place,
                 sex,
-                civil_status,
-                nationality
+                civil_status
             )
             VALUES
             (
@@ -306,8 +287,7 @@ final class MemberSeeder extends Seeder
                 :birth_date,
                 :birth_place,
                 :sex,
-                :civil_status,
-                :nationality
+                :civil_status
             )
             '
         );
@@ -340,8 +320,6 @@ final class MemberSeeder extends Seeder
             'civil_status' =>
             $civilStatus,
 
-            'nationality' =>
-            'Filipino',
         ]);
 
         /*

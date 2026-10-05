@@ -264,26 +264,7 @@ declare(strict_types=1);
 
             </div>
 
-            <div class="form-group">
 
-                <label
-                    class="form-label"
-                    for="nationality">
-
-                    Nationality
-
-                </label>
-
-                <input
-                    id="nationality"
-                    class="input"
-                    type="text"
-                    name="nationality"
-                    data-type="title"
-                    maxlength="100"
-                    value="<?= htmlspecialchars($personal['nationality'] ?? '') ?>">
-
-            </div>
 
         </div>
 

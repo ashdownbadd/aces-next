@@ -26,6 +26,7 @@
 @import url("./components/summary.css");
 
 @import url("./pages/auth.css");
+@import url("./pages/settings.css");
 @import url("./pages/dashboard.css");
 @import url("./pages/members.css");
 @import url("./pages/member-profile.css");

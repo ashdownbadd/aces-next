@@ -94,13 +94,29 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}.c-navbar__user {
+}.c-navbar__account {
+
+  position: relative;
+}
+
+.c-navbar__account > summary {
+
+  list-style: none;
+}
+
+.c-navbar__account > summary::-webkit-details-marker {
+
+  display: none;
+}
+
+.c-navbar__user {
 
   display: inline-flex;
   align-items: center;
   gap: 7px;
 
-  padding: 5px 10px;
+  min-height: 34px;
+  padding: 5px 9px 5px 12px;
 
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -111,13 +127,93 @@
   font-size: var(--font-size-xs);
   font-weight: 600;
   white-space: nowrap;
-}.c-navbar__status {
+  cursor: pointer;
 
-  width: 7px;
-  height: 7px;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease;
+}
 
-  border-radius: 50%;
-  background: var(--color-success);
+.c-navbar__user:hover,
+.c-navbar__account[open] .c-navbar__user {
+
+  color: var(--color-text);
+  background: var(--color-background);
+  border-color: var(--color-border-strong);
+}
+
+.c-navbar__user-chevron {
+
+  width: 14px;
+  height: 14px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  transition: transform 0.16s ease;
+}
+
+.c-navbar__account[open] .c-navbar__user-chevron {
+
+  transform: rotate(180deg);
+}
+
+.c-navbar__dropdown {
+
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1100;
+
+  min-width: 160px;
+  padding: 6px;
+
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+}
+
+.c-navbar__dropdown-link {
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 34px;
+  padding: 0 10px;
+
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.c-navbar__dropdown-link:hover,
+.c-navbar__dropdown-link:focus-visible {
+
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.c-navbar__dropdown-form {
+
+  margin: 0;
+}
+
+.c-navbar__dropdown-button {
+
+  appearance: none;
 }
 
 @media (max-width: 1060px) {.c-navbar {
@@ -142,8 +238,7 @@
 @media (max-width: 640px) {.c-navbar {
 
     padding-inline: 14px;
-  }.c-navbar__brand span,
-  .c-navbar__user {
+  }.c-navbar__brand span {
 
     display: none;
   }

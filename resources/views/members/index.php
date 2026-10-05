@@ -221,8 +221,8 @@ $paginationUrl = static function (
 
                             <div class="members__empty">
 
-                                <div class="members__empty-icon">
-                                    👥
+                                <div class="members__empty-icon" aria-hidden="true">
+                                    <i class="fas fa-users"></i>
                                 </div>
 
                                 <?php if (

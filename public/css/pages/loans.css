@@ -393,6 +393,14 @@
   margin: 0 0 var(--space-2);
 }
 
+.loan-detail__status-group {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  padding-top: var(--space-2);
+}
+
 .loan-list__description,
 .loan-detail__description {
   margin: 0;
@@ -478,13 +486,6 @@
   text-decoration: none;
 }
 
-.loan-detail__status-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  justify-content: flex-end;
-}
-
 .loan-detail__section {
   display: flex;
   flex-direction: column;
@@ -560,9 +561,6 @@
     grid-template-columns: 1fr;
   }
 
-  .loan-detail__status-group {
-    justify-content: flex-start;
-  }
 }
 
 
@@ -1471,6 +1469,73 @@
   min-height: 0;
 }
 
+
+.loan-member-picker {
+  position: relative;
+}
+
+.loan-member-picker__results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+
+  max-height: 280px;
+  overflow-y: auto;
+
+  padding: var(--space-1);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.loan-member-picker__option {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  gap: var(--space-3);
+
+  padding: var(--space-3);
+
+  color: var(--color-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.loan-member-picker__option:hover,
+.loan-member-picker__option:focus-visible,
+.loan-member-picker__option[aria-selected="true"] {
+  background: var(--color-surface-muted);
+  outline: none;
+}
+
+.loan-member-picker__option-number {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.loan-member-picker__option-name {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loan-member-picker__empty {
+  padding: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
 
 @media (max-width: 640px) {
   .loan-list__header--actions,

@@ -35,6 +35,7 @@ final class Migrator
         'CreateMembersTable',
         'CreateMemberNumberSequenceTable',
         'CreateMemberProfilesTable',
+        'RemoveNationalityFromMemberProfilesTable',
         'CreateMemberContactsTable',
         'CreateMemberAddressesTable',
         'CreateMemberEducationsTable',
@@ -161,6 +162,9 @@ final class Migrator
         return match ($migration) {
             self::MIGRATION_NAMESPACE . 'CreateMemberNumberSequenceTable'
                 => $this->tableExists($pdo, 'member_number_sequences'),
+
+            self::MIGRATION_NAMESPACE . 'RemoveNationalityFromMemberProfilesTable'
+                => ! $this->columnExists($pdo, 'member_profiles', 'nationality'),
 
             self::MIGRATION_NAMESPACE . 'AddEducationDetailsToMemberEducationsTable'
                 => $this->columnsExist(

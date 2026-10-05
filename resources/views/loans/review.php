@@ -410,10 +410,6 @@ $money = static fn (float $value): string => '₱' . number_format(
 
     <?php if (!$submitted && $applicationStatus === 'Pending'): ?>
 
-        <p class="form-help">
-            Submitting will change this application from Pending to Under Review.
-        </p>
-
     <?php endif; ?>
 
 </div>

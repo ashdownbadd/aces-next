@@ -56,6 +56,66 @@ final readonly class UserRepository
         return $this->map($user);
     }
 
+    public function usernameExists(
+        string $username,
+        ?int $exceptUserId = null,
+    ): bool {
+        $sql = 'SELECT id FROM users WHERE username = :username';
+        $parameters = ['username' => $username];
+
+        if ($exceptUserId !== null) {
+            $sql .= ' AND id <> :user_id';
+            $parameters['user_id'] = $exceptUserId;
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $statement = $this->database
+            ->connection()
+            ->prepare($sql);
+        $statement->execute($parameters);
+
+        return $statement->fetch(PDO::FETCH_ASSOC) !== false;
+    }
+
+    public function updateUsername(
+        int $userId,
+        string $username,
+    ): void {
+        $statement = $this->database
+            ->connection()
+            ->prepare(
+                'UPDATE users
+                 SET username = :username
+                 WHERE id = :id
+                 LIMIT 1'
+            );
+
+        $statement->execute([
+            'username' => $username,
+            'id' => $userId,
+        ]);
+    }
+
+    public function updatePassword(
+        int $userId,
+        string $passwordHash,
+    ): void {
+        $statement = $this->database
+            ->connection()
+            ->prepare(
+                'UPDATE users
+                 SET password = :password
+                 WHERE id = :id
+                 LIMIT 1'
+            );
+
+        $statement->execute([
+            'password' => $passwordHash,
+            'id' => $userId,
+        ]);
+    }
+
     public function create(User $user): int
     {
         $statement = $this->database

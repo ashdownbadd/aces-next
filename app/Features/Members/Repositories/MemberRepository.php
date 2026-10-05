@@ -380,8 +380,7 @@ final class MemberRepository extends Repository
                     birth_date,
                     birth_place,
                     sex,
-                    civil_status,
-                    nationality
+                    civil_status
                 )
                 VALUES
                 (
@@ -393,8 +392,7 @@ final class MemberRepository extends Repository
                     :birth_date,
                     :birth_place,
                     :sex,
-                    :civil_status,
-                    :nationality
+                    :civil_status
                 )
                 "
             );
@@ -428,10 +426,6 @@ final class MemberRepository extends Repository
                 'civil_status' =>
                 $this->nullable(
                     $registration->personal->civilStatus
-                ),
-                'nationality' =>
-                $this->nullable(
-                    $registration->personal->nationality
                 ),
             ]);
 
@@ -783,8 +777,7 @@ final class MemberRepository extends Repository
                 birth_date = :birth_date,
                 birth_place = :birth_place,
                 sex = :sex,
-                civil_status = :civil_status,
-                nationality = :nationality
+                civil_status = :civil_status
             WHERE member_id = :member_id
             "
             );
@@ -826,10 +819,6 @@ final class MemberRepository extends Repository
                     $registration->personal->civilStatus
                 ),
 
-                'nationality' =>
-                $this->nullable(
-                    $registration->personal->nationality
-                ),
 
                 'member_id' => $memberId,
             ]);
@@ -1112,7 +1101,6 @@ final class MemberRepository extends Repository
             mp.birth_place,
             mp.sex,
             mp.civil_status,
-            mp.nationality,
 
             mc.mobile_number,
             mc.telephone_number,

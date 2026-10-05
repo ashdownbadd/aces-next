@@ -28,11 +28,9 @@ final class MemberInputValidator
                 if ($this->parseDate($data['birth_date'] ?? '') > new DateTimeImmutable('today')) {
                     throw new InvalidArgumentException('Birth date cannot be in the future.');
                 }
-                $this->required($data, 'birth_place', 'Birth place');
                 $this->max($data['birth_place'] ?? '', 150, 'Birth place');
                 $this->allowed($data['sex'] ?? '', ['male','female'], 'Sex');
                 $this->allowed($data['civil_status'] ?? '', ['single','married','widowed','separated'], 'Civil status');
-                $this->name($data['nationality'] ?? '', 'Nationality', true, 80);
                 break;
             case 'contact':
                 $mobile = trim((string)($data['mobile_number'] ?? ''));
@@ -53,11 +51,10 @@ final class MemberInputValidator
                 break;
             case 'address':
                 foreach (['house_number'=>'House number','street'=>'Street','barangay'=>'Barangay','city'=>'City','province'=>'Province'] as $field=>$label) {
-                    $this->required($data, $field, $label);
                     $this->max($data[$field] ?? '', 150, $label);
                 }
                 $zip = trim((string)($data['zip_code'] ?? ''));
-                if (!preg_match('/^[0-9]{4,10}$/', $zip)) {
+                if ($zip !== '' && !preg_match('/^[0-9]{4,10}$/', $zip)) {
                     throw new InvalidArgumentException('ZIP code must contain 4 to 10 digits.');
                 }
                 break;
@@ -66,7 +63,7 @@ final class MemberInputValidator
                 $this->max($data['occupation'] ?? '', 150, 'Occupation');
                 $this->max($data['employer'] ?? '', 150, 'Employer');
                 $income = str_replace(',', '', trim((string)($data['monthly_income'] ?? '')));
-                if ($income === '' || !is_numeric($income) || (float)$income < 0 || (float)$income > 999999999.99) {
+                if ($income !== '' && (!is_numeric($income) || (float)$income < 0 || (float)$income > 999999999.99)) {
                     throw new InvalidArgumentException('Monthly income must be a valid non-negative amount.');
                 }
                 break;
@@ -92,6 +89,25 @@ final class MemberInputValidator
                 }
                 break;
         }
+    }
+
+    /**
+     * Return a validation message for a single wizard step instead of
+     * allowing an expected validation failure to escape as an exception.
+     *
+     * @param array<string,mixed> $data
+     */
+    public function validationErrorForStep(
+        string $step,
+        array $data,
+    ): ?string {
+        try {
+            $this->validateStep($step, $data);
+        } catch (InvalidArgumentException $exception) {
+            return $exception->getMessage();
+        }
+
+        return null;
     }
 
     public function validateRegistration(MemberRegistrationData $registration): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers\Features;
 
 use App\Features\Authentication\Controllers\LoginController;
+use App\Features\Authentication\Controllers\ProfileController;
 use App\Features\Authentication\Repositories\UserRepository;
 use App\Features\Authentication\Services\AuthService;
 use App\Http\Middleware\AuthMiddleware;
@@ -34,6 +35,14 @@ final class AuthenticationServiceProvider extends ServiceProvider
                 $container->get(UserRepository::class),
                 $container->get(Session::class),
                 $container->get(\App\Foundation\Database::class),
+            ),
+        );
+
+        $this->container->singleton(
+            ProfileController::class,
+            fn(Container $container) => new ProfileController(
+                $container->get(\App\Foundation\View::class),
+                $container->get(AuthService::class),
             ),
         );
 

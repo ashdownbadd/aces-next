@@ -516,7 +516,19 @@
           renderedError
           || `The server returned HTTP ${response.status}.`;
 
-        throw new Error(details);
+        let errorType = "server";
+
+        if (response.status === 401 || response.status === 403) {
+          errorType = "authorization";
+        } else if (response.status === 419) {
+          errorType = "session";
+        } else if (renderedError || response.status === 422) {
+          errorType = "validation";
+        }
+
+        throw Object.assign(new Error(details), {
+          criticalActionErrorType: errorType,
+        });
       }
 
       const success = successMessage(form);
@@ -530,16 +542,43 @@
       });
 
       processing = false;
+
+      // A redirect to another page is part of the successful workflow.
+      // Navigate automatically so actions such as Settings → Dashboard do
+      // not require an extra Continue click. The destination page owns the
+      // flash notification through the existing session message.
+      const shouldAutoNavigate =
+        getActionPath(form) === "/settings"
+        && activeResponseUrl
+        && activeResponseUrl !== window.location.href;
+
+      if (shouldAutoNavigate) {
+        window.setTimeout(() => {
+          closeModal(true);
+        }, 350);
+        return;
+      }
+
       modalFocus();
     } catch (error) {
       console.error("Critical action failed.", error);
 
+      const errorType =
+        error?.criticalActionErrorType || "server";
+
+      const errorTitles = {
+        validation: "Validation Error",
+        authorization: "Access Denied",
+        session: "Session Expired",
+        server: "Request Failed",
+      };
+
       setState({
-        title: "Something went wrong",
+        title: errorTitles[errorType] || errorTitles.server,
         message:
           error instanceof Error && error.message
             ? error.message
-            : "The operation could not be completed. Check your connection and try again.",
+            : "The request could not be completed. Please try again.",
         loading: false,
         canClose: true,
         error: true,

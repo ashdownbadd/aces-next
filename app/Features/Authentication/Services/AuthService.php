@@ -44,8 +44,10 @@ final readonly class AuthService
 
         $this->recordAttempt($username, $ipAddress, true);
 
-        $this->session->put('user_id', $user->id());
         $this->session->regenerate();
+        $this->session->put('user_id', $user->id());
+        $this->session->put('user_name', $user->fullName());
+        $this->session->save();
 
         return 'success';
     }
@@ -117,6 +119,70 @@ final readonly class AuthService
                 'username' => $username,
                 'ip_address' => $ipAddress,
             ]);
+        }
+    }
+
+    public function updateCredentials(
+        int $userId,
+        string $username,
+        string $currentPassword,
+        string $newPassword,
+    ): void {
+        $user = $this->users->findById($userId);
+
+        if ($user === null) {
+            throw new \InvalidArgumentException(
+                'Unable to update the account.'
+            );
+        }
+
+        if ($this->users->usernameExists($username, $userId)) {
+            throw new \InvalidArgumentException(
+                'That username is already in use.'
+            );
+        }
+
+        $passwordHash = null;
+
+        if ($newPassword !== '') {
+            if (!password_verify($currentPassword, $user->password())) {
+                throw new \InvalidArgumentException(
+                    'The current password is incorrect.'
+                );
+            }
+
+            if ($newPassword === $currentPassword) {
+                throw new \InvalidArgumentException(
+                    'New password must be different from the current password.'
+                );
+            }
+
+            $passwordHash = password_hash(
+                $newPassword,
+                PASSWORD_DEFAULT,
+            );
+        }
+
+        $connection = $this->database->connection();
+        $connection->beginTransaction();
+
+        try {
+            $this->users->updateUsername($userId, $username);
+
+            if ($passwordHash !== null) {
+                $this->users->updatePassword(
+                    $userId,
+                    $passwordHash,
+                );
+            }
+
+            $connection->commit();
+        } catch (\Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
         }
     }
 

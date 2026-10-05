@@ -226,6 +226,7 @@ final class LoanService
         if (
             (int) ($loan['created_by'] ?? 0) === $actorId
             && ! $this->isAdministrator($actorId)
+            && ! $this->isLoanOfficer($actorId)
         ) {
             throw new RuntimeException('The user who created a loan cannot approve the same loan.');
         }
@@ -827,6 +828,13 @@ final class LoanService
         $user = $this->users->findById($userId);
 
         return $user !== null && $user->hasRole('admin', 'administrator');
+    }
+
+    private function isLoanOfficer(int $userId): bool
+    {
+        $user = $this->users->findById($userId);
+
+        return $user !== null && $user->hasRole('loan_officer');
     }
 
     private function actorId(): int

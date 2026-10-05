@@ -187,9 +187,6 @@ $paymentFrequencies = [
 
                     </div>
 
-                    <span class="form-help">
-                        Search by member number or name. Only active members can be selected.
-                    </span>
 
                 </div>
 
@@ -691,18 +688,6 @@ $paymentFrequencies = [
             </button>
 
         </div>
-
-        <p class="loan-create__action-hint">
-            Review will validate the required fields and show the computed
-            deductions and amortization schedule before submission.
-        </p>
-
-        <div
-            class="alert alert--error loan-create__validation"
-            data-loan-validation
-            hidden
-            role="alert"
-            aria-live="polite"></div>
 
     </form>
 

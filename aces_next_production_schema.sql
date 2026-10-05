@@ -387,7 +387,6 @@ CREATE TABLE `member_profiles` (
   `birth_place` varchar(150) DEFAULT NULL,
   `sex` enum('Male','Female') DEFAULT NULL,
   `civil_status` enum('Single','Married','Widowed','Separated') DEFAULT NULL,
-  `nationality` varchar(100) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

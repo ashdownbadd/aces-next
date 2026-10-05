@@ -159,7 +159,6 @@ $alerts = $alerts ?? [
     <section class="dashboard-actions" aria-labelledby="dashboard-actions-title">
 
         <div class="dashboard-actions__header">
-
             <div>
                 <span class="dashboard-actions__eyebrow">
                     Attention
@@ -172,24 +171,21 @@ $alerts = $alerts ?? [
                 </h2>
 
                 <p class="dashboard-actions__description">
-                    Work items that may need your attention.
+                    Tasks that need your attention.
                 </p>
             </div>
 
-            <span class="dashboard-actions__count">
-                <?= $hasActionRequired
-                    ? ($underReviewLoanCount + $overdueLoanCount)
-                    : 0 ?>
-                <?= ($underReviewLoanCount + $overdueLoanCount) === 1
-                    ? 'Item'
-                    : 'Items' ?>
-            </span>
-
+            <?php if ($hasActionRequired): ?>
+                <span class="dashboard-actions__count">
+                    <?= ($underReviewLoanCount + $overdueLoanCount) ?>
+                    <?= ($underReviewLoanCount + $overdueLoanCount) === 1 ? 'item' : 'items' ?>
+                </span>
+            <?php endif; ?>
         </div>
 
         <?php if ($hasActionRequired): ?>
 
-            <div class="dashboard-actions__grid">
+            <div class="dashboard-actions__list">
 
                 <?php if ($underReviewLoanCount > 0): ?>
 
@@ -202,17 +198,16 @@ $alerts = $alerts ?? [
                         </span>
 
                         <span class="dashboard-actions__content">
-                            <strong>
+                            <span class="dashboard-actions__item-label">
                                 <?= $underReviewLoanCount ?>
                                 <?= $underReviewLoanCount === 1
                                     ? 'Loan application'
                                     : 'Loan applications' ?>
-                                under review
-                            </strong>
+                            </span>
 
-                            <small>
-                                Waiting for an approval decision.
-                            </small>
+                            <strong>
+                                Waiting for an approval decision
+                            </strong>
                         </span>
 
                         <span
@@ -236,17 +231,16 @@ $alerts = $alerts ?? [
                         </span>
 
                         <span class="dashboard-actions__content">
-                            <strong>
+                            <span class="dashboard-actions__item-label">
                                 <?= $overdueLoanCount ?>
                                 <?= $overdueLoanCount === 1
                                     ? 'Loan'
                                     : 'Loans' ?>
-                                overdue
-                            </strong>
+                            </span>
 
-                            <small>
-                                Payment periods require attention.
-                            </small>
+                            <strong>
+                                Payment periods require attention
+                            </strong>
                         </span>
 
                         <span
@@ -264,6 +258,9 @@ $alerts = $alerts ?? [
         <?php else: ?>
 
             <div class="dashboard-actions__empty">
+                <span class="dashboard-actions__empty-icon" aria-hidden="true">
+                    <i class="fas fa-check"></i>
+                </span>
 
                 <div>
                     <strong>Nothing requires attention right now.</strong>
@@ -271,7 +268,6 @@ $alerts = $alerts ?? [
                         Current operational items are up to date.
                     </span>
                 </div>
-
             </div>
 
         <?php endif; ?>
@@ -292,16 +288,16 @@ $alerts = $alerts ?? [
         || $pastDueLoanCount > 0;
     ?>
 
-    <section class="section dashboard-health">
+    <section class="section dashboard-health" aria-labelledby="dashboard-health-title">
 
         <div class="section__header">
             <div>
-                <h2 class="section__title">
+                <h2 class="section__title" id="dashboard-health-title">
                     Cooperative Alerts
                 </h2>
 
                 <p class="section__description">
-                    Items that may require administrator attention.
+                    Monitor areas that may affect cooperative operations.
                 </p>
             </div>
 
@@ -318,19 +314,22 @@ $alerts = $alerts ?? [
                 class="dashboard-health__card <?= $negativeEquityCount > 0 ? 'dashboard-health__card--warning' : 'dashboard-health__card--healthy' ?>">
 
                 <div class="dashboard-health__card-content">
-
                     <span class="dashboard-health__label">
-                        Negative Share Capital
+                        Members
                     </span>
 
                     <strong class="dashboard-health__value">
                         <?= $negativeEquityCount ?>
                     </strong>
 
-                    <p class="dashboard-health__description">
-                        Members with a negative share capital balance.
-                    </p>
+                    <span class="dashboard-health__metric">
+                        Negative share capital
+                    </span>
 
+                    <span class="dashboard-health__card-status">
+                        <i class="fas <?= $negativeEquityCount > 0 ? 'fa-triangle-exclamation' : 'fa-check' ?>" aria-hidden="true"></i>
+                        <?= $negativeEquityCount > 0 ? 'Review required' : 'No issues detected' ?>
+                    </span>
                 </div>
 
                 <div class="dashboard-health__card-icon" aria-hidden="true">
@@ -343,19 +342,22 @@ $alerts = $alerts ?? [
                 class="dashboard-health__card <?= $pastDueLoanCount > 0 ? 'dashboard-health__card--warning' : 'dashboard-health__card--healthy' ?>">
 
                 <div class="dashboard-health__card-content">
-
                     <span class="dashboard-health__label">
-                        Overdue Loans
+                        Loan Portfolio
                     </span>
 
                     <strong class="dashboard-health__value">
                         <?= $pastDueLoanCount ?>
                     </strong>
 
-                    <p class="dashboard-health__description">
-                        Active loan accounts with overdue periods.
-                    </p>
+                    <span class="dashboard-health__metric">
+                        Overdue accounts
+                    </span>
 
+                    <span class="dashboard-health__card-status">
+                        <i class="fas <?= $pastDueLoanCount > 0 ? 'fa-triangle-exclamation' : 'fa-check' ?>" aria-hidden="true"></i>
+                        <?= $pastDueLoanCount > 0 ? 'Review required' : 'No issues detected' ?>
+                    </span>
                 </div>
 
                 <div class="dashboard-health__card-icon" aria-hidden="true">

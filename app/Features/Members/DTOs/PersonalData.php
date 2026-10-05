@@ -17,7 +17,6 @@ final class PersonalData
         public readonly string $birthPlace,
         public readonly string $sex,
         public readonly string $civilStatus,
-        public readonly string $nationality,
     ) {}
 
     public static function fromRequest(
@@ -64,10 +63,6 @@ final class PersonalData
                 '',
             ),
 
-            nationality: (string) $request->input(
-                'nationality',
-                '',
-            ),
         );
     }
 
@@ -94,7 +89,6 @@ final class PersonalData
 
             civilStatus: (string) ($data['civil_status'] ?? ''),
 
-            nationality: (string) ($data['nationality'] ?? ''),
         );
     }
 
@@ -112,7 +106,6 @@ final class PersonalData
             'birth_place' => $this->birthPlace,
             'sex' => $this->sex,
             'civil_status' => $this->civilStatus,
-            'nationality' => $this->nationality,
         ];
     }
 }

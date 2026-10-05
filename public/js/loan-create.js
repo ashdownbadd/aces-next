@@ -394,11 +394,6 @@
       "[data-calculation-note]"
     );
 
-  const validationBox =
-    form.querySelector(
-      "[data-loan-validation]"
-    );
-
   const reviewButton =
     form.querySelector(
       "[data-review-loan]"
@@ -608,11 +603,9 @@
   };
 
   const showValidation = (message) => {
-    validationBox.textContent =
-      message;
-
-    validationBox.hidden =
-      !message;
+    if (message) {
+      console.warn(message);
+    }
   };
 
   const validateBeforeReview = () => {
@@ -1112,12 +1105,7 @@
 
     previewWrap.hidden = false;
 
-    previewStatus.textContent =
-      `${rows.length} payment period${
-        rows.length === 1
-          ? ""
-          : "s"
-      } generated automatically.`;
+    previewStatus.textContent = "";
   };
 
   form

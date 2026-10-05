@@ -244,6 +244,8 @@ $isAccounting = $authUser?->hasRole('accounting');
 
     </section>
 
+    <?php if ($total > 0 || $lastPage > 1): ?>
+
     <div class="loan-list__footer">
 
         <?php
@@ -256,10 +258,8 @@ $isAccounting = $authUser?->hasRole('accounting');
             : 0;
         ?>
 
-        <div class="loan-list__result-range">
-
-            <?php if ($total > 0): ?>
-
+        <?php if ($total > 0): ?>
+            <div class="loan-list__result-range">
                 Showing
                 <?= number_format($from) ?>
                 –
@@ -269,14 +269,8 @@ $isAccounting = $authUser?->hasRole('accounting');
                 <?= $status === 'Overdue'
                     ? 'overdue loans'
                     : 'loan applications' ?>
-
-            <?php else: ?>
-
-                No matching applications
-
-            <?php endif; ?>
-
-        </div>
+            </div>
+        <?php endif; ?>
 
         <?php if ($lastPage > 1): ?>
 
@@ -380,5 +374,7 @@ $isAccounting = $authUser?->hasRole('accounting');
         <?php endif; ?>
 
     </div>
+
+    <?php endif; ?>
 
 </div>

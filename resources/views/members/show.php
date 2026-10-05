@@ -437,11 +437,6 @@ $memberId = (int) ($member['id'] ?? 0);
                     <strong><?= $formatLabel($member['civil_status'] ?? null) ?></strong>
                 </div>
 
-                <div class="member-profile__data">
-                    <span class="member-profile__label">Nationality</span>
-                    <strong><?= $display($member['nationality'] ?? null) ?></strong>
-                </div>
-
             </div>
 
         </section>

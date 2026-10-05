@@ -302,24 +302,6 @@ $humanize = static function (?string $value): string {
 
                         </div>
 
-                        <div class="summary__row">
-
-                            <div class="summary__label">
-
-                                Nationality
-
-                            </div>
-
-                            <div class="summary__value">
-
-                                <?= htmlspecialchars(
-                                    $personal['nationality']
-                                        ?? '—'
-                                ) ?>
-
-                            </div>
-
-                        </div>
 
                     </div>
 

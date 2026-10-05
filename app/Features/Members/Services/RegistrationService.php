@@ -37,12 +37,28 @@ final class RegistrationService
         string $step,
         array $data,
     ): ?string {
-        $this->validator->validateStep($step, $data);
-
+        // Preserve the submitted values even when validation fails so the
+        // wizard can re-render the current step without losing user input.
         $this->session->putStep(
             $step,
             $data,
         );
+
+        $validationError = $this->validator->validationErrorForStep(
+            $step,
+            $data,
+        );
+
+        if ($validationError !== null) {
+            $this->userSession->put(
+                'member_registration_error',
+                $validationError,
+            );
+
+            return null;
+        }
+
+        $this->userSession->forget('member_registration_error');
 
         $this->session->markStep(
             $step,
@@ -85,6 +101,24 @@ final class RegistrationService
     public function highestCompletedStepIndex(): int
     {
         return $this->session->highestCompletedStepIndex();
+    }
+
+    /**
+     * Return and clear the latest registration validation message.
+     */
+    public function consumeValidationError(): ?string
+    {
+        $message = $this->userSession->get(
+            'member_registration_error',
+        );
+
+        $this->userSession->forget(
+            'member_registration_error',
+        );
+
+        return $message !== null
+            ? (string) $message
+            : null;
     }
 
     /**

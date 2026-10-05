@@ -130,10 +130,6 @@ final class EditService
                     $member['civil_status'] ?? ''
                 ),
 
-                'nationality' =>
-                (string) (
-                    $member['nationality'] ?? ''
-                ),
             ],
         );
 

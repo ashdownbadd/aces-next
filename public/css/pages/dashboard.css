@@ -42,8 +42,7 @@
 } /* Uniform metric cards */
 .dashboard__stats .stat-card {
   min-width: 0;
-  min-height: 148px;
-  height: 148px;
+  min-height: 112px;
 
   display: flex;
   flex-direction: column;
@@ -112,9 +111,9 @@
   align-items: center;
   justify-content: center;
 
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
 
   border: 1px solid var(--color-border);
   border-radius: 50%;
@@ -205,7 +204,6 @@
   display: none !important;
 } /* ==========================================================================
    Cooperative Alerts
-   Matches the statistic-card visual language.
    ========================================================================== */
 
 .dashboard-health {
@@ -213,6 +211,7 @@
   flex-direction: column;
   gap: 16px;
 }
+
 .dashboard-health .section__header {
   display: flex;
   align-items: flex-end;
@@ -220,90 +219,91 @@
   gap: 18px;
   margin-bottom: 0;
 }
+
 .dashboard-health__status {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-
   min-height: 28px;
   padding: 0 10px;
-
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
-
   font-family: var(--font-family);
   font-size: var(--font-size-xs);
+  font-weight: 650;
   letter-spacing: 0.07em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
+
 .dashboard-health__status--healthy {
   color: var(--color-success);
   background: rgba(39, 168, 88, 0.05);
   border-color: rgba(39, 168, 88, 0.18);
 }
+
 .dashboard-health__status--attention {
   color: var(--color-danger);
   background: rgba(217, 61, 61, 0.05);
   border-color: rgba(217, 61, 61, 0.18);
 }
+
 .dashboard-health__status-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: currentColor;
 }
+
 .dashboard-health__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
+
 .dashboard-health__card {
   min-width: 0;
-  min-height: 148px;
-  height: 148px;
-
+  min-height: 156px;
   display: flex;
-  flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
-
+  gap: 18px;
   padding: 20px;
-
   border: 1px solid var(--color-border);
   border-radius: 18px;
-
   background: var(--color-surface);
   color: inherit;
 }
+
 .dashboard-health__card--healthy {
   border-color: var(--color-border);
 }
+
 .dashboard-health__card--warning {
   border-color: var(--color-border-strong);
 }
+
 .dashboard-health__card-content {
   min-width: 0;
-  height: 100%;
-
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: flex-start;
+  gap: 7px;
 }
+
 .dashboard-health__label {
   display: block;
-
-  color: var(--color-text-muted);
-
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+  color: var(--color-text-soft);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
+
 .dashboard-health__value {
   display: block;
-  margin: 0;
-
+  margin: 1px 0 0;
   color: var(--color-text);
-
   font-family: var(--font-family);
   font-size: var(--font-size-3xl);
   font-weight: 800;
@@ -311,31 +311,40 @@
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
 }
-.dashboard-health__description {
-  margin: 0;
 
+.dashboard-health__metric {
   color: var(--color-text-muted);
-
   font-size: var(--font-size-xs);
   line-height: 1.35;
 }
-.dashboard-health__card-icon {
-  display: flex;
+
+.dashboard-health__card-status {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  margin-top: 5px;
+  color: var(--color-success);
+  font-size: var(--font-size-xs);
+  font-weight: 650;
+}
 
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
+.dashboard-health__card--warning .dashboard-health__card-status {
+  color: var(--color-danger);
+}
 
+.dashboard-health__card-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
   border: 1px solid var(--color-border);
-  border-radius: 50%;
-
+  border-radius: 12px;
   background: var(--color-surface);
   color: var(--color-success);
-
   font-size: var(--font-size-sm);
 }
+
 .dashboard-health__card--warning .dashboard-health__card-icon {
   color: var(--color-danger);
 }
@@ -345,10 +354,17 @@
     align-items: flex-start;
     flex-direction: column;
   }
+
   .dashboard-health__grid {
     grid-template-columns: 1fr;
   }
-} /* ==========================================================================
+
+  .dashboard-actions__header {
+    align-items: flex-start;
+  }
+}
+
+/* ==========================================================================
    Action Required
    ========================================================================== */
 
@@ -356,180 +372,175 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-
   margin: 0;
 }
+
 .dashboard-actions__header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-
   gap: 18px;
 }
+
 .dashboard-actions__eyebrow {
   display: block;
   margin-bottom: 4px;
-
   color: var(--color-primary);
-
   font-family: var(--font-family);
   font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.11em;
   text-transform: uppercase;
 }
+
 .dashboard-actions__title {
   margin: 0;
-
   color: var(--color-text);
-
   font-size: var(--font-size-md);
   font-weight: 750;
 }
+
 .dashboard-actions__description {
   margin: 3px 0 0;
-
   color: var(--color-text-muted);
-
   font-size: var(--font-size-xs);
 }
+
 .dashboard-actions__count {
   display: inline-flex;
   align-items: center;
-
   min-height: 28px;
   padding: 0 10px;
-
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
-
   color: var(--color-text-muted);
-
   font-family: var(--font-family);
   font-size: var(--font-size-xs);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-weight: 650;
+  white-space: nowrap;
 }
-.dashboard-actions__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+
+.dashboard-actions__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
+
 .dashboard-actions__item {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-
-  gap: 14px;
-
+  gap: 16px;
   min-width: 0;
-  min-height: 88px;
-  padding: 18px;
-
+  min-height: 86px;
+  padding: 16px 18px;
   border: 1px solid var(--color-border);
   border-radius: 18px;
-
   background: var(--color-surface);
-
   color: inherit;
   text-decoration: none;
-
   transition:
     border-color 0.14s ease,
-    background-color 0.14s ease;
+    background-color 0.14s ease,
+    transform 0.14s ease;
 }
+
 .dashboard-actions__item:hover {
   border-color: var(--color-border-strong);
   background: var(--color-surface);
+  transform: translateY(-1px);
 }
+
+.dashboard-actions__item:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .dashboard-actions__icon,
 .dashboard-actions__empty-icon {
   display: grid;
   place-items: center;
-
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
   border: 1px solid var(--color-border);
-  border-radius: 50%;
-
+  border-radius: 12px;
   background: var(--color-surface);
-
   color: var(--color-primary);
-
   font-size: var(--font-size-sm);
 }
 
 .dashboard-actions__icon--warning {
   color: var(--color-danger);
 }
+
 .dashboard-actions__content {
   display: flex;
   flex-direction: column;
   gap: 3px;
-
   min-width: 0;
 }
-.dashboard-actions__content strong {
-  overflow: hidden;
 
+.dashboard-actions__item-label {
   color: var(--color-text);
-
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  text-overflow: ellipsis;
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
 }
-.dashboard-actions__content small {
-  color: var(--color-text-muted);
 
+.dashboard-actions__content strong {
+  color: var(--color-text-muted);
   font-size: var(--font-size-xs);
+  font-weight: 500;
   line-height: 1.35;
 }
+
 .dashboard-actions__arrow {
   color: var(--color-text-soft);
-
   font-size: var(--font-size-xs);
+  transition:
+    color 0.14s ease,
+    transform 0.14s ease;
 }
+
+.dashboard-actions__item:hover .dashboard-actions__arrow {
+  color: var(--color-primary);
+  transform: translateX(2px);
+}
+
 .dashboard-actions__empty {
   display: flex;
   align-items: center;
-  gap: 14px;
-
-  min-height: 76px;
-  padding: 16px 18px;
-
+  gap: 12px;
+  min-height: 72px;
+  padding: 14px 16px;
   border: 1px solid var(--color-border);
   border-radius: 18px;
-
   background: var(--color-surface);
 }
+
 .dashboard-actions__empty-icon {
   color: var(--color-success);
 }
+
 .dashboard-actions__empty div {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
+
 .dashboard-actions__empty strong {
   color: var(--color-text);
   font-size: var(--font-size-sm);
 }
+
 .dashboard-actions__empty span {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
 }
 
-@media (max-width: 768px) {
-  .dashboard-actions__header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .dashboard-actions__grid {
-    grid-template-columns: 1fr;
-  }
-} /* ==========================================================================
+/* ==========================================================================
    Dashboard standard card corrections
    ========================================================================== */
 

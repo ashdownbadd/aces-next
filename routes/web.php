@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Features\ActivityLogs\Controllers\ActivityLogController;
 use App\Features\Authentication\Controllers\LoginController;
+use App\Features\Authentication\Controllers\ProfileController;
 use App\Features\Dashboard\Controllers\DashboardController;
 use App\Features\Members\Controllers\MembersController;
 use App\Features\Members\Controllers\BeneficiaryController;
@@ -256,7 +257,7 @@ $router->post(
     '/loans/{id}/approve',
     [LoanController::class, 'approve'],
     [
-        AdminMiddleware::class,
+        LoanOfficerMiddleware::class,
     ],
 );
 
@@ -264,7 +265,7 @@ $router->post(
     '/loans/{id}/reject',
     [LoanController::class, 'reject'],
     [
-        AdminMiddleware::class,
+        LoanOfficerMiddleware::class,
     ],
 );
 
@@ -375,6 +376,22 @@ $router->post(
     [LoginController::class, 'login'],
     [
         GuestMiddleware::class,
+    ],
+);
+
+$router->get(
+    '/settings',
+    [ProfileController::class, 'show'],
+    [
+        AuthMiddleware::class,
+    ],
+);
+
+$router->post(
+    '/settings',
+    [ProfileController::class, 'update'],
+    [
+        AuthMiddleware::class,
     ],
 );
 

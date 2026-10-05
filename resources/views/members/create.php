@@ -20,6 +20,8 @@ $highestCompletedStepIndex =
         ? (int) $highestCompletedStepIndex
         : $currentStepIndex;
 
+$validationError = $validationError ?? null;
+
 ?>
 
 <div class="wizard-layout">
@@ -41,6 +43,12 @@ $highestCompletedStepIndex =
                 : 'Create a new cooperative member.' ?>
         </p>
     </div>
+
+    <?php if ($validationError !== null): ?>
+        <div class="alert alert--error" role="alert">
+            <?= htmlspecialchars($validationError, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+    <?php endif; ?>
 
     <div class="wizard">
 

@@ -56,3 +56,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+
+/* Close the account dropdown when the user clicks outside it or presses Escape. */
+document.addEventListener('DOMContentLoaded', () => {
+  const account = document.querySelector('.c-navbar__account');
+
+  if (!account) {
+    return;
+  }
+
+  document.addEventListener('click', (event) => {
+    if (!account.open || account.contains(event.target)) {
+      return;
+    }
+
+    account.removeAttribute('open');
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && account.open) {
+      account.removeAttribute('open');
+      account.querySelector('summary')?.focus();
+    }
+  });
+});

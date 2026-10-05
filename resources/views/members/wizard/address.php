@@ -64,7 +64,6 @@ declare(strict_types=1);
                     data-type="title"
                     maxlength="150"
                     autocomplete="address-line2"
-                    required
                     value="<?= htmlspecialchars($address['street'] ?? '') ?>">
 
             </div>
@@ -86,7 +85,6 @@ declare(strict_types=1);
                     name="barangay"
                     data-type="title"
                     maxlength="100"
-                    required
                     value="<?= htmlspecialchars($address['barangay'] ?? '') ?>">
 
             </div>
@@ -109,7 +107,6 @@ declare(strict_types=1);
                     data-type="title"
                     maxlength="100"
                     autocomplete="address-level2"
-                    required
                     value="<?= htmlspecialchars($address['city'] ?? '') ?>">
 
             </div>
@@ -156,7 +153,6 @@ declare(strict_types=1);
                     inputmode="numeric"
                     maxlength="4"
                     autocomplete="postal-code"
-                    required
                     value="<?= htmlspecialchars($address['zip_code'] ?? '') ?>">
 
             </div>

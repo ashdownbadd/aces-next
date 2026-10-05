@@ -171,21 +171,16 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
 
             </div>
 
-            <p class="loan-detail__description">
-                Review the application and take the next workflow action.
-            </p>
 
         </div>
 
-        <div class="loan-detail__status-group">
-            <?php if ($status !== ''): ?>
-                <span class="badge"><?= $e($status) ?></span>
-            <?php endif; ?>
-
-            <?php if ($loanStatus !== ''): ?>
-                <span class="badge"><?= $e($loanStatus) ?></span>
-            <?php endif; ?>
-        </div>
+        <?php if ($workflowState !== ''): ?>
+            <div class="loan-detail__status-group">
+                <span class="badge">
+                    <?= $e($workflowState) ?>
+                </span>
+            </div>
+        <?php endif; ?>
 
     </header>
 
@@ -198,18 +193,12 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                 </span>
 
                 <h2 class="loan-detail__workflow-title">
-                    <?= $e($workflowState) ?>
+                    Application Progress
                 </h2>
 
                 <p class="loan-detail__workflow-description">
                     The loan's current stage and next available action.
                 </p>
-            </div>
-
-            <div class="loan-detail__workflow-status">
-                <span class="badge">
-                    <?= $e($workflowState) ?>
-                </span>
             </div>
         </div>
 
@@ -938,10 +927,6 @@ $currentWorkflowIndex = $workflowOrder[$workflowState] ?? 0;
                         or reject it with a required reason.
                     </p>
                 </div>
-
-                <span class="loan-detail__action-status">
-                    Under Review
-                </span>
             </div>
 
             <div class="loan-detail__decision-grid">

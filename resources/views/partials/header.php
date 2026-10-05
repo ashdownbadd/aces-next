@@ -23,17 +23,6 @@ function topnavActive(
 
 ?>
 
-<?php
-$roleLabel = match ($authUser?->role()) {
-    'admin' => 'Administrator',
-    'membership' => 'Membership Officer',
-    'loan_officer' => 'Loan Officer',
-    'accounting' => 'Accounting',
-    default => 'User',
-};
-
-?>
-
 <header class="c-navbar">
 
     <a href="/dashboard" class="c-navbar__brand">
@@ -81,17 +70,29 @@ $roleLabel = match ($authUser?->role()) {
 
     <div class="c-navbar__actions">
 
-        <span class="c-navbar__user">
-            <span class="c-navbar__status"></span>
-            <?= htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8') ?>
-        </span>
+        <details class="c-navbar__account">
+            <summary class="c-navbar__user">
+                <span class="c-navbar__user-name">
+                    <?= htmlspecialchars((string) ($_SESSION['user_name'] ?? 'User'), ENT_QUOTES, 'UTF-8') ?>
+                </span>
+                <svg class="c-navbar__user-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </summary>
 
-        <form method="POST" action="/logout" class="u-inline-form">
-            <?= $view->csrfField() ?>
-            <button type="submit" class="btn btn--outline btn--sm">
-                Logout
-            </button>
-        </form>
+            <div class="c-navbar__dropdown">
+                <a href="/settings" class="c-navbar__dropdown-link">
+                    Settings
+                </a>
+
+                <form method="POST" action="/logout" class="c-navbar__dropdown-form">
+                    <?= $view->csrfField() ?>
+                    <button type="submit" class="c-navbar__dropdown-link c-navbar__dropdown-button">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </details>
 
     </div>
 
