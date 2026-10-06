@@ -235,6 +235,24 @@ final class LoanRepository extends Repository
     }
 
     /**
+     * Retrieve the member state required for loan eligibility checks.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function findMemberForLoan(int $memberId): ?array
+    {
+        $statement = $this->connection()->prepare(
+            'SELECT id, status FROM members WHERE id = :id LIMIT 1'
+        );
+
+        $statement->execute(['id' => $memberId]);
+
+        $member = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $member === false ? null : $member;
+    }
+
+    /**
      * Retrieve one loan together with its member summary.
      *
      * @return array<string, mixed>|null

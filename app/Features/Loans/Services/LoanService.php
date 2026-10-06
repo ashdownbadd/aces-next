@@ -86,6 +86,18 @@ final class LoanService
     {
         $this->validateLoanData($loan);
 
+        $member = $this->repository->findMemberForLoan($loan->memberId);
+
+        if ($member === null) {
+            throw new RuntimeException('Member not found.');
+        }
+
+        if (($member['status'] ?? null) !== 'Active') {
+            throw new RuntimeException(
+                'Only Active members can apply for a loan.'
+            );
+        }
+
         $actorId = $this->actorId();
         $now = $this->now();
         $data = $this->prepareLoanData($loan);
