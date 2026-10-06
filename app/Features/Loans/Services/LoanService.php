@@ -178,6 +178,8 @@ final class LoanService
             'Only Pending loans can be submitted for review.',
         );
 
+        $this->assertActiveMemberForApplication($loan);
+
         $now = $this->now();
         $actorId = $this->actorId();
 
@@ -233,6 +235,8 @@ final class LoanService
             LoanApplicationStatus::UNDER_REVIEW,
             'Only loans Under Review can be approved.',
         );
+
+        $this->assertActiveMemberForApplication($loan);
 
         $actorId = $this->actorId();
         if (
@@ -807,6 +811,30 @@ final class LoanService
     /**
      * @param array<string, mixed> $loan
      */
+    /**
+     * Ensure the member remains eligible while the application progresses.
+     *
+     * A member may become inactive after a loan application is created.
+     * In that case the application must not advance toward approval.
+     *
+     * @param array<string, mixed> $loan
+     */
+    private function assertActiveMemberForApplication(array $loan): void
+    {
+        $memberId = (int) ($loan['member_id'] ?? 0);
+        $member = $this->repository->findMemberForLoan($memberId);
+
+        if ($member === null) {
+            throw new RuntimeException('Member not found.');
+        }
+
+        if (($member['status'] ?? null) !== 'Active') {
+            throw new RuntimeException(
+                'Only Active members can continue a loan application.'
+            );
+        }
+    }
+
     private function assertStatus(
         array $loan,
         string $expected,
