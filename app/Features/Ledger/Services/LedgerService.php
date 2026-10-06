@@ -130,6 +130,12 @@ final class LedgerService
             );
         }
 
+        if (($original['status'] ?? null) !== 'Posted') {
+            throw new RuntimeException(
+                'Only Posted journal vouchers can be reversed.'
+            );
+        }
+
         $originalLines = $this->repository->lines($originalVoucherId);
 
         if ($originalLines === []) {
