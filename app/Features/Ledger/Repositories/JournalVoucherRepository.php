@@ -432,11 +432,16 @@ final class JournalVoucherRepository extends Repository
                 COALESCE(SUM(jl.debit), 0) AS debit_total,
                 COALESCE(SUM(jl.credit), 0) AS credit_total
             FROM accounts AS a
+            LEFT JOIN journal_vouchers AS jv
+                ON jv.status = 'Posted'
+               AND jv.id IN (
+                    SELECT jl2.journal_voucher_id
+                    FROM journal_lines AS jl2
+                    WHERE jl2.account_id = a.id
+                )
             LEFT JOIN journal_lines AS jl
                 ON jl.account_id = a.id
-            LEFT JOIN journal_vouchers AS jv
-                ON jv.id = jl.journal_voucher_id
-               AND jv.status = 'Posted'
+               AND jl.journal_voucher_id = jv.id
         ";
 
         $parameters = [];
@@ -492,11 +497,16 @@ final class JournalVoucherRepository extends Repository
                 COALESCE(SUM(jl.debit), 0) AS debit_total,
                 COALESCE(SUM(jl.credit), 0) AS credit_total
             FROM accounts AS a
+            LEFT JOIN journal_vouchers AS jv
+                ON jv.status = 'Posted'
+               AND jv.id IN (
+                    SELECT jl2.journal_voucher_id
+                    FROM journal_lines AS jl2
+                    WHERE jl2.account_id = a.id
+                )
             LEFT JOIN journal_lines AS jl
                 ON jl.account_id = a.id
-            LEFT JOIN journal_vouchers AS jv
-                ON jv.id = jl.journal_voucher_id
-               AND jv.status = 'Posted'
+               AND jl.journal_voucher_id = jv.id
         ";
 
         $parameters = [];
@@ -546,11 +556,16 @@ final class JournalVoucherRepository extends Repository
                 COALESCE(SUM(jl.debit), 0) AS debit_total,
                 COALESCE(SUM(jl.credit), 0) AS credit_total
             FROM accounts AS a
+            LEFT JOIN journal_vouchers AS jv
+                ON jv.status = 'Posted'
+               AND jv.id IN (
+                    SELECT jl2.journal_voucher_id
+                    FROM journal_lines AS jl2
+                    WHERE jl2.account_id = a.id
+                )
             LEFT JOIN journal_lines AS jl
                 ON jl.account_id = a.id
-            LEFT JOIN journal_vouchers AS jv
-                ON jv.id = jl.journal_voucher_id
-               AND jv.status = 'Posted'
+               AND jl.journal_voucher_id = jv.id
         ";
 
         $parameters = [];
