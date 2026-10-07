@@ -69,14 +69,10 @@ $incomeTotal = static function (array $report): float {
     return (float) ($report['total_income'] ?? 0.00);
 };
 
-$accountNetBalance = static function (array $rows, int $accountId): float {
+$accountBalance = static function (array $rows, int $accountId, string $field): float {
     foreach ($rows as $row) {
         if ((int) ($row['id'] ?? 0) === $accountId) {
-            return round(
-                (float) ($row['debit'] ?? 0.00)
-                - (float) ($row['credit'] ?? 0.00),
-                2,
-            );
+            return (float) ($row[$field] ?? 0.00);
         }
     }
 
@@ -92,26 +88,17 @@ $incomeBeforeNovember = $incomeTotal(
 $trialBalanceBefore = $ledgerService->trialBalance('2026-10-31');
 $balanceSheetBefore = $ledgerService->balanceSheet('2026-10-31');
 
-$cashTrialBalanceBefore = $accountNetBalance(
+$cashTrialBalanceBefore = $accountBalance(
     $trialBalanceBefore['rows'],
     $cashAccountId,
+    'debit',
 );
-$incomeTrialBalanceBefore = $accountNetBalance(
+$incomeTrialBalanceBefore = $accountBalance(
     $trialBalanceBefore['rows'],
     $incomeAccountId,
+    'credit',
 );
-function accountBalance(array $rows, int $accountId, string $field): float
-{
-    foreach ($rows as $row) {
-        if ((int) ($row['id'] ?? 0) === $accountId) {
-            return round((float) ($row[$field] ?? 0.00), 2);
-        }
-    }
-
-    return 0.00;
-}
-
-$cashBalanceSheetBefore = accountBalance(
+$cashBalanceSheetBefore = $accountBalance(
     $balanceSheetBefore['assets'],
     $cashAccountId,
     'balance',
@@ -198,25 +185,60 @@ try {
 
     $trialBalanceOctober = $ledgerService->trialBalance('2026-10-31');
 
-    $cashOctober = $accountNetBalance(
-        $trialBalanceOctober['rows'],
-        $cashAccountId,
-    );
-    $incomeOctoberBalance = $accountNetBalance(
-        $trialBalanceOctober['rows'],
-        $incomeAccountId,
+    $rawTrialBalanceOctober = $ledgerRepository->trialBalance('2026-10-31');
+    foreach ($rawTrialBalanceOctober as $rawRow) {
+        if ((int) ($rawRow['id'] ?? 0) === $cashAccountId
+            || (int) ($rawRow['id'] ?? 0) === $incomeAccountId) {
+            echo sprintf(
+                "RAW TB account %d: debit=%s credit=%s\n",
+                (int) $rawRow['id'],
+                (string) $rawRow['debit_total'],
+                (string) $rawRow['credit_total'],
+            );
+        }
+    }
+
+
+    $cashOctober = 0.00;
+    $incomeOctoberBalance = 0.00;
+
+    foreach ($trialBalanceOctober['rows'] as $row) {
+        if ((int) $row['id'] === $cashAccountId) {
+            $cashOctober = (float) $row['debit'];
+        }
+
+        if ((int) $row['id'] === $incomeAccountId) {
+            $incomeOctoberBalance = (float) $row['credit'];
+        }
+    }
+
+    // Compare the account's net Trial Balance position rather than a
+    // single debit/credit side. Existing QA data may leave the cash account
+    // with a net credit balance, in which case its debit field is correctly 0.
+    $cashTrialBalanceBeforeNet = $cashTrialBalanceBefore
+        - $accountBalance(
+            $trialBalanceBefore['rows'],
+            $cashAccountId,
+            'credit',
+        );
+
+    $cashOctoberNet = $cashOctober
+        - $accountBalance(
+            $trialBalanceOctober['rows'],
+            $cashAccountId,
+            'credit',
+        );
+
+    assertNear(
+        $cashTrialBalanceBeforeNet + 300.00,
+        $cashOctoberNet,
+        'Trial Balance as of Oct 31 must include Sep 30, Oct 1, and Oct 31.',
     );
 
     assertNear(
-        $cashTrialBalanceBefore + 300.00,
-        $cashOctober,
-        'Trial Balance cash net balance as of Oct 31 must include Sep 30, Oct 1, and Oct 31.',
-    );
-
-    assertNear(
-        $incomeTrialBalanceBefore - 300.00,
+        $incomeTrialBalanceBefore + 300.00,
         $incomeOctoberBalance,
-        'Trial Balance income net balance as of Oct 31 must include Sep 30, Oct 1, and Oct 31.',
+        'Trial Balance income balance as of Oct 31.',
     );
 
     $balanceSheetOctober = $ledgerService->balanceSheet('2026-10-31');
