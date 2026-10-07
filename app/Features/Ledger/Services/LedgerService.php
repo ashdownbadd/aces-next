@@ -130,12 +130,6 @@ final class LedgerService
             );
         }
 
-        if (($original['status'] ?? null) !== 'Posted') {
-            throw new RuntimeException(
-                'Only Posted journal vouchers can be reversed.'
-            );
-        }
-
         $originalLines = $this->repository->lines($originalVoucherId);
 
         if ($originalLines === []) {
@@ -631,6 +625,44 @@ final class LedgerService
         if ($accountId <= 0) {
             throw new InvalidArgumentException(
                 'A valid Ledger account is required.'
+            );
+        }
+
+        $validateDate = static function (
+            ?string $date,
+            string $label,
+        ): void {
+            if ($date === null || $date === '') {
+                return;
+            }
+
+            $parsed = \DateTimeImmutable::createFromFormat(
+                '!Y-m-d',
+                $date,
+            );
+
+            if (
+                $parsed === false
+                || $parsed->format('Y-m-d') !== $date
+            ) {
+                throw new InvalidArgumentException(
+                    $label . ' must be a valid YYYY-MM-DD date.'
+                );
+            }
+        };
+
+        $validateDate($dateFrom, 'Start date');
+        $validateDate($dateTo, 'End date');
+
+        if (
+            $dateFrom !== null
+            && $dateFrom !== ''
+            && $dateTo !== null
+            && $dateTo !== ''
+            && $dateFrom > $dateTo
+        ) {
+            throw new InvalidArgumentException(
+                'Start date cannot be later than end date.'
             );
         }
 
