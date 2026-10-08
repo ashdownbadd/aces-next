@@ -107,7 +107,7 @@
   min-height: var(--header-height);
 
   color: var(--color-text);
-  background: #ffffff !important;
+  background: var(--color-surface) !important;
   border: 0 !important;
   border-radius: var(--radius-md) var(--radius-md) 0 0;
 
@@ -132,13 +132,13 @@
 
   pointer-events: none;
 
-  box-shadow: calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) #ffffff !important;
+  box-shadow: calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
 }.c-navbar__link.is-active::before {
 
   left: calc(var(--radius-md) * -1);
 
   border-bottom-right-radius: var(--radius-md);
-  box-shadow: var(--radius-md) var(--radius-md) 0 var(--radius-md) #ffffff !important;
+  box-shadow: var(--radius-md) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
 
   bottom: 0 !important;
 }.c-navbar__link.is-active::after {
@@ -354,7 +354,7 @@
 }
 
 .c-navbar__link.is-active {
-  background: #ffffff !important;
+  background: var(--color-surface) !important;
   border-color: transparent !important;
   outline: none !important;
   box-shadow: none !important;
@@ -503,7 +503,7 @@
   position: relative !important;
   bottom: 0 !important;
   margin-bottom: 0 !important;
-  background: #ffffff !important;
+  background: var(--color-surface) !important;
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
@@ -516,12 +516,12 @@
 
 .c-navbar .c-navbar__link.is-active::before {
   box-shadow:
-    var(--radius-md) var(--radius-md) 0 var(--radius-md) #ffffff !important;
+    var(--radius-md) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
 }
 
 .c-navbar .c-navbar__link.is-active::after {
   box-shadow:
-    calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) #ffffff !important;
+    calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
 }
 
 .c-navbar .c-navbar__link:hover,
@@ -564,4 +564,23 @@
 .c-navbar__dropdown {
   position: absolute !important;
   z-index: 1050 !important;
+}
+
+/* Final connected-tab surface synchronization */
+.c-navbar .c-navbar__link.is-active,
+.c-navbar .c-navbar__link.is-active:hover,
+.c-navbar .c-navbar__link.is-active:focus,
+.c-navbar .c-navbar__link.is-active:focus-visible,
+.c-navbar .c-navbar__link.is-active:active {
+  background: var(--color-surface) !important;
+}
+
+.c-navbar .c-navbar__link.is-active::before {
+  box-shadow:
+    var(--radius-md) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
+}
+
+.c-navbar .c-navbar__link.is-active::after {
+  box-shadow:
+    calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
 }
