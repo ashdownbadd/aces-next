@@ -17,6 +17,8 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  overflow: visible;
 }.c-navbar__brand {
 
   display: inline-flex;
@@ -459,4 +461,24 @@
 .c-navbar .c-navbar__link.is-active::after {
   box-shadow:
     calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
+}
+
+/* Final sticky-header containment */
+.c-navbar {
+  overflow: hidden !important;
+}
+
+.c-navbar .c-navbar__link.is-active {
+  height: var(--header-height) !important;
+  align-self: stretch !important;
+}
+
+/* Final account dropdown overflow fix */
+.c-navbar {
+  overflow: visible !important;
+}
+
+.c-navbar__dropdown {
+  position: absolute !important;
+  z-index: 1050 !important;
 }
