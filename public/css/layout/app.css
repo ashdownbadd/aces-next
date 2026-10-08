@@ -1,7 +1,7 @@
 .app {
 
   min-height: 100vh;
-  background: var(--color-background);
+  background: var(--color-surface);
 }.app__content {
 
   width: min(100%, var(--content-max-width));

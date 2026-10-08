@@ -271,6 +271,7 @@
 
     min-height: 44px;
   }
+}
 
 @media (max-width: 1060px) {.c-navbar {
 
@@ -394,4 +395,68 @@
   -webkit-box-shadow: none !important;
   -webkit-focus-ring-color: transparent !important;
   -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Final active-tab surface synchronization */
+.c-navbar .c-navbar__link.is-active {
+  background: var(--color-surface) !important;
+}
+
+.c-navbar .c-navbar__link.is-active::before {
+  box-shadow:
+    var(--radius-md) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
+}
+
+.c-navbar .c-navbar__link.is-active::after {
+  box-shadow:
+    calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
+}
+/* ==========================================================================
+   FINAL NAVBAR STATE + CONNECTED-TAB OVERRIDES
+   ========================================================================== */
+
+.c-navbar .c-navbar__link,
+.c-navbar .c-navbar__link:hover,
+.c-navbar .c-navbar__link:focus,
+.c-navbar .c-navbar__link:focus-visible,
+.c-navbar .c-navbar__link:active {
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  outline: 0 !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -webkit-focus-ring-color: transparent !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.c-navbar .c-navbar__link.is-active,
+.c-navbar .c-navbar__link.is-active:hover,
+.c-navbar .c-navbar__link.is-active:focus,
+.c-navbar .c-navbar__link.is-active:focus-visible,
+.c-navbar .c-navbar__link.is-active:active {
+  background: var(--color-surface) !important;
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  outline: 0 !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+.c-navbar .c-navbar__link.is-active::before {
+  box-shadow:
+    var(--radius-md) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
+}
+
+.c-navbar .c-navbar__link.is-active::after {
+  box-shadow:
+    calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
 }
