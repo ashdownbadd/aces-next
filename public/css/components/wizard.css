@@ -193,7 +193,8 @@
   border-bottom: 0;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   color: var(--color-text);
-  box-shadow: none;
+  /* Fill the vertical gap beneath the active tab without moving its baseline. */
+  box-shadow: 0 8px 0 0 #ffffff;
 }
 
 .wizard__step--active::before,
