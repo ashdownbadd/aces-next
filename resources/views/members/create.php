@@ -50,7 +50,7 @@ $validationError = $validationError ?? null;
         </div>
     <?php endif; ?>
 
-    <div class="wizard">
+    <div class="card wizard wizard-card wizard-card--connected">
 
         <nav
             class="wizard__steps"
@@ -148,10 +148,6 @@ $validationError = $validationError ?? null;
             <?php endforeach; ?>
 
         </nav>
-
-    </div>
-
-    <div class="card">
 
         <div class="wizard__body">
             <?php require __DIR__ . '/wizard/' . $step . '.php'; ?>
