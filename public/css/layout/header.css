@@ -611,3 +611,21 @@
 .c-navbar .c-navbar__link.is-active::after {
   box-shadow: calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) #ffffff !important;
 }
+
+
+/* Targeted fix: inactive navbar links change color only on hover. */
+.c-navbar .c-navbar__link:not(.is-active):hover,
+.c-navbar .c-navbar__link:not(.is-active):focus,
+.c-navbar .c-navbar__link:not(.is-active):focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #1e40af !important;
+  box-shadow: none !important;
+}
+
+.c-navbar .c-navbar__link:not(.is-active):hover svg,
+.c-navbar .c-navbar__link:not(.is-active):focus svg,
+.c-navbar .c-navbar__link:not(.is-active):focus-visible svg {
+  color: #1e40af !important;
+  stroke: #1e40af !important;
+}

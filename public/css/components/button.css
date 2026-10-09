@@ -86,3 +86,32 @@
   outline-offset: 2px;
   box-shadow: none;
 }
+
+
+/* Targeted fix: primary sign-in/action button text stays pure white. */
+.btn--primary,
+.btn--primary:hover,
+.btn--primary:focus,
+.btn--primary:active,
+.c-button--primary,
+.c-button--primary:hover,
+.c-button--primary:focus,
+.c-button--primary:active,
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  color: #ffffff !important;
+}
+
+.btn--primary *,
+.c-button--primary *,
+.btn-primary * {
+  color: #ffffff !important;
+}
+
+.btn--primary svg,
+.c-button--primary svg,
+.btn-primary svg {
+  stroke: #ffffff !important;
+}
