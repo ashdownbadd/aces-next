@@ -26,7 +26,7 @@
 
   color: var(--color-text);
 
-  font-family: "Syne", var(--font-family-heading), sans-serif;
+  font-family: var(--font-family-heading);
   font-size: var(--font-size-lg);
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -583,4 +583,31 @@
 .c-navbar .c-navbar__link.is-active::after {
   box-shadow:
     calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) var(--color-surface) !important;
+}
+
+/* Soft blue ambient navbar + crisp white active connected tab */
+.c-navbar {
+  background:
+    radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.8) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(186, 230, 253, 0.6) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(240, 249, 255, 0.9) 0px, transparent 100%),
+    #e0f2fe !important;
+  border-bottom: 1px solid rgba(186, 230, 253, 0.5) !important;
+}
+
+.c-navbar .c-navbar__link.is-active,
+.c-navbar .c-navbar__link.is-active:hover,
+.c-navbar .c-navbar__link.is-active:focus,
+.c-navbar .c-navbar__link.is-active:focus-visible,
+.c-navbar .c-navbar__link.is-active:active {
+  background: #ffffff !important;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03) !important;
+}
+
+.c-navbar .c-navbar__link.is-active::before {
+  box-shadow: var(--radius-md) var(--radius-md) 0 var(--radius-md) #ffffff !important;
+}
+
+.c-navbar .c-navbar__link.is-active::after {
+  box-shadow: calc(var(--radius-md) * -1) var(--radius-md) 0 var(--radius-md) #ffffff !important;
 }
