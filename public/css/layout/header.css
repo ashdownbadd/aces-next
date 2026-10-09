@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@800&display=swap');
 .c-navbar {
 
   flex-shrink: 0;
@@ -628,4 +629,11 @@
 .c-navbar .c-navbar__link:not(.is-active):focus-visible svg {
   color: #1e40af !important;
   stroke: #1e40af !important;
+}
+
+
+/* Targeted brand typography fix */
+.c-navbar__brand {
+  font-family: 'Syne', sans-serif !important;
+  font-weight: 800;
 }

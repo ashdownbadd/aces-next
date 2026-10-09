@@ -281,3 +281,18 @@
   outline: none !important;
   box-shadow: none !important;
 }
+
+
+/* Targeted sign-in button text color fix */
+.c-login__button,
+.c-login__button:hover,
+.c-login__button:focus,
+.c-login__button:active {
+  color: #ffffff !important;
+}
+.c-login__button * {
+  color: #ffffff !important;
+}
+.c-login__button svg {
+  stroke: #ffffff !important;
+}
