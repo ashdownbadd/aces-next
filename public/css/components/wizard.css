@@ -415,3 +415,34 @@
     transition: none;
   }
 }
+
+
+/* ==========================================================================
+   Wizard refinement: seamless slate-gray surfaces, no borders
+   ========================================================================== */
+
+.wizard__body {
+  background: #f8fafc !important;
+  border: none !important;
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08) !important;
+}
+
+.wizard__step--active,
+.wizard__step--active:hover {
+  background: #f8fafc !important;
+  border: none !important;
+  color: #1e40af !important;
+}
+
+.wizard__step--active::before {
+  box-shadow: 4px 4px 0 2px #f8fafc !important;
+}
+
+.wizard__step--active::after {
+  box-shadow: -4px 4px 0 2px #f8fafc !important;
+}
+
+.wizard__step:not(.wizard__step--active) {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+}
