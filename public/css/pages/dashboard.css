@@ -540,112 +540,155 @@
   font-size: var(--font-size-xs);
 }
 
-/* ==========================================================================
-   Dashboard standard card corrections
-   ========================================================================== */
-
-.dashboard__stats {
-  align-items: stretch;
-}
+/* Dashboard stat-card redesign — rounded shell + circular top-right action */
 .dashboard__stats .c-card__shell {
   position: relative;
-
+  display: block;
+  box-sizing: border-box;
   width: 100%;
   height: auto;
   min-width: 0;
-  min-height: 0;
-  padding: 0;
-  aspect-ratio: 13 / 10;
+  min-height: 148px;
+  padding: 1.25rem;
+  aspect-ratio: auto;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+  transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+.dashboard__stats .c-card__shell:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
 }
 .dashboard__stats .c-card__shell[hidden] {
   display: none !important;
 }
+
+/* Card link fills the shell and reserves space for the separate action link. */
 .dashboard__stats .dashboard-stat-card {
   position: relative;
-
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: auto;
   min-width: 0;
-  min-height: 0;
-
+  min-height: 106px;
   box-sizing: border-box;
-  padding: 0.75rem;
-
-  /*
-   * The notch clip-path (see clipPath#dashboard-card-clip in dashboard.php)
-   * uses objectBoundingBox arcs, so its radii are computed as a % of this
-   * element's own width and height, independently on each axis. That only
-   * stays a true circular curve if width:height never changes — so the
-   * card is pinned to the same 13:10 ratio the original reference used.
-   * Height is now derived from width instead of being fixed; min-height
-   * above is just a floor for very narrow columns.
-   */
-  aspect-ratio: 13 / 10;
-
-  /* Notched-card silhouette. Replaces the previous border-radius +
-   * painted-overlay cutout with a real clipped corner, so the border is
-   * dropped in favor of a shape-following drop-shadow. */
+  padding: 0 3.25rem 0 0;
   border: 0;
   border-radius: 0;
+  background: transparent;
   box-shadow: none;
-  clip-path: url("#dashboard-card-clip");
-  filter: drop-shadow(0 1px 2px rgba(16, 24, 40, 0.08));
+  clip-path: none;
+  filter: none;
+  color: inherit;
+  text-decoration: none;
 }
 .dashboard__stats .dashboard-stat-card:hover {
-  filter: drop-shadow(0 4px 10px rgba(16, 24, 40, 0.12));
-} /* Overview cards intentionally have no left-side icon. */
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: none;
+  transform: none;
+}
+.dashboard__stats .dashboard-stat-card:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
 .dashboard__stats .dashboard-stat-card .c-card__top {
   min-height: 0;
 }
 .dashboard__stats .dashboard-stat-card .c-card__content {
-  margin-top: 6px;
-} /* The corner notch is now cut directly out of the card via clip-path, so
- * the action must stay outside the clipped element. Keep the button fully
- * inside the notch's upper-right pocket instead of overlapping the card body. */
-.dashboard__stats .dashboard-stat-card .c-card__action-wrap {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  margin-top: 0;
 }
+.dashboard__stats .dashboard-stat-card .c-card__title {
+  margin: 0;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.dashboard__stats .dashboard-stat-card .c-card__value {
+  margin-top: 5px;
+  color: #0f172a;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+.dashboard__stats .dashboard-stat-card .c-card__description,
+.dashboard__stats .dashboard-stat-card .c-card__subtitle {
+  color: #64748b;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+/* Independent link target: separate from the main card link. */
 .dashboard__stats .c-card__shell > .c-card__action {
   position: absolute;
-  top: 1.5%;
-  right: 1.5%;
+  top: 1rem;
+  right: 1rem;
   z-index: 5;
-
   display: grid;
   place-items: center;
-
-  width: 14%;
-  height: auto;
-  aspect-ratio: 21 / 16;
-  flex: 0 0 auto;
-
+  width: 36px;
+  height: 36px;
   box-sizing: border-box;
-  border: 0;
-  border-radius: var(--radius-md);
-
-  background: var(--color-primary);
-  color: var(--color-on-primary, #fff);
-
-  font-size: var(--font-size-sm);
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #2563eb;
+  font-size: 1rem;
   line-height: 1;
   text-decoration: none;
-
-  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.18);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 .dashboard__stats .c-card__shell > .c-card__action:hover,
-.dashboard__stats .c-card__shell > .c-card__action:focus-visible,
+.dashboard__stats .c-card__shell > .c-card__action:focus-visible {
+  background: #e0f2fe;
+  border-color: #bae6fd;
+  color: #1d4ed8;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.09);
+  transform: translateY(-2px);
+}
+.dashboard__stats .c-card__shell > .c-card__action:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
 .dashboard__stats .c-card__shell > .c-card__action:active {
-  transform: none;
-  color: var(--color-on-primary, #fff);
-  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.18);
-}/* The component owns visibility for expanded cards; this selector is kept so
- * the Show More script can still target the additional cards. */
+  transform: translateY(0);
+}
 .dashboard__stats .dashboard__stat--additional[hidden] {
   display: none !important;
 }
 .dashboard__stats .dashboard__stat--additional:not([hidden]) {
   display: block;
 }
+@media (max-width: 640px) {
+  .dashboard__stats .c-card__shell {
+    min-height: 132px;
+    padding: 1rem;
+  }
+  .dashboard__stats .dashboard-stat-card {
+    min-height: 100px;
+    padding-right: 3rem;
+  }
+  .dashboard__stats .c-card__shell > .c-card__action {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 34px;
+    height: 34px;
+  }
+}
+
 
 /* ==========================================================================
    Dashboard header/card refinements

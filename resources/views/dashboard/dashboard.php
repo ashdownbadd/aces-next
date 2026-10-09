@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-$hour = (int) date('G');
+$dashboardTimezone = new DateTimeZone('Asia/Manila');
+$dashboardNow = new DateTimeImmutable('now', $dashboardTimezone);
+$hour = (int) $dashboardNow->format('G');
 
-if ($hour < 12) {
+if ($hour >= 5 && $hour < 12) {
     $greeting = 'Good Morning';
-} elseif ($hour < 18) {
+} elseif ($hour >= 12 && $hour < 18) {
     $greeting = 'Good Afternoon';
 } else {
     $greeting = 'Good Evening';
@@ -43,7 +45,7 @@ $alerts = $alerts ?? [
 
     <section class="dashboard-hero">
         <span class="dashboard-hero__eyebrow">
-            <?= date('l, F j, Y'); ?>
+            <?= $dashboardNow->format('l, F j, Y'); ?>
         </span>
 
         <h1 class="dashboard-hero__title">
