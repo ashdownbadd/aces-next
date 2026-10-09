@@ -52,7 +52,7 @@
     linear-gradient(
       to right,
       transparent,
-      rgba(245, 167, 42, 0.35)
+      var(--blue-accent-ring)
     );
 }
 
@@ -61,7 +61,7 @@
     linear-gradient(
       to left,
       transparent,
-      rgba(245, 167, 42, 0.35)
+      var(--blue-accent-ring)
     );
 }
 
