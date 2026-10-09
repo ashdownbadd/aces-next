@@ -67,6 +67,18 @@
    ========================================================================== */
 
 .wizard {
+  /* Connector geometry tokens */
+  --wizard-surface: #ffffff;
+  --wizard-edge: #e2e8f0;
+  --wizard-border: 1px;
+  --wizard-gap: 8px; /* floating gap between pills and the card */
+  --wizard-curve: 16px; /* radius of the outward sweep */
+  --wizard-curve-fill: calc(var(--wizard-curve) / 4);
+  --wizard-body-radius: 16px;
+  --wizard-tab-height: 42px;
+  --wizard-tab-pad-y: 8px;
+  --wizard-tab-extend: calc(var(--wizard-gap) + var(--wizard-border));
+
   width: 100%;
   margin: 4px 0 2px;
   padding: 0;
@@ -83,16 +95,21 @@
 .wizard__steps {
   position: relative;
   z-index: 2;
-  margin-bottom: 0;
   display: flex;
-  align-items: flex-end;
-  gap: 5px;
+  align-items: flex-end; /* shared baseline for every step */
+  gap: calc(
+    var(--wizard-curve) + 4px
+  ); /* wider than the wings so pills never touch them */
   width: 100%;
   min-width: 0;
-  overflow-x: auto;
-  overflow-y: visible;
-  padding: 5px 5px 8px;
+  /* Side padding keeps the outer wings above the card's straight top edge. */
+  padding: 5px calc(var(--wizard-body-radius) + var(--wizard-curve))
+    var(--wizard-tab-extend);
+  /* Pull the card up so the active tab can cover its 1px top border. */
+  margin-bottom: calc(-1 * var(--wizard-border));
   box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
   background: transparent !important;
   border: 0 !important;
   border-radius: 0 !important;
@@ -108,15 +125,14 @@
   position: relative;
   flex: 1 1 0;
   min-width: 0;
-  min-height: 42px;
+  min-height: var(--wizard-tab-height);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 8px 14px;
+  padding: var(--wizard-tab-pad-y) 14px;
   box-sizing: border-box;
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
+  border: var(--wizard-border) solid transparent;
   background: transparent;
   color: var(--color-text-muted);
   font-family: var(--font-family);
@@ -128,6 +144,10 @@
     border-color 140ms ease,
     color 140ms ease,
     opacity 140ms ease;
+}
+
+.wizard__step:not(.wizard__step--active) {
+  border-radius: 9999px;
 }
 
 .wizard__step:hover {
@@ -180,45 +200,50 @@
   white-space: nowrap;
 }
 
-.wizard__step--active {
+/* Active tab: same surface as the card, square bottom corners, and its box
+   extends past the shared baseline to cover the gap and the card's top
+   border. Text stays on the baseline because padding grows by the same amount. */
+.wizard__step--active,
+.wizard__step--active:hover {
   z-index: 3;
-  margin-bottom: -1px;
-  bottom: auto;
-  padding-bottom: 8px;
-  background: #ffffff;
-  border-color: #e2e8f0;
-  border-top: 1px solid #e2e8f0;
-  border-left: 1px solid #e2e8f0;
-  border-right: 1px solid #e2e8f0;
-  border-bottom: 0;
+  min-height: calc(var(--wizard-tab-height) + var(--wizard-tab-extend));
+  margin-bottom: calc(-1 * var(--wizard-tab-extend));
+  padding-bottom: calc(var(--wizard-tab-pad-y) + var(--wizard-tab-extend));
+  background: var(--wizard-surface);
+  border-color: transparent;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   color: var(--color-text);
-  /* Fill the vertical gap beneath the active tab without moving its baseline. */
-  box-shadow: 0 8px 0 0 #ffffff;
+  cursor: default;
 }
 
+/* Wings: transparent boxes. The white comes only from the offset box-shadow,
+   visible solely in the corner outside each rounded edge. The tab side drops
+   straight down, then sweeps outward onto the card's top edge. */
 .wizard__step--active::before,
 .wizard__step--active::after {
   content: "";
   position: absolute;
-  bottom: 0;
-  width: 20px;
-  height: 20px;
+  bottom: 0; /* padding-box bottom = top edge of the card */
+  width: var(--wizard-curve);
+  height: var(--wizard-curve);
   display: block;
-  background: transparent;
+  background-color: transparent !important;
   pointer-events: none;
+  z-index: 0;
 }
 
 .wizard__step--active::before {
-  left: -20px;
-  border-bottom-right-radius: 20px;
-  box-shadow: 4px 4px 0 4px #ffffff;
+  left: calc(-1 * (var(--wizard-curve) + var(--wizard-border)));
+  border-bottom-right-radius: var(--wizard-curve);
+  box-shadow: var(--wizard-curve-fill) var(--wizard-curve-fill) 0
+    var(--wizard-curve-fill) var(--wizard-surface);
 }
 
 .wizard__step--active::after {
-  right: -20px;
-  border-bottom-left-radius: 20px;
-  box-shadow: -4px 4px 0 4px #ffffff;
+  right: calc(-1 * (var(--wizard-curve) + var(--wizard-border)));
+  border-bottom-left-radius: var(--wizard-curve);
+  box-shadow: calc(-1 * var(--wizard-curve-fill)) var(--wizard-curve-fill) 0
+    var(--wizard-curve-fill) var(--wizard-surface);
 }
 
 .wizard__step--active .wizard__label {
@@ -282,10 +307,11 @@
   width: 100%;
   box-sizing: border-box;
   padding: 24px 28px 0;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: relative;
+  z-index: 1;
+  background: var(--wizard-surface);
+  border: var(--wizard-border) solid var(--wizard-edge);
+  border-radius: var(--wizard-body-radius);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   overflow: visible;
 }
@@ -353,15 +379,16 @@
     gap: 16px;
   }
 
+  .wizard {
+    --wizard-tab-height: 40px;
+  }
+
   .wizard__steps {
     justify-content: flex-start;
-    border-radius: 0 !important;
-    padding: 4px 4px 0;
   }
 
   .wizard__step {
-    min-height: 40px;
-    padding: 8px 12px;
+    padding-inline: 12px;
   }
 
   .wizard__label {
@@ -387,40 +414,4 @@
   .wizard__step {
     transition: none;
   }
-}
-
-
-/* ==========================================================================
-   TPointTech-style connected tab surface
-   ========================================================================== */
-
-.wizard-card--connected {
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  overflow: visible !important;
-}
-
-.wizard-card--connected .wizard__steps {
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-}
-
-.wizard-card--connected .wizard__step--active,
-.wizard-card--connected .wizard__body {
-  background: #ffffff !important;
-}
-
-.wizard-card--connected .wizard__step--active {
-  border-bottom: 0 !important;
-}
-
-.wizard-card--connected .wizard__step--active::before {
-  box-shadow: 4px 4px 0 4px #ffffff !important;
-}
-
-.wizard-card--connected .wizard__step--active::after {
-  box-shadow: -4px 4px 0 4px #ffffff !important;
 }
